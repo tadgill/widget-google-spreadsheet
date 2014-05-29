@@ -46,6 +46,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
       i18n.init({ fallbackLng: "en" }, function(t) {
         _el.wrapperCtn.i18n().show();
 
+        // Set tooltips only after i18n has shown
+        $("label[for='validate-url'] + button").popover({trigger:'click'});
+
         //Set buttons to be sticky only after wrapper is visible.
         $(".sticky-buttons").sticky({
           container : _el.wrapperCtn,

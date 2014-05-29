@@ -2,5 +2,9 @@
   "settings": "Google Spreadsheet Settings",
   "save": "Save",
   "cancel": "Cancel",
-  "help": "Help"
+  "help": "Help",
+  "validate-url": {
+    "label": "Validate URL",
+    "tooltip": "Leave checked unless using DDE"
+  }
 }
