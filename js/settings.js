@@ -45,6 +45,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
 
       i18n.init({ fallbackLng: "en" }, function(t) {
         _el.wrapperCtn.i18n().show();
+
+        //Set buttons to be sticky only after wrapper is visible.
+        $(".sticky-buttons").sticky({
+          container : _el.wrapperCtn,
+          topSpacing : 41,	//top margin + border of wrapper
+          getWidthFrom : _el.wrapperCtn
+        });
       });
     }
   };
