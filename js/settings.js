@@ -40,6 +40,12 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
     init: function () {
       _cache();
       _bind();
+
+      _el.alertCtn.hide();
+
+      i18n.init({ fallbackLng: "en" }, function(t) {
+        _el.wrapperCtn.i18n().show();
+      });
     }
   };
 
