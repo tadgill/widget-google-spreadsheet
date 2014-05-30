@@ -20,6 +20,10 @@
     .widget-wrapper {
       display: none;
     }
+    div.input-link{
+      margin-top: 22px;
+      margin-left: -15px;
+    }
   </style>
 </head>
 <body>
@@ -52,23 +56,28 @@
     <div id="settings-alert" class="alert alert-danger"></div>
     <form role="form">
       <div class="row">
-        <div class="col-sm-10 col-md-9">
-          <div class="form-group">
-            <label for="url" data-i18n="url"></label>
-            <input id="url" name="url" type="text" class="form-control" />
+        <div class="col-xs-8">
+          <label for="url" data-i18n="url"></label>
+          <input id="url" name="url" type="text" class="form-control dataURL" />
+        </div>
+        <div class="col-xs-3">
+          <div class="input-link">
+            <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
           </div>
         </div>
       </div>
     </form>
   </div>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
+  <script type="text/javascript" src="https://apis.google.com/js/client.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript" src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
 
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/bootstrap/bootstrap.min.js"></script>
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/i18next/i18next.js"></script>
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/sticky/jquery.sticky.min.js"></script>
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/rise/common.js"></script>
-  <script src="js/settings.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/bootstrap/bootstrap.min.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/i18next/i18next.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/sticky/jquery.sticky.min.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/rise/common.js"></script>
+  <script type="text/javascript" src="js/settings.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 var RiseVision = RiseVision || {};
 RiseVision.GoogleSpreadsheet = {};
 
-RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
+RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   "use strict";
 
   // private variables
@@ -21,6 +21,12 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
     $("#help").on("click", function() {
       window.open("http://www.risevision.com/help/users/what-are-gadgets/" +
         "free-gadgets/rise-vision-google-spreadsheet/", "_blank");
+    });
+
+    $("#google-drive").click(function() {
+      //TODO: Making the actual rpc call may get ported to common.js
+      gadgets.rpc.call("", "rscmd_openGooglePicker", null, $(this).data("for"),
+        google.picker.ViewId.SPREADSHEETS);
     });
   }
 
@@ -96,7 +102,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
     }
   };
 
-})($,gadgets, i18n);
+})($, gadgets, i18n, google);
 
-RiseVision.GoogleSpreadsheet.Settings.init();
+google.setOnLoadCallback(function() {
+  $(function() {
+    RiseVision.GoogleSpreadsheet.Settings.init();
+  });
+});
+
+google.load('picker', '1');
 

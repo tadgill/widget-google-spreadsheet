@@ -3,5 +3,6 @@
   "save": "Save",
   "cancel": "Cancel",
   "help": "Help",
-  "url": "Data URL*"
+  "url": "Data URL*",
+  "google-drive": "Google Drive"
 }
