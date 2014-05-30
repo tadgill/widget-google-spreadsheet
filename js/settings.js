@@ -27,12 +27,34 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
   function _cache() {
     _el = {
       wrapperCtn:           $(".widget-wrapper"),
-      alertCtn:             $("#settings-alert")
+      alertCtn:             $("#settings-alert"),
+      urlInp:               $("#url")
     };
   }
 
+  function _getAdditionalParams(){
+    var additionalParams = {};
+
+    additionalParams["url"] = _el.urlInp.val();
+
+    return additionalParams;
+  }
+
+  function _getParams(){
+    var params = "";
+
+    return params;
+  }
+
   function _saveSettings(){
-    //TODO: Dependent on writing validation code first
+    //TODO: Will be conditional on validation code
+    //construct settings object
+    var settings = {
+      "params" : _getParams(),
+      "additionalParams" : JSON.stringify(_getAdditionalParams())
+    };
+
+    gadgets.rpc.call("", "rscmd_saveSettings", null, settings);
   }
 
   // public space
@@ -43,19 +65,37 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n) {
 
       _el.alertCtn.hide();
 
-      i18n.init({ fallbackLng: "en" }, function(t) {
-        _el.wrapperCtn.i18n().show();
+      //Request additional parameters from the Viewer.
+      gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
 
-        // Set tooltips only after i18n has shown
-        $("label[for='validate-url'] + button").popover({trigger:'click'});
+        _prefs = new gadgets.Prefs();
 
-        //Set buttons to be sticky only after wrapper is visible.
-        $(".sticky-buttons").sticky({
-          container : _el.wrapperCtn,
-          topSpacing : 41,	//top margin + border of wrapper
-          getWidthFrom : _el.wrapperCtn
+        if (result) {
+          result = JSON.parse(result);
+
+          // Set values from params
+
+          //Additional params
+          _el.urlInp.val(result["url"]);
+
+        }
+
+        i18n.init({ fallbackLng: "en" }, function(t) {
+          _el.wrapperCtn.i18n().show();
+
+          // Set tooltips only after i18n has shown
+          $("label[for='validate-url'] + button").popover({trigger:'click'});
+
+          //Set buttons to be sticky only after wrapper is visible.
+          $(".sticky-buttons").sticky({
+            container : _el.wrapperCtn,
+            topSpacing : 41,	//top margin + border of wrapper
+            getWidthFrom : _el.wrapperCtn
+          });
         });
       });
+
+
     }
   };
 

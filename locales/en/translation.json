@@ -6,5 +6,6 @@
   "validate-url": {
     "label": "Validate URL",
     "tooltip": "Leave checked unless using DDE"
-  }
+  },
+  "url": "Data URL*"
 }
