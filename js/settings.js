@@ -24,8 +24,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     });
 
     $("#google-drive").click(function() {
-      //TODO: Making the actual rpc call may get ported to common.js
-      gadgets.rpc.call("", "rscmd_openGooglePicker", null, $(this).data("for"),
+      RiseVision.Common.GooglePicker.openPicker($(this).data("for"),
         google.picker.ViewId.SPREADSHEETS);
     });
   }
@@ -46,10 +45,77 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     return additionalParams;
   }
 
+  function _getSheets(docID, callbackFn){
+    var option, href, sheets = [];
+
+    $.getJSON(encodeURI("https://spreadsheets.google.com/feeds/worksheets/" +
+      docID + "/public/basic?alt=json&dummy=" +
+      Math.ceil(Math.random() * 100)))
+      .done(function(data) {
+        console.log("success");
+        console.dir(data);
+        $.each(data.feed.entry, function(i, item){
+          option = document.createElement("option");
+          //Sheet name
+          option.text = item.title.$t;
+          /* Visualization API doesn't refresh properly if 'pub' parameter is
+           present, so remove it.
+           */
+          href = item.link[2].href;
+          // Visualization URL
+          href = href.replace("&pub=1", "");
+          /* Use docs.google.com domain when using new Google Sheets due to
+           this bug - http://goo.gl/4Zf8LQ.
+           If /gviz/ is in the URL path, then use this as an indicator that the
+           new Google Sheets is being used.
+           */
+          option.value = (href.indexOf("/gviz/") == -1) ? option.value = href :
+            href.replace("spreadsheets.google.com", "docs.google.com");
+
+          sheets.push(option);
+        });
+
+        if(typeof callbackFn === 'function'){callbackFn(sheets);}
+
+      })
+      .fail(function(jqxhr) {
+        console.log("fail");
+        console.dir(jqxhr);
+        $(".errors").empty();
+        $(".errors").append("To use this spreadsheet, it first needs to be " +
+          "published to the web. From the Google Spreadsheet menu, select " +
+          "<em>File > Publish to the web</em>, and then click the " +
+          "<em>Start Publishing</em> button. Once done, select your file " +
+          "from the Google Drive link again.");
+
+        $(".errors").css("display", "inline-block");
+        $("li.more").hide();
+
+        console.log(jqxhr.status + " - " + jqxhr.statusText);
+        console.log(jqxhr.responseText);
+
+        callbackFn(null);
+
+      });
+
+  }
+
   function _getParams(){
     var params = "";
 
     return params;
+  }
+
+  function _onGooglePickerSelect(id, doc){
+    var sheets = null;
+    $("#" + id).val("");
+
+    _getSheets(doc.id, function(sheets) {
+        if (sheets !== null) {
+          console.dir(sheets);
+          //TODO: Continue logic here for populating URL and sheets
+        }
+    });
   }
 
   function _saveSettings(){
@@ -70,6 +136,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       _bind();
 
       _el.alertCtn.hide();
+
+      // register a callback function for the Google Picker
+      gadgets.rpc.register("rscmd_googlePickerCallback", _onGooglePickerSelect);
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
