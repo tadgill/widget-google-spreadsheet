@@ -4,5 +4,14 @@
   "cancel": "Cancel",
   "help": "Help",
   "url": "Data URL*",
-  "google-drive": "Google Drive"
+  "google-drive": "Google Drive",
+  "cells": {
+    "label": "Cells",
+    "sheet": "Entire Sheet",
+    "range": "Range"
+  },
+  "range": "Range",
+  "sheet": "Worksheet",
+  "headerRows": "Number of Header Rows",
+  "google-picker-fail": "To use this spreadsheet, it first needs to be published to the web. From the Google Spreadsheet menu, select <em>File > Publish to the web</em>, and then click the <em>Start Publishing</em> button. Once done, select your file from the Google Drive link again."
 }

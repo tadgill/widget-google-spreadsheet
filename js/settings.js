@@ -5,7 +5,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   "use strict";
 
   // private variables
-  var _prefs = null, _el;
+  var _prefs = null, _headerRows = 0, _range="", _el, _docID;
 
   // private functions
   function _bind() {
@@ -33,7 +33,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     _el = {
       wrapperCtn:           $(".widget-wrapper"),
       alertCtn:             $("#settings-alert"),
-      urlInp:               $("#url")
+      urlInp:               $("#url"),
+      urlOptionsCtn:        $("div.url-options"),
+      sheetSel:             $("#sheet")
     };
   }
 
@@ -52,8 +54,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       docID + "/public/basic?alt=json&dummy=" +
       Math.ceil(Math.random() * 100)))
       .done(function(data) {
-        console.log("success");
-        console.dir(data);
         $.each(data.feed.entry, function(i, item){
           option = document.createElement("option");
           //Sheet name
@@ -79,20 +79,12 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
 
       })
       .fail(function(jqxhr) {
-        console.log("fail");
-        console.dir(jqxhr);
-        $(".errors").empty();
-        $(".errors").append("To use this spreadsheet, it first needs to be " +
-          "published to the web. From the Google Spreadsheet menu, select " +
-          "<em>File > Publish to the web</em>, and then click the " +
-          "<em>Start Publishing</em> button. Once done, select your file " +
-          "from the Google Drive link again.");
+        _el.alertCtn.empty().append(i18n.t("google-picker-fail")).show();
+        _el.urlOptionsCtn.hide();
+        _el.wrapperCtn.scrollTop(0);
 
-        $(".errors").css("display", "inline-block");
-        $("li.more").hide();
-
-        console.log(jqxhr.status + " - " + jqxhr.statusText);
-        console.log(jqxhr.responseText);
+        //console.log(jqxhr.status + " - " + jqxhr.statusText);
+        //console.log(jqxhr.responseText);
 
         callbackFn(null);
 
@@ -107,14 +99,22 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   }
 
   function _onGooglePickerSelect(id, doc){
-    var sheets = null;
     $("#" + id).val("");
 
     _getSheets(doc.id, function(sheets) {
         if (sheets !== null) {
-          console.dir(sheets);
-          //TODO: Continue logic here for populating URL and sheets
+          _docID = doc.id;
+          _onSheetsLoaded(sheets);
+          _showDataURLOptions();
         }
+    });
+  }
+
+  function _onSheetsLoaded(sheets){
+    _el.sheetSel.empty();
+
+    $.each(sheets,function(i, item){
+      _el.sheetSel.append(item);
     });
   }
 
@@ -129,6 +129,23 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     gadgets.rpc.call("", "rscmd_saveSettings", null, settings);
   }
 
+  function _showDataURLOptions(){
+    // configure URL, start with base
+    var url = $("#sheet").val();
+    // add header rows to URL if applicable
+    if (_headerRows != "") {
+      url += "&headers=" + _headerRows;
+    }
+    // add range to URL if applicable
+    if (_range != "") {
+      url += "&range=" + _range;
+    }
+
+    _el.alertCtn.empty().hide();
+    $("#url").val(url);
+    _el.urlOptionsCtn.show();
+  }
+
   // public space
   return {
     init: function () {
@@ -136,6 +153,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       _bind();
 
       _el.alertCtn.hide();
+      _el.urlOptionsCtn.hide();
 
       // register a callback function for the Google Picker
       gadgets.rpc.register("rscmd_googlePickerCallback", _onGooglePickerSelect);

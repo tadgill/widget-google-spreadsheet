@@ -57,12 +57,60 @@
     <form role="form">
       <div class="row">
         <div class="col-xs-8">
-          <label for="url" data-i18n="url"></label>
-          <input id="url" name="url" type="text" class="form-control dataURL" />
+          <div class="form-group">
+            <label for="url" data-i18n="url"></label>
+            <input id="url" name="url" type="text" class="form-control dataURL" />
+          </div>
         </div>
         <div class="col-xs-3">
-          <div class="input-link">
-            <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
+          <div class="form-group">
+            <div class="input-link">
+              <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row url-options">
+        <div class="col-md-3">
+          <label for="cells" data-i18n="cells.label"></label>
+          <div class="radio">
+            <label for="cells-sheet" data-i18n="cells.sheet"></label>
+            <input id="cells-sheet" type="radio" name="cells-sheet" value="sheet" checked="checked">
+          </div>
+          <div class="radio">
+            <label for="cells-range" data-i18n="cells.range"></label>
+            <input id="cells-range" type="radio" name="cells-range" value="range">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="range" data-i18n="range"></label>
+            <input id="range" name="range" class="small form-control" type="text" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="sheet" data-i18n="sheet"></label>
+            <select id="sheet" name="sheet" class="form-control"></select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="headerRows" data-i18n="headerRows"></label>
+            <select id="headerRows" name="headerRows" class="form-control">
+              <option value="-1">Auto</option>
+              <option value="0" selected="selected">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
           </div>
         </div>
       </div>
