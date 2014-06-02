@@ -27,6 +27,20 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       RiseVision.Common.GooglePicker.openPicker($(this).data("for"),
         google.picker.ViewId.SPREADSHEETS);
     });
+
+    $("#sheet").change(function() {
+      _configureURL();
+    });
+
+    $("#headerRows").change(function() {
+      _headerRows = Number($(this).val());
+      _configureURL();
+    });
+
+    $("#range").blur(function() {
+      _range = $(this).val();
+      _configureURL();
+    });
   }
 
   function _cache() {
@@ -37,6 +51,27 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       urlOptionsCtn:        $("div.url-options"),
       sheetSel:             $("#sheet")
     };
+  }
+
+  function _configureSheets(sheets){
+    _el.sheetSel.empty();
+
+    $.each(sheets,function(i, item){
+      _el.sheetSel.append(item);
+    });
+  }
+
+  function _configureURL(){
+    // configure URL with value from sheets select element
+    var url = _el.sheetSel.val();
+    // add header rows to URL
+    url += "&headers=" + _headerRows;
+    // add range to URL if applicable
+    if (_range != "") {
+      url += "&range=" + _range;
+    }
+
+    _el.urlInp.val(url);
   }
 
   function _getAdditionalParams(){
@@ -89,7 +124,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
         callbackFn(null);
 
       });
-
   }
 
   function _getParams(){
@@ -99,22 +133,16 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   }
 
   function _onGooglePickerSelect(id, doc){
-    $("#" + id).val("");
+    _el.urlInp.val("");
 
     _getSheets(doc.id, function(sheets) {
         if (sheets !== null) {
           _docID = doc.id;
-          _onSheetsLoaded(sheets);
-          _showDataURLOptions();
+          _configureSheets(sheets);
+          _configureURL();
+          _el.alertCtn.empty().hide();
+          _el.urlOptionsCtn.show();
         }
-    });
-  }
-
-  function _onSheetsLoaded(sheets){
-    _el.sheetSel.empty();
-
-    $.each(sheets,function(i, item){
-      _el.sheetSel.append(item);
     });
   }
 
@@ -127,23 +155,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     };
 
     gadgets.rpc.call("", "rscmd_saveSettings", null, settings);
-  }
-
-  function _showDataURLOptions(){
-    // configure URL, start with base
-    var url = $("#sheet").val();
-    // add header rows to URL if applicable
-    if (_headerRows != "") {
-      url += "&headers=" + _headerRows;
-    }
-    // add range to URL if applicable
-    if (_range != "") {
-      url += "&range=" + _range;
-    }
-
-    _el.alertCtn.empty().hide();
-    $("#url").val(url);
-    _el.urlOptionsCtn.show();
   }
 
   // public space
