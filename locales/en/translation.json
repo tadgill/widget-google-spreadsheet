@@ -13,5 +13,9 @@
   "range": "Range",
   "sheet": "Worksheet",
   "headerRows": "Number of Header Rows",
-  "google-picker-fail": "To use this spreadsheet, it first needs to be published to the web. From the Google Spreadsheet menu, select <em>File > Publish to the web</em>, and then click the <em>Start Publishing</em> button. Once done, select your file from the Google Drive link again."
+  "google-picker-fail": "To use this spreadsheet, it first needs to be published to the web. From the Google Spreadsheet menu, select <em>File > Publish to the web</em>, and then click the <em>Start Publishing</em> button. Once done, select your file from the Google Drive link again.",
+  "validation": {
+    "required": "__fieldName__ is a required field.",
+    "valid_url": "__fieldName__ must contain a valid URL."
+  }
 }

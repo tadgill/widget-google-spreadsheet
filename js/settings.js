@@ -5,7 +5,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   "use strict";
 
   // private variables
-  var _prefs = null, _headerRows = 0, _range="", _el, _docID;
+  var _prefs = null, _headerRows = 0, _range="", _el, _docID = null;
 
   // private functions
   function _bind() {
@@ -53,7 +53,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       _configureURL();
     });
 
-    $("#headerRows").change(function() {
+    _el.headerRowsSel.change(function() {
       _headerRows = Number($(this).val());
       _configureURL();
     });
@@ -71,7 +71,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       urlInp:               $("#url"),
       urlOptionsCtn:        $("div.url-options"),
       sheetSel:             $("#sheet"),
-      rangeInp:             $("#range")
+      rangeInp:             $("#range"),
+      headerRowsSel:        $("#headerRows")
     };
   }
 
@@ -99,7 +100,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   function _getAdditionalParams(){
     var additionalParams = {};
 
-    additionalParams["url"] = _el.urlInp.val();
+    additionalParams["url"] = encodeURI($.trim(_el.urlInp.val()));
 
     return additionalParams;
   }
@@ -151,7 +152,40 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   function _getParams(){
     var params = "";
 
+    /* Only save spreadsheet metadata settings if file has been selected
+    using Google Picker(i.e. if docID has a value).
+     */
+    if (_docID !== null) {
+      params += "&up_docID=" + _docID;
+
+      // If Range is chosen
+      if($("#cells-range").is(":checked")){
+        params += "&up_cells=" + $("#cells-range").val() +
+          "&up_range=" + $.trim(_el.rangeInp.val());
+      } else {
+        params += "&up_cells=" + $("#cells-sheet").val();
+      }
+
+      params += "&up_sheet=" + encodeURI(_el.sheetSel.val()) +
+        "&up_headerRows=" + _el.headerRowsSel.val();
+    }
+
     return params;
+  }
+
+  function _getValidationsMap(){
+    return {
+      "required": {
+        fn: RiseVision.Common.Validation.isValidRequired,
+        localize: "validation.required",
+        conditional: null
+      },
+      "url": {
+        fn: RiseVision.Common.Validation.isValidURL,
+        localize: "validation.valid_url",
+        conditional: null
+      }
+    }
   }
 
   function _onGooglePickerSelect(id, doc){
@@ -169,14 +203,63 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
   }
 
   function _saveSettings(){
-    //TODO: Will be conditional on validation code
-    //construct settings object
-    var settings = {
-      "params" : _getParams(),
-      "additionalParams" : JSON.stringify(_getAdditionalParams())
-    };
+    var settings = null;
 
-    gadgets.rpc.call("", "rscmd_saveSettings", null, settings);
+    // validate
+    if(!_validate()){
+      _el.alertCtn.show();
+      _el.wrapperCtn.scrollTop(0);
+    } else {
+      //construct settings object
+      settings = {
+        "params" : _getParams(),
+        "additionalParams" : JSON.stringify(_getAdditionalParams())
+      }
+
+      gadgets.rpc.call("", "rscmd_saveSettings", null, settings);
+    }
+  }
+
+  function _validate(){
+    var itemsToValidate = [
+        { el: document.getElementById("url"),
+          rules: "required|url",
+          fieldName: "URL"
+        }
+      ],
+      passed = true;
+
+    _el.alertCtn.empty().hide();
+
+    for(var i = 0; i < itemsToValidate.length; i++){
+      if(!_validateItem(itemsToValidate[i])){
+        passed = false;
+        break;
+      }
+    }
+
+    return passed;
+  }
+
+  function _validateItem(item){
+    var rules = item.rules.split('|'),
+      validationsMap = _getValidationsMap(),
+      alerts = document.getElementById("settings-alert"),
+      passed = true;
+
+    for (var i = 0, ruleLength = rules.length; i < ruleLength; i++) {
+      var rule = rules[i];
+
+      if (validationsMap[rule].fn.apply(null,
+        [item.el,validationsMap[rule].conditional]) === false) {
+        passed = false;
+        alerts.innerHTML = i18n.t(validationsMap[rule].localize,
+          { fieldName: item.fieldName });
+        break;
+      }
+    }
+
+    return passed;
   }
 
   // public space
@@ -199,10 +282,40 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
         if (result) {
           result = JSON.parse(result);
 
-          // Set values from params
+          /* Get metadata from the spreadsheet if docID exists. It will only
+           exist if the spreadsheet has been selected using Google Picker.
+            */
+          if (_prefs.getString("docID") !== "") {
+            _docID = _prefs.getString("docID");
+
+            // Cells
+            $("input[type='radio'][name='cells']").each(function() {
+              if ($(this).val() === _prefs.getString("cells")) {
+                $(this).attr("checked", "checked");
+              }
+            });
+
+            // Range
+            if(_prefs.getString("range") && _prefs.getString("range") !== ""){
+              _el.rangeInp.val(_prefs.getString("range"));
+              _range = _prefs.getString("range");
+            }
+
+            _getSheets(_prefs.getString("docID"), function(sheets) {
+              if (sheets !== null) {
+                _configureSheets(sheets);
+                _el.sheetSel.val(encodeURI(_prefs.getString("sheet")));
+                _el.urlOptionsCtn.show();
+              }
+            });
+
+            // Header Rows
+            _el.headerRowsSel.val(_prefs.getString("headerRows"));
+            _headerRows = _prefs.getInt("headerRows");
+          }
 
           //Additional params
-          _el.urlInp.val(result["url"]);
+          _el.urlInp.val(decodeURI(result["url"]));
 
         } else {
           // Set default radio button selected to be Entire Sheet
