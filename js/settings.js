@@ -28,7 +28,28 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
         google.picker.ViewId.SPREADSHEETS);
     });
 
-    $("#sheet").change(function() {
+    $("input[name='cells']").change(function() {
+      var val = $(this).val();
+
+      if ($(this).is(":checked")) {
+        if (val === "range") {
+          _range = _el.rangeInp.val();
+          _el.rangeInp.prop('disabled', false);
+          $("label[for='range']").removeClass('label-disabled');
+        }
+        else {
+          _range = "";
+          _el.rangeInp.val("");
+          _el.rangeInp.prop('disabled', true);
+          $("label[for='range']").addClass('label-disabled');
+        }
+      }
+
+      if(_el.urlOptionsCtn.is(":visible")){ _configureURL(); }
+
+    });
+
+    _el.sheetSel.change(function() {
       _configureURL();
     });
 
@@ -37,7 +58,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       _configureURL();
     });
 
-    $("#range").blur(function() {
+    _el.rangeInp.blur(function() {
       _range = $(this).val();
       _configureURL();
     });
@@ -49,7 +70,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
       alertCtn:             $("#settings-alert"),
       urlInp:               $("#url"),
       urlOptionsCtn:        $("div.url-options"),
-      sheetSel:             $("#sheet")
+      sheetSel:             $("#sheet"),
+      rangeInp:             $("#range")
     };
   }
 
@@ -182,7 +204,18 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
           //Additional params
           _el.urlInp.val(result["url"]);
 
+        } else {
+          // Set default radio button selected to be Entire Sheet
+          $("input[type='radio'][name='cells']").each(function() {
+            if ($(this).val() === "sheet") {
+              $(this).attr("checked", "checked");
+            }
+          });
         }
+
+        /* Manually trigger event handlers so that the visibility of fields
+         can be set. */
+        $("input[name='cells']").trigger("change");
 
         i18n.init({ fallbackLng: "en" }, function(t) {
           _el.wrapperCtn.i18n().show();
