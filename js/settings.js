@@ -1,11 +1,12 @@
 var RiseVision = RiseVision || {};
 RiseVision.GoogleSpreadsheet = {};
 
-RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
+RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   "use strict";
 
   // private variables
-  var _prefs = null, _headerRows = 0, _range="", _el, _docID = null;
+  var _prefs = null, _pickerApiLoaded = false, _scope,
+      _headerRows = 0, _range="", _el, _docID = null;
 
   // private functions
   function _bind() {
@@ -24,8 +25,28 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     });
 
     $("#google-drive").click(function() {
-      RiseVision.Common.GooglePicker.openPicker($(this).data("for"),
-        google.picker.ViewId.SPREADSHEETS);
+        if(_pickerApiLoaded && RiseVision.Authorization.getAuthToken()){
+          _createPicker();
+          return;
+        }
+
+        if(!RiseVision.Authorization.getAuthToken()){
+          // Initiate the authorization this time with UI (immediate = false)
+          RiseVision.Authorization.authorize(false, _scope, function(oauthToken){
+            if (oauthToken) {
+              // Load the Picker API
+              gapi.load('picker', {'callback': _onPickerApiLoaded });
+            }
+          });
+          return;
+        }
+
+        if(!_pickerApiLoaded){
+          // Load the Picker API
+          gapi.load('picker', {'callback': _onPickerApiLoaded });
+          return;
+        }
+
     });
 
     $("input[name='cells']").change(function() {
@@ -95,6 +116,20 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     }
 
     _el.urlInp.val(url);
+  }
+
+  function _createPicker(){
+    if(_pickerApiLoaded && RiseVision.Authorization.getAuthToken()){
+      var origin = "http://rdn-test.appspot.com/",
+          picker = new google.picker.PickerBuilder().
+            setOrigin(origin).
+            addView(google.picker.ViewId.SPREADSHEETS).
+            setOAuthToken(RiseVision.Authorization.getAuthToken()).
+            setCallback(_onPickerAction).
+            build();
+
+      picker.setVisible(true);
+    }
   }
 
   function _getAdditionalParams(){
@@ -188,10 +223,21 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
     }
   }
 
-  function _onGooglePickerSelect(id, doc){
-    _el.urlInp.val("");
+  function _onPickerApiLoaded() {
+    _pickerApiLoaded = true;
+    _createPicker();
+  }
 
-    _getSheets(doc.id, function(sheets) {
+  function _onPickerAction(data){
+    //console.dir(data);
+    var doc;
+
+    if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+      _el.urlInp.val("");
+
+      doc = data[google.picker.Response.DOCUMENTS][0];
+
+      _getSheets(doc.id, function(sheets) {
         if (sheets !== null) {
           _docID = doc.id;
           _configureSheets(sheets);
@@ -199,7 +245,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
           _el.alertCtn.empty().hide();
           _el.urlOptionsCtn.show();
         }
-    });
+      });
+    }
   }
 
   function _saveSettings(){
@@ -264,15 +311,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
 
   // public space
   return {
-    init: function () {
+    init: function (scope) {
+      _scope = scope;
+
       _cache();
       _bind();
 
       _el.alertCtn.hide();
       _el.urlOptionsCtn.hide();
-
-      // register a callback function for the Google Picker
-      gadgets.rpc.register("rscmd_googlePickerCallback", _onGooglePickerSelect);
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
@@ -341,18 +387,21 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, google) {
           });
         });
       });
-
-
     }
   };
 
-})($, gadgets, i18n, google);
+})($, gadgets, i18n, gapi);
 
-google.setOnLoadCallback(function() {
-  $(function() {
-    RiseVision.GoogleSpreadsheet.Settings.init();
+var scope = "https://www.googleapis.com/auth/drive";
+
+RiseVision.Authorization.loadApi(function(){
+  // Initiate the authorization without UI (immediate = true)
+  RiseVision.Authorization.authorize(true, scope, function() {
+    RiseVision.GoogleSpreadsheet.Settings.init(scope);
   });
+
 });
 
-google.load('picker', '1');
+
+
 
