@@ -11,12 +11,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       PICKER_ORIGIN = "http://rdn-test.appspot.com/",
 
       SPREADSHEET_API = "https://spreadsheets.google.com/feeds/worksheets/" +
-    "{key}/public/basic";
+    "{key}/public/basic",
 
+      DEFAULT_HEADER_ROWS = 0;
 
   // private variables
   var _prefs = null, _pickerApiLoaded = false, _authScope,
-      _headerRows = 0, _range="", _el, _fileID = null;
+      _el, _fileID = null;
 
   // private functions
   function _bind() {
@@ -63,12 +64,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       if ($(this).is(":checked")) {
         if (val === "range") {
-          _range = _el.rangeInp.val();
           _el.rangeInp.prop('disabled', false);
           $("label[for='range']").removeClass('label-disabled');
         }
         else {
-          _range = "";
           _el.rangeInp.val("");
           _el.rangeInp.prop('disabled', true);
           $("label[for='range']").addClass('label-disabled');
@@ -84,12 +83,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     });
 
     _el.headerRowsSel.change(function() {
-      _headerRows = Number($(this).val());
       _configureURL();
     });
 
     _el.rangeInp.blur(function() {
-      _range = $(this).val();
       _configureURL();
     });
   }
@@ -118,10 +115,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     // configure URL with value from sheets select element
     var url = _el.sheetSel.val();
     // add header rows to URL
-    url += "&headers=" + _headerRows;
+    url += "&headers=" + _el.headerRowsSel.val();
     // add range to URL if applicable
-    if (_range != "") {
-      url += "&range=" + _range;
+    if ($.trim(_el.rangeInp.val()) != "") {
+      url += "&range=" + $.trim(_el.rangeInp.val());
     }
 
     _el.urlInp.val(url);
@@ -249,6 +246,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           _fileID = doc.id;
           _configureSheets(sheets);
           _configureURL();
+          _el.headerRowsSel.val(DEFAULT_HEADER_ROWS);
           _el.alertCtn.empty().hide();
           _el.urlOptionsCtn.show();
         }
@@ -319,6 +317,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   // public space
   return {
     init: function (authScope) {
+      if(typeof authScope !== "string" || authScope === ""){
+        throw new Error("GoogleSpreadsheet Widget Settings: " +
+          " authorization scope value required");
+        return;
+      }
       _authScope = authScope;
 
       _cache();
@@ -351,7 +354,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             // Range
             if(_prefs.getString("range") && _prefs.getString("range") !== ""){
               _el.rangeInp.val(_prefs.getString("range"));
-              _range = _prefs.getString("range");
             }
 
             // Worksheets
@@ -365,7 +367,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
             // Header Rows
             _el.headerRowsSel.val(_prefs.getString("headerRows"));
-            _headerRows = _prefs.getInt("headerRows");
           }
 
           // URL Data
@@ -378,6 +379,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
               $(this).attr("checked", "checked");
             }
           });
+
+          // Set default header rows
+          _el.headerRowsSel.val(DEFAULT_HEADER_ROWS);
         }
 
         /* Manually trigger event handlers so that the visibility of fields
