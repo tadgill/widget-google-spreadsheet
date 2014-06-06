@@ -6,7 +6,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   // private variables
   var _prefs = null, _pickerApiLoaded = false, _scope,
-      _headerRows = 0, _range="", _el, _docID = null;
+      _headerRows = 0, _range="", _el, _fileID = null;
 
   // private functions
   function _bind() {
@@ -136,15 +136,16 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     var additionalParams = {};
 
     additionalParams["url"] = encodeURI($.trim(_el.urlInp.val()));
+    additionalParams["sheet"] = encodeURI(_el.sheetSel.val());
 
     return additionalParams;
   }
 
-  function _getSheets(docID, callbackFn){
+  function _getSheets(fileID, callbackFn){
     var option, href, sheets = [];
 
     $.getJSON(encodeURI("https://spreadsheets.google.com/feeds/worksheets/" +
-      docID + "/public/basic?alt=json&dummy=" +
+      fileID + "/public/basic?alt=json&dummy=" +
       Math.ceil(Math.random() * 100)))
       .done(function(data) {
         $.each(data.feed.entry, function(i, item){
@@ -188,11 +189,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     var params = "";
 
     /* Only save spreadsheet metadata settings if file has been selected
-    using Google Picker(i.e. if docID has a value).
+    using Google Picker(i.e. if fileID has a value).
      */
-    if (_docID !== null) {
-      params += "&up_docID=" + _docID;
-
+    if (_fileID !== null) {
       // If Range is chosen
       if($("#cells-range").is(":checked")){
         params += "&up_cells=" + $("#cells-range").val() +
@@ -201,8 +200,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         params += "&up_cells=" + $("#cells-sheet").val();
       }
 
-      params += "&up_sheet=" + encodeURI(_el.sheetSel.val()) +
-        "&up_headerRows=" + _el.headerRowsSel.val();
+      params += "&up_headerRows=" + _el.headerRowsSel.val() +
+        "&up_fileID=" + _fileID;
     }
 
     return params;
@@ -239,7 +238,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       _getSheets(doc.id, function(sheets) {
         if (sheets !== null) {
-          _docID = doc.id;
+          _fileID = doc.id;
           _configureSheets(sheets);
           _configureURL();
           _el.alertCtn.empty().hide();
@@ -328,11 +327,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         if (result) {
           result = JSON.parse(result);
 
-          /* Get metadata from the spreadsheet if docID exists. It will only
+          /* Get metadata from the spreadsheet if fileID exists. It will only
            exist if the spreadsheet has been selected using Google Picker.
             */
-          if (_prefs.getString("docID") !== "") {
-            _docID = _prefs.getString("docID");
+          if (_prefs.getString("fileID") !== "") {
+            _fileID = _prefs.getString("fileID");
 
             // Cells
             $("input[type='radio'][name='cells']").each(function() {
@@ -347,10 +346,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
               _range = _prefs.getString("range");
             }
 
-            _getSheets(_prefs.getString("docID"), function(sheets) {
+            // Worksheets
+            _getSheets(_prefs.getString("fileID"), function(sheets) {
               if (sheets !== null) {
                 _configureSheets(sheets);
-                _el.sheetSel.val(encodeURI(_prefs.getString("sheet")));
+                _el.sheetSel.val(decodeURI(result["sheet"]));
                 _el.urlOptionsCtn.show();
               }
             });
@@ -360,7 +360,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             _headerRows = _prefs.getInt("headerRows");
           }
 
-          //Additional params
+          // URL Data
           _el.urlInp.val(decodeURI(result["url"]));
 
         } else {
