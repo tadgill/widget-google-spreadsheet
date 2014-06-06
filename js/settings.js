@@ -4,8 +4,18 @@ RiseVision.GoogleSpreadsheet = {};
 RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   "use strict";
 
+  // private constants
+  var HELP_URL = "http://www.risevision.com/help/users/what-are-gadgets/" +
+    "free-gadgets/rise-vision-google-spreadsheet/",
+
+      PICKER_ORIGIN = "http://rdn-test.appspot.com/",
+
+      SPREADSHEET_API = "https://spreadsheets.google.com/feeds/worksheets/" +
+    "{key}/public/basic";
+
+
   // private variables
-  var _prefs = null, _pickerApiLoaded = false, _scope,
+  var _prefs = null, _pickerApiLoaded = false, _authScope,
       _headerRows = 0, _range="", _el, _fileID = null;
 
   // private functions
@@ -20,8 +30,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     });
 
     $("#help").on("click", function() {
-      window.open("http://www.risevision.com/help/users/what-are-gadgets/" +
-        "free-gadgets/rise-vision-google-spreadsheet/", "_blank");
+      window.open(HELP_URL, "_blank");
     });
 
     $("#google-drive").click(function() {
@@ -32,7 +41,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
         if(!RiseVision.Authorization.getAuthToken()){
           // Initiate the authorization this time with UI (immediate = false)
-          RiseVision.Authorization.authorize(false, _scope, function(oauthToken){
+          RiseVision.Authorization.authorize(false, _authScope, function(oauthToken){
             if (oauthToken) {
               // Load the Picker API
               gapi.load('picker', {'callback': _onPickerApiLoaded });
@@ -120,13 +129,12 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   function _createPicker(){
     if(_pickerApiLoaded && RiseVision.Authorization.getAuthToken()){
-      var origin = "http://rdn-test.appspot.com/",
-          picker = new google.picker.PickerBuilder().
-            setOrigin(origin).
-            addView(google.picker.ViewId.SPREADSHEETS).
-            setOAuthToken(RiseVision.Authorization.getAuthToken()).
-            setCallback(_onPickerAction).
-            build();
+          var picker = new google.picker.PickerBuilder().
+              setOrigin(PICKER_ORIGIN).
+              addView(google.picker.ViewId.SPREADSHEETS).
+              setOAuthToken(RiseVision.Authorization.getAuthToken()).
+              setCallback(_onPickerAction).
+              build();
 
       picker.setVisible(true);
     }
@@ -142,11 +150,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   }
 
   function _getSheets(fileID, callbackFn){
-    var option, href, sheets = [];
+    var option, href, sheets = [],
+        api = SPREADSHEET_API.replace("{key}",fileID),
+        dummy = Math.ceil(Math.random() * 100);
 
-    $.getJSON(encodeURI("https://spreadsheets.google.com/feeds/worksheets/" +
-      fileID + "/public/basic?alt=json&dummy=" +
-      Math.ceil(Math.random() * 100)))
+    $.getJSON(encodeURI(api + "?alt=json&dummy=" + dummy))
       .done(function(data) {
         $.each(data.feed.entry, function(i, item){
           option = document.createElement("option");
@@ -169,7 +177,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           sheets.push(option);
         });
 
-        if(typeof callbackFn === 'function'){callbackFn(sheets);}
+        callbackFn.call(null, sheets);
 
       })
       .fail(function(jqxhr) {
@@ -180,7 +188,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         //console.log(jqxhr.status + " - " + jqxhr.statusText);
         //console.log(jqxhr.responseText);
 
-        callbackFn(null);
+        callbackFn.call(null, sheets);
 
       });
   }
@@ -237,7 +245,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       doc = data[google.picker.Response.DOCUMENTS][0];
 
       _getSheets(doc.id, function(sheets) {
-        if (sheets !== null) {
+        if (sheets.length > 0) {
           _fileID = doc.id;
           _configureSheets(sheets);
           _configureURL();
@@ -310,8 +318,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   // public space
   return {
-    init: function (scope) {
-      _scope = scope;
+    init: function (authScope) {
+      _authScope = authScope;
 
       _cache();
       _bind();
@@ -348,7 +356,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
             // Worksheets
             _getSheets(_prefs.getString("fileID"), function(sheets) {
-              if (sheets !== null) {
+              if (sheets.length > 0) {
                 _configureSheets(sheets);
                 _el.sheetSel.val(decodeURI(result["sheet"]));
                 _el.urlOptionsCtn.show();
@@ -392,12 +400,12 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
 })($, gadgets, i18n, gapi);
 
-var scope = "https://www.googleapis.com/auth/drive";
+var authScope = "https://www.googleapis.com/auth/drive";
 
 RiseVision.Authorization.loadApi(function(){
   // Initiate the authorization without UI (immediate = true)
-  RiseVision.Authorization.authorize(true, scope, function() {
-    RiseVision.GoogleSpreadsheet.Settings.init(scope);
+  RiseVision.Authorization.authorize(true, authScope, function() {
+    RiseVision.GoogleSpreadsheet.Settings.init(authScope);
   });
 
 });
