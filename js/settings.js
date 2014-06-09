@@ -8,8 +8,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   var HELP_URL = "http://www.risevision.com/help/users/what-are-gadgets/" +
     "free-gadgets/rise-vision-google-spreadsheet/",
 
-      PICKER_ORIGIN = "http://rdn-test.appspot.com/",
-
       SPREADSHEET_API = "https://spreadsheets.google.com/feeds/worksheets/" +
     "{key}/public/basic",
 
@@ -17,7 +15,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   // private variables
   var _prefs = null, _pickerApiLoaded = false, _authScope,
-      _el, _fileID = null;
+      _el, _fileID = null, _origin;
 
   // private functions
   function _bind() {
@@ -127,7 +125,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   function _createPicker(){
     if(_pickerApiLoaded && RiseVision.Authorization.getAuthToken()){
           var picker = new google.picker.PickerBuilder().
-              setOrigin(PICKER_ORIGIN).
+              setOrigin(_origin).
               addView(google.picker.ViewId.SPREADSHEETS).
               setOAuthToken(RiseVision.Authorization.getAuthToken()).
               setCallback(_onPickerAction).
@@ -323,6 +321,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         return;
       }
       _authScope = authScope;
+      _origin = document.referrer.split("/").slice(0,3).join("/") + "/";
 
       _cache();
       _bind();
