@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
+<head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Google Spreadsheet Settings</title>
 
@@ -19,6 +19,10 @@
     }
     .widget-wrapper {
       display: none;
+    }
+    div.input-link{
+      margin-top: 22px;
+      margin-left: -15px;
     }
   </style>
 </head>
@@ -50,15 +54,78 @@
       </div>
     </div>
     <div id="settings-alert" class="alert alert-danger"></div>
+    <form role="form">
+      <div class="row">
+        <div class="col-xs-8">
+          <div class="form-group">
+            <label for="url" data-i18n="url"></label>
+            <input id="url" name="url" type="text" class="form-control dataURL" />
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="form-group">
+            <div class="input-link">
+              <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row url-options">
+        <div class="col-md-3">
+          <label for="cells" data-i18n="cells.label"></label>
+          <div class="radio">
+            <label for="cells-sheet" data-i18n="cells.sheet"></label>
+            <input id="cells-sheet" type="radio" name="cells" value="sheet">
+          </div>
+          <div class="radio">
+            <label for="cells-range" data-i18n="cells.range"></label>
+            <input id="cells-range" type="radio" name="cells" value="range">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="range" data-i18n="range"></label>
+            <input id="range" name="range" class="small form-control" type="text" />
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="sheet" data-i18n="sheet"></label>
+            <select id="sheet" name="sheet" class="form-control"></select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="headerRows" data-i18n="headerRows"></label>
+            <select id="headerRows" name="headerRows" class="form-control">
+              <option value="-1">Auto</option>
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
   </div>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
+  <script type="text/javascript" src="//apis.google.com/js/client.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/rise/authorization.js"></script>
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript" src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
 
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/bootstrap/bootstrap.min.js"></script>
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/i18next/i18next.js"></script>
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/sticky/jquery.sticky.min.js"></script>
-  <script src="//s3.amazonaws.com/rise-common-test/scripts/rise/common.js"></script>
-  <script src="js/settings.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/bootstrap/bootstrap.min.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/i18next/i18next.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/sticky/jquery.sticky.min.js"></script>
+  <script type="text/javascript" src="//s3.amazonaws.com/rise-common-test/scripts/rise/common.js"></script>
+  <script type="text/javascript" src="js/settings.js"></script>
 </body>
 </html>
