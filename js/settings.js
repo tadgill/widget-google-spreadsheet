@@ -11,7 +11,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       SPREADSHEET_API = "https://spreadsheets.google.com/feeds/worksheets/" +
     "{key}/public/basic",
 
-      DEFAULT_HEADER_ROWS = 0;
+      DEFAULT_HEADER_ROWS = 0,
+      DEFAULT_REFRESH     = 60;
 
   // private variables
   var _prefs = null, _pickerApiLoaded = false, _authScope,
@@ -97,7 +98,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       urlOptionsCtn:        $("div.url-options"),
       sheetSel:             $("#sheet"),
       rangeInp:             $("#range"),
-      headerRowsSel:        $("#headerRows")
+      headerRowsSel:        $("#headerRows"),
+      refreshInp:           $("#refresh")
     };
   }
 
@@ -107,6 +109,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     $.each(sheets,function(i, item){
       _el.sheetSel.append(item);
     });
+
+    _el.sheetSel.selectpicker('refresh');
   }
 
   function _configureURL(){
@@ -207,6 +211,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         "&up_fileID=" + _fileID;
     }
 
+    params += "&up_refresh=" + (_el.refreshInp.val() * 1000);
+
     return params;
   }
 
@@ -220,6 +226,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       "url": {
         fn: RiseVision.Common.Validation.isValidURL,
         localize: "validation.valid_url",
+        conditional: null
+      },
+      "numeric": {
+        fn: RiseVision.Common.Validation.isValidNumber,
+        localize: "validation.numeric",
         conditional: null
       }
     }
@@ -275,6 +286,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         { el: document.getElementById("url"),
           rules: "required|url",
           fieldName: "URL"
+        },
+        {
+          el: document.getElementById("refresh"),
+          rules: "numeric",
+          fieldName: "Data Refresh Interval"
         }
       ],
       passed = true;
@@ -371,6 +387,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           // URL Data
           _el.urlInp.val(decodeURI(result["url"]));
 
+          _el.refreshInp.val(_prefs.getInt("refresh") / 1000);
+
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
@@ -381,6 +399,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
           // Set default header rows
           _el.headerRowsSel.val(DEFAULT_HEADER_ROWS);
+
+          // Set default data refresh
+          _el.refreshInp.val(DEFAULT_REFRESH);
         }
 
         /* Manually trigger event handlers so that the visibility of fields
@@ -389,6 +410,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
         i18n.init({ fallbackLng: "en" }, function(t) {
           _el.wrapperCtn.i18n().show();
+          $(".form-control").selectpicker();
+
+          // Set tooltips only after i18n has shown
+          $("label[for='refresh'] + button").popover({trigger:'click'});
 
           //Set buttons to be sticky only after wrapper is visible.
           $(".sticky-buttons").sticky({
