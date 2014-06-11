@@ -134,13 +134,15 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-xs-6 col-sm-4 col-md-3">
-          <div class="form-group">
-            <label for="scroll-direction" data-i18n="scroll-direction.label"></label>
-            <select id="scroll-direction" name="scroll-direction" class="form-control">
-              <option value="0" data-i18n="scroll-direction.none"></option>
-              <option value="1" data-i18n="scroll-direction.up"></option>
-            </select>
+        <div class="col-md-3">
+          <label for="scroll-direction" data-i18n="scroll-direction.label"></label>
+          <div class="radio">
+            <label for="scroll-none" data-i18n="scroll-direction.none"></label>
+            <input id="scroll-none" type="radio" name="scroll-direction" value="none">
+          </div>
+          <div class="radio">
+            <label for="scroll-up" data-i18n="scroll-direction.up"></label>
+            <input id="scroll-up" type="radio" name="scroll-direction" value="up">
           </div>
         </div>
       </div>
@@ -150,7 +152,7 @@
             <div class="form-group">
               <label for="scroll-by" data-i18n="scroll-by.label"></label>
               <select id="scroll-by" name="scroll-by" class="form-control">
-                <option value="continuous" data-i18n="scroll-by.continuous"></option>
+                <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
                 <option value="page" data-i18n="scroll-by.page"></option>
               </select>
             </div>
@@ -161,7 +163,7 @@
               <select id="scroll-speed" name="scroll-speed" class="form-control">
                 <option value="slowest" data-i18n="scroll-speed.slowest"></option>
                 <option value="slow" data-i18n="scroll-speed.slow"></option>
-                <option value="medium" data-i18n="scroll-speed.medium"></option>
+                <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
                 <option value="fast" data-i18n="scroll-speed.fast"></option>
                 <option value="fastest" data-i18n="scroll-speed.fastest"></option>
               </select>
