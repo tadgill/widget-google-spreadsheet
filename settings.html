@@ -114,6 +114,79 @@
           </div>
         </div>
       </div>
+      <hr>
+      <div class="row">
+        <div class="col-xs-6 col-sm-5 col-md-4">
+          <div class="form-group">
+            <label for="refresh" data-i18n="refresh.label"></label>
+            <button type="button"
+                    class="btn btn-link btn-help"
+                    data-toggle="popover" data-placement="top"
+                    data-i18n="[data-content]refresh.tooltip">
+              <span class="glyphicons circle_question_mark"></span>
+            </button>
+            <input id="refresh" name="refresh" type="text" class="form-control" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-6 col-sm-4 col-md-3">
+          <div class="form-group">
+            <label for="scroll-direction" data-i18n="scroll-direction.label"></label>
+            <select id="scroll-direction" name="scroll-direction" class="form-control">
+              <option value="0" data-i18n="scroll-direction.none"></option>
+              <option value="1" data-i18n="scroll-direction.up"></option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="scroll-options">
+        <div class="row">
+          <div class="col-xs-6 col-md-4">
+            <div class="form-group">
+              <label for="scroll-by" data-i18n="scroll-by.label"></label>
+              <select id="scroll-by" name="scroll-by" class="form-control">
+                <option value="continuous" data-i18n="scroll-by.continuous"></option>
+                <option value="page" data-i18n="scroll-by.page"></option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-6 col-md-4">
+            <div class="form-group">
+              <label for="scroll-speed" data-i18n="scroll-speed.label"></label>
+              <select id="scroll-speed" name="scroll-speed" class="form-control">
+                <option value="slowest" data-i18n="scroll-speed.slowest"></option>
+                <option value="slow" data-i18n="scroll-speed.slow"></option>
+                <option value="medium" data-i18n="scroll-speed.medium"></option>
+                <option value="fast" data-i18n="scroll-speed.fast"></option>
+                <option value="fastest" data-i18n="scroll-speed.fastest"></option>
+              </select>
+            </div>
+          </div>
+          <div class="clearfix visible-xs"></div>
+          <div class="col-xs-6 col-md-4">
+            <div class="form-group">
+              <label for="scroll-resumes" data-i18n="scroll-resumes"></label>
+              <input id="scroll-resumes" name="scroll-resumes" type="text" class="form-control" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-xs-6 col-md-4">
+          <div class="form-group">
+            <label for="row-padding" data-i18n="row-padding"></label>
+            <input id="row-padding" name="row-padding" type="text" class="form-control" />
+          </div>
+        </div>
+        <div class="col-xs-6 col-md-4">
+          <div class="form-group">
+            <label for="column-padding" data-i18n="column-padding"></label>
+            <input id="column-padding" name="column-padding" type="text" class="form-control" />
+          </div>
+        </div>
+      </div>
     </form>
   </div>
 

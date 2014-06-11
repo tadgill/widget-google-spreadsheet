@@ -14,6 +14,31 @@
   "sheet": "Worksheet",
   "headerRows": "Number of Header Rows",
   "google-picker-fail": "To use this spreadsheet, it first needs to be published to the web. From the Google Spreadsheet menu, select <em>File > Publish to the web</em>, and then click the <em>Start Publishing</em> button. Once done, select your file from the Google Drive link again.",
+  "refresh": {
+    "label": "Data Refresh Interval (seconds)",
+    "tooltip": "Rate at which you want your data to refresh"
+  },
+  "scroll-direction": {
+    "label": "Scroll Direction",
+    "none": "None",
+    "up": "Up"
+  },
+  "scroll-by": {
+    "label": "Scroll By",
+    "continuous": "Continuous",
+    "page": "Page"
+  },
+  "scroll-speed": {
+    "label":"Scroll Speed",
+    "slowest": "Slowest",
+    "slow": "Slow",
+    "medium": "Medium",
+    "fast": "Fast",
+    "fastest": "Fastest"
+  },
+  "scroll-resumes": "Scroll Resumes (seconds)",
+  "row-padding": "Row Padding (pixels)",
+  "column-padding": "Column Padding (pixels)",
   "validation": {
     "required": "__fieldName__ is a required field.",
     "valid_url": "__fieldName__ must contain a valid URL."
