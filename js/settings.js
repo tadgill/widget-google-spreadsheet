@@ -116,7 +116,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       scrollOptionsCtn:     $("#scroll-options"),
       scrollBySel:          $("#scroll-by"),
       scrollSpeedSel:       $("#scroll-speed"),
-      scrollResumesInp:     $("#scroll-resumes")
+      scrollResumesInp:     $("#scroll-resumes"),
+      rowPaddingInp:        $("#row-padding"),
+      columnPaddingInp:     $("#column-padding")
     };
   }
 
@@ -239,6 +241,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       params += "&up_scroll-direction=" + $("#scroll-none").val();
     }
 
+    if(_el.rowPaddingInp.val() !== ""){
+      params += "&up_row-padding=" + $.trim(_el.rowPaddingInp.val());
+    }
+
+    if(_el.columnPaddingInp.val() !== ""){
+      params += "&up_column-padding=" + $.trim(_el.columnPaddingInp.val());
+    }
+
     return params;
   }
 
@@ -315,7 +325,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         },
         {
           el: document.getElementById("refresh"),
-          rules: "numeric",
+          rules: "required|numeric",
           fieldName: i18n.t("refresh.label")
         }
       ],
@@ -324,9 +334,25 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     if(_el.scrollOptionsCtn.is(":visible")){
       itemsToValidate.push({
         el: document.getElementById("scroll-resumes"),
-        rules: "numeric",
+        rules: "required|numeric",
         fieldName: i18n.t("scroll-resumes")
-      })
+      });
+    }
+
+    if(_el.rowPaddingInp.val() !== ""){
+      itemsToValidate.push({
+        el: document.getElementById("row-padding"),
+        rules: "numeric",
+        fieldName: i18n.t("row-padding")
+      });
+    }
+
+    if(_el.columnPaddingInp.val() !== ""){
+      itemsToValidate.push({
+        el: document.getElementById("column-padding"),
+        rules: "numeric",
+        fieldName: i18n.t("column-padding")
+      });
     }
 
     _el.alertCtn.empty().hide();
@@ -438,6 +464,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             _el.scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
           }
 
+          if(_prefs.getInt("row-padding")){
+            _el.rowPaddingInp.val(_prefs.getInt("row-padding"));
+          }
+
+          if(_prefs.getInt("column-padding")){
+            _el.columnPaddingInp.val(_prefs.getInt("column-padding"));
+          }
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
