@@ -39,6 +39,16 @@
   "scroll-resumes": "Scroll Resumes (seconds)",
   "row-padding": "Row Padding (pixels)",
   "column-padding": "Column Padding (pixels)",
+  "header": {
+    "font": "Column Header Font",
+    "font-size": "Column Header Font Size",
+    "font-variants": {
+      "label": "Font Variants",
+      "bold": "Bold",
+      "italic": "Italic"
+    },
+    "color": "Column Header Color"
+  },
   "validation": {
     "required": "__fieldName__ is a required field.",
     "valid_url": "__fieldName__ must contain a valid URL.",
