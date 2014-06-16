@@ -105,21 +105,36 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   function _cache() {
     _el = {
-      wrapperCtn:           $(".widget-wrapper"),
-      alertCtn:             $("#settings-alert"),
-      urlInp:               $("#url"),
-      urlOptionsCtn:        $("div.url-options"),
-      sheetSel:             $("#sheet"),
-      rangeInp:             $("#range"),
-      headerRowsSel:        $("#headerRows"),
-      refreshInp:           $("#refresh"),
-      scrollOptionsCtn:     $("#scroll-options"),
-      scrollBySel:          $("#scroll-by"),
-      scrollSpeedSel:       $("#scroll-speed"),
-      scrollResumesInp:     $("#scroll-resumes"),
-      rowPaddingInp:        $("#row-padding"),
-      columnPaddingInp:     $("#column-padding")
+      wrapperCtn:                   $(".widget-wrapper"),
+      alertCtn:                     $("#settings-alert"),
+      urlInp:                       $("#url"),
+      urlOptionsCtn:                $("div.url-options"),
+      sheetSel:                     $("#sheet"),
+      rangeInp:                     $("#range"),
+      headerRowsSel:                $("#headerRows"),
+      refreshInp:                   $("#refresh"),
+      scrollOptionsCtn:             $("#scroll-options"),
+      scrollBySel:                  $("#scroll-by"),
+      scrollSpeedSel:               $("#scroll-speed"),
+      scrollResumesInp:             $("#scroll-resumes"),
+      rowPaddingInp:                $("#row-padding"),
+      columnPaddingInp:             $("#column-padding"),
+      headerFontPicker:             $(".header-font-picker"),
+      headerFontSizePicker:         $(".header-font-size-picker"),
+      headerBold:                   $("#header-bold"),
+      headerItalic:                 $("#header-italic"),
+      headerColorPicker:            $("#header-color-picker")
     };
+  }
+
+  function _configureColorPicker(options) {
+    options.elem.spectrum({
+      type: options.type,
+      color: options.color,
+      showInput: true,
+      chooseText: i18n.t("common.buttons.apply"),
+      cancelText: i18n.t("common.buttons.cancel")
+    });
   }
 
   function _configureSheets(sheets){
@@ -163,6 +178,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
     additionalParams["url"] = encodeURI($.trim(_el.urlInp.val()));
     additionalParams["sheet"] = encodeURI(_el.sheetSel.val());
+    additionalParams["column-header-font"] =
+      _el.headerFontPicker.data("plugin_fontPicker").getFont();
+    additionalParams["column-header-color"] = _el.headerColorPicker.val();
 
     return additionalParams;
   }
@@ -248,6 +266,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     if(_el.columnPaddingInp.val() !== ""){
       params += "&up_column-padding=" + $.trim(_el.columnPaddingInp.val());
     }
+
+    params += "&up_column-header-font-size=" +
+      _el.headerFontSizePicker.data("plugin_fontSizePicker").getFontSize() +
+      "&up_column-header-bold=" + _el.headerBold.is(":checked").toString() +
+      "&up_column-header-italic=" + _el.headerItalic.is(":checked").toString();
 
     return params;
   }
@@ -407,6 +430,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
+        var headerColor = null;
 
         _prefs = new gadgets.Prefs();
 
@@ -471,6 +495,19 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           if(_prefs.getInt("column-padding")){
             _el.columnPaddingInp.val(_prefs.getInt("column-padding"));
           }
+
+          _el.headerFontPicker.fontPicker({
+            "font" : result["column-header-font"]
+          });
+
+          _el.headerFontSizePicker.fontSizePicker({
+            "font-size": _prefs.getString("column-header-font-size")
+          });
+
+          _el.headerBold.attr("checked", _prefs.getBool("column-header-bold"));
+          _el.headerItalic.attr("checked", _prefs.getBool("column-header-italic"));
+
+          headerColor = result["column-header-color"];
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
@@ -496,6 +533,19 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
           // Set default scroll resume
           _el.scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
+
+          // Default column header font
+          _el.headerFontPicker.fontPicker({
+            "font" : "Verdana"
+          });
+
+          // Default column header font size
+          _el.headerFontSizePicker.fontSizePicker({
+            "font-size":"18"
+          });
+
+          // Default column header colour
+          headerColor = "#000";
         }
 
         /* Manually trigger event handlers so that the visibility of fields
@@ -505,6 +555,17 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         $("input[name='scroll-direction']").trigger("change");
 
         i18n.init({ fallbackLng: "en" }, function(t) {
+          /* Configure colour pickers, has to be after i18n has initialized
+           because button labels rely on translations
+           */
+
+          // Configure Column Header colour picker
+          _configureColorPicker({
+            elem: _el.headerColorPicker,
+            type: "background",
+            color: headerColor
+          });
+
           _el.wrapperCtn.i18n().show();
           $(".form-control").selectpicker();
 

@@ -1,8 +1,5 @@
 {
   "settings": "Google Spreadsheet Settings",
-  "save": "Save",
-  "cancel": "Cancel",
-  "help": "Help",
   "url": "Data URL*",
   "google-drive": "Google Drive",
   "cells": {
@@ -48,6 +45,14 @@
       "italic": "Italic"
     },
     "color": "Column Header Color"
+  },
+  "common": {
+    "buttons":{
+      "save": "Save",
+      "cancel": "Cancel",
+      "help": "Help",
+      "apply": "Apply"
+    }
   },
   "validation": {
     "required": "__fieldName__ is a required field.",
