@@ -39,13 +39,14 @@
   "header": {
     "font": "Column Header Font",
     "font-size": "Column Header Font Size",
-    "font-variants": {
-      "label": "Font Variants",
-      "bold": "Bold",
-      "italic": "Italic"
-    },
     "color": "Column Header Color",
     "text": "Column Header Sample Text"
+  },
+  "data": {
+    "font": "Data Font",
+    "font-size": "Data Font Size",
+    "color": "Data Color",
+    "text": "Data Sample Text"
   },
   "common": {
     "buttons":{
@@ -53,6 +54,11 @@
       "cancel": "Cancel",
       "help": "Help",
       "apply": "Apply"
+    },
+    "font-variants":{
+      "label": "Font Variants",
+      "bold": "Bold",
+      "italic": "Italic"
     }
   },
   "validation": {

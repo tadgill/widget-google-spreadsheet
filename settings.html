@@ -196,7 +196,7 @@
           </div>
         </div>
       </div>
-      <div id="column-header-font">
+      <div id="header-font">
         <div class="row">
           <div class="col-sm-6 col-lg-3">
             <div class="form-group">
@@ -213,13 +213,13 @@
           <div class="clearfix hidden-lg"></div>
           <div class="col-sm-6 col-lg-3">
             <div class="form-group">
-              <label data-i18n="header.font-variants.label"></label>
+              <label data-i18n="common.font-variants.label"></label>
               <div class="checkbox">
-                <label for="header-bold" data-i18n="header.font-variants.bold"></label>
+                <label for="header-bold" data-i18n="common.font-variants.bold"></label>
                 <input id="header-bold" name="header-bold" type="checkbox" value="header-bold">
               </div>
               <div class="checkbox">
-                <label for="header-italic" data-i18n="header.font-variants.italic"></label>
+                <label for="header-italic" data-i18n="common.font-variants.italic"></label>
                 <input id="header-italic" name="header-italic" type="checkbox" value="header-italic">
               </div>
             </div>
@@ -239,7 +239,49 @@
           </div>
         </div>
       </div>
-
+      <div id="data-font">
+        <div class="row">
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label data-i18n="data.font"></label>
+              <div class="data-font-picker"></div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label data-i18n="data.font-size"></label>
+              <div class="data-font-size-picker"></div>
+            </div>
+          </div>
+          <div class="clearfix hidden-lg"></div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label data-i18n="common.font-variants.label"></label>
+              <div class="checkbox">
+                <label for="data-bold" data-i18n="common.font-variants.bold"></label>
+                <input id="data-bold" name="data-bold" type="checkbox" value="data-bold">
+              </div>
+              <div class="checkbox">
+                <label for="data-italic" data-i18n="common.font-variants.italic"></label>
+                <input id="data-italic" name="data-italic" type="checkbox" value="data-italic">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label for="data-color-picker" data-i18n="data.color"></label>
+              <div class="color-picker">
+                <input id='data-color-picker' type='color'>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="font-picker-text form-group"></div>
+          </div>
+        </div>
+      </div>
     </form>
   </div>
 

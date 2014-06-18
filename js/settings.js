@@ -138,7 +138,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         $bold = $("#" + config["prefix"] + "-bold"),
         $italic = $("#" + config["prefix"] + "-italic"),
         $colorPicker = $("#" + config["prefix"] + "-color-picker"),
-        $sampleText = $("#column-" + config["prefix"] + "-font .font-picker-text");
+        $sampleText = $("#" + config["prefix"] + "-font .font-picker-text");
 
     // Instantiate the font picker
     $fontPicker.fontPicker({
@@ -292,23 +292,25 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   function _getAdditionalParams(){
     var additionalParams = {},
-        headerStylingData = _getFontStylingData("header");
+        headerStylingData = _getFontStylingData("header"),
+        dataStylingData = _getFontStylingData("data");
 
     additionalParams["url"] = encodeURI($.trim(_el.$urlInp.val()));
     additionalParams["sheet"] = encodeURI(_el.$sheetSel.val());
 
     $.extend(additionalParams, headerStylingData.additional);
+    $.extend(additionalParams, dataStylingData.additional);
 
     return additionalParams;
   }
 
   function _getFontStylingData(prefix){
     var data = {},
-      $fontPicker = $("." + prefix + "-font-picker"),
-      $fontSizePicker = $("." + prefix + "-font-size-picker"),
-      $bold = $("#" + prefix + "-bold"),
-      $italic = $("#" + prefix + "-italic"),
-      $colorPicker = $("#" + prefix + "-color-picker");
+        $fontPicker = $("." + prefix + "-font-picker"),
+        $fontSizePicker = $("." + prefix + "-font-size-picker"),
+        $bold = $("#" + prefix + "-bold"),
+        $italic = $("#" + prefix + "-italic"),
+        $colorPicker = $("#" + prefix + "-color-picker");
 
     data["additional"] = {};
     data["additional"][prefix + "-font"] =
@@ -374,7 +376,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   function _getParams(){
     var params = "",
-        headerStylingData = _getFontStylingData("header");
+        headerStylingData = _getFontStylingData("header"),
+        dataStylingData = _getFontStylingData("data");
 
     /* Only save spreadsheet metadata settings if file has been selected
     using Google Picker(i.e. if fileID has a value).
@@ -412,6 +415,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     }
 
     params += headerStylingData.params;
+    params += dataStylingData.params;
 
     return params;
   }
@@ -571,7 +575,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
-        var headerStyling = {};
+        var headerStyling = {}, dataStyling = {};
 
         _prefs = new gadgets.Prefs();
 
@@ -644,6 +648,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           headerStyling["bold"] = _prefs.getBool("header-bold");
           headerStyling["italic"] = _prefs.getBool("header-italic");
           headerStyling["color"] = result["header-color"];
+
+          dataStyling["font"] = result["data-font"];
+          dataStyling["font-style"] = result["data-font-style"];
+          dataStyling["font-url"] = result["data-font-url"];
+          dataStyling["font-size"] =  _prefs.getString("data-font-size");
+          dataStyling["bold"] = _prefs.getBool("data-bold");
+          dataStyling["italic"] = _prefs.getBool("data-italic");
+          dataStyling["color"] = result["data-color"];
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
@@ -671,6 +683,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
 
           $.extend(headerStyling, DEFAULT_FONT_STYLING);
+          $.extend(dataStyling, DEFAULT_FONT_STYLING);
         }
 
         /* Manually trigger event handlers so that the visibility of fields
@@ -687,6 +700,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             prefix: "header",
             styling: headerStyling
           });
+
+          _configureFontStyling({
+            prefix: "data",
+            styling: dataStyling
+          })
 
           _el.$wrapperCtn.i18n().show();
           $(".form-control").selectpicker();
