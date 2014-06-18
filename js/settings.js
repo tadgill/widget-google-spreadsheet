@@ -16,11 +16,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       DEFAULT_SCROLL_RESUME       = 5;
 
   var DEFAULT_FONT_STYLING = {
-    font: "Verdana",
-    fontSize: "18",
-    color: "#000",
-    bold: false,
-    italic: false
+    "font": "Verdana",
+    "font-style": "Verdana, Geneva, sans-serif",
+    "font-url": "",
+    "font-size": "18",
+    "color": "#000",
+    "bold": false,
+    "italic": false
   }
 
   // private variables
@@ -140,7 +142,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
     // Instantiate the font picker
     $fontPicker.fontPicker({
-      "font": config.styling.font,
+      "font": config.styling["font"],
+      "font-url": config.styling["font-url"],
       "load": onFontsLoaded
     });
 
@@ -153,12 +156,18 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       $sampleText.append($textTemplate);
 
       // Apply font family style
-      $textTemplate.css("font-family",
-        this.data("plugin_fontPicker").getFontStyle());
+      //TODO: possibly make this conditional based on font-style being "Google"
+      if(String(config.styling["font-style"]).indexOf(",") !== -1){
+        // It is a standard font so font family is accessible
+        $textTemplate.css("font-family",config.styling["font-style"]);
+      } else {
+        // It is a google or custom font, use just the font name
+        $textTemplate.css("font-family",config.styling["font"]);
+      }
 
       // Apply font size
       $textTemplate.css("font-size",
-          config.styling.fontSize + "px");
+          config.styling["font-size"] + "px");
 
       // Apply bold (or not)
       if(config.styling.bold){
@@ -180,7 +189,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
     // Instantiate the font size picker
     $fontSizePicker.fontSizePicker({
-      "font-size":config.styling.fontSize
+      "font-size":config.styling["font-size"]
     });
 
     // Set the bold checkbox
@@ -203,17 +212,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     // Font picker change
     $fontPicker
       .on("standardFontSelected", function(e, font, fontFamily) {
-        $sampleText.find(".font-text").css("font-family",
-          $fontPicker.data("plugin_fontPicker").getFontStyle());
+        $sampleText.find(".font-text").css("font-family",fontFamily);
       })
       .on("googleFontSelected", function(e, font) {
-        console.log("googleFontSelected");
-        console.log(e, font);
-        // TODO: sort out dealing with google fonts
+        $sampleText.find(".font-text").css("font-family",font);
       })
       .on("customFontSelected", function(e, font, fontURL) {
         console.log("customFontSelected");
-        console.log(e, font, fontURL);
+        console.log(font, fontURL);
         // TODO: sort out dealing with a custom font
       });
 
@@ -303,7 +309,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     data["additional"] = {};
     data["additional"][prefix + "-font"] =
       $fontPicker.data("plugin_fontPicker").getFont();
-
+    data["additional"][prefix + "-font-style"] =
+      $fontPicker.data("plugin_fontPicker").getFontStyle();
+    data["additional"][prefix + "-font-url"] =
+      $fontPicker.data("plugin_fontPicker").getFontURL();
     data["additional"][prefix + "-color"] =
       $colorPicker.spectrum("get").toHexString();
 
@@ -624,11 +633,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             _el.$columnPaddingInp.val(_prefs.getInt("column-padding"));
           }
 
-          headerStyling.font = result["header-font"];
-          headerStyling.fontSize =  _prefs.getString("header-font-size");
-          headerStyling.bold = _prefs.getBool("header-bold");
-          headerStyling.italic = _prefs.getBool("header-italic");
-          headerStyling.color = result["header-color"];
+          headerStyling["font"] = result["header-font"];
+          headerStyling["font-style"] = result["header-font-style"];
+          headerStyling["font-url"] = result["header-font-url"];
+          headerStyling["font-size"] =  _prefs.getString("header-font-size");
+          headerStyling["bold"] = _prefs.getBool("header-bold");
+          headerStyling["italic"] = _prefs.getBool("header-italic");
+          headerStyling["color"] = result["header-color"];
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
