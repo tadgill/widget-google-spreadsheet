@@ -15,6 +15,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       DEFAULT_REFRESH             = 60,
       DEFAULT_SCROLL_RESUME       = 5;
 
+  var DEFAULT_FONT_STYLING = {
+    font: "Verdana",
+    fontSize: "18",
+    color: "#000",
+    bold: false,
+    italic: false
+  }
+
   // private variables
   var _prefs = null, _pickerApiLoaded = false, _authScope,
       _el, _fileID = null, _origin;
@@ -118,22 +126,121 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       scrollSpeedSel:               $("#scroll-speed"),
       scrollResumesInp:             $("#scroll-resumes"),
       rowPaddingInp:                $("#row-padding"),
-      columnPaddingInp:             $("#column-padding"),
-      headerFontPicker:             $(".header-font-picker"),
-      headerFontSizePicker:         $(".header-font-size-picker"),
-      headerBold:                   $("#header-bold"),
-      headerItalic:                 $("#header-italic"),
-      headerColorPicker:            $("#header-color-picker")
+      columnPaddingInp:             $("#column-padding")
     };
   }
 
-  function _configureColorPicker(options) {
-    options.elem.spectrum({
-      type: options.type,
-      color: options.color,
+  function _configureFontStyling(config){
+    var $fontPicker = $("." + config["prefix"] + "-font-picker"),
+        $fontSizePicker = $("." + config["prefix"] + "-font-size-picker"),
+        $bold = $("#" + config["prefix"] + "-bold"),
+        $italic = $("#" + config["prefix"] + "-italic"),
+        $colorPicker = $("#" + config["prefix"] + "-color-picker"),
+        $sampleText = $("#column-" + config["prefix"] + "-font .font-picker-text");
+
+    // Instantiate the font picker
+    $fontPicker.fontPicker({
+      "font": config.styling.font,
+      "load": onFontsLoaded
+    });
+
+    // Handler for font picker instantiation complete (fonts loaded)
+    function onFontsLoaded(){
+      var $textTemplate = $('<span class="font-text">' +
+        i18n.t(config["prefix"] + ".text") + '</span>');
+
+      // Apply the template to the sample text
+      $sampleText.append($textTemplate);
+
+      // Apply font family style
+      $textTemplate.css("font-family",
+        this.data("plugin_fontPicker").getFontStyle());
+
+      // Apply font size
+      $textTemplate.css("font-size",
+          config.styling.fontSize + "px");
+
+      // Apply bold (or not)
+      if(config.styling.bold){
+        $textTemplate.css("font-weight", "bold");
+      } else {
+        $textTemplate.css("font-weight", "normal");
+      }
+
+      // Apply italic (or not)
+      if(config.styling.italic){
+        $textTemplate.css("font-style", "italic");
+      } else {
+        $textTemplate.css("font-style", "normal");
+      }
+
+      // Apply color
+      $textTemplate.css("color", config.styling.color);
+    }
+
+    // Instantiate the font size picker
+    $fontSizePicker.fontSizePicker({
+      "font-size":config.styling.fontSize
+    });
+
+    // Set the bold checkbox
+    $bold.attr("checked", config.styling.bold);
+    // Set the italic checkbox
+    $italic.attr("checked", config.styling.italic);
+
+    // Instantiate the color picker along with its change handler
+    $colorPicker.spectrum({
+      type: "background",
+      color: config.styling.color,
       showInput: true,
       chooseText: i18n.t("common.buttons.apply"),
-      cancelText: i18n.t("common.buttons.cancel")
+      cancelText: i18n.t("common.buttons.cancel"),
+      change: function(value) {
+        $sampleText.find(".font-text").css("color", value.toHexString());
+      }
+    });
+
+    // Font picker change
+    $fontPicker
+      .on("standardFontSelected", function(e, font, fontFamily) {
+        $sampleText.find(".font-text").css("font-family",
+          $fontPicker.data("plugin_fontPicker").getFontStyle());
+      })
+      .on("googleFontSelected", function(e, font) {
+        console.log("googleFontSelected");
+        console.log(e, font);
+        // TODO: sort out dealing with google fonts
+      })
+      .on("customFontSelected", function(e, font, fontURL) {
+        console.log("customFontSelected");
+        console.log(e, font, fontURL);
+        // TODO: sort out dealing with a custom font
+      });
+
+    // Font Size Picker change
+    $fontSizePicker
+      .on("sizeChanged", function(e, value){
+        $sampleText.find(".font-text").css("font-size", value + "px");
+      });
+
+    // Bold change
+    $bold.on("click", function(event) {
+      if ($(this).is(":checked")) {
+        $sampleText.find(".font-text").css("font-weight", "bold");
+      }
+      else {
+        $sampleText.find(".font-text").css("font-weight", "normal");
+      }
+    });
+
+    // Italic change
+    $italic.on("click", function(event) {
+      if ($(this).is(":checked")) {
+        $sampleText.find(".font-text").css("font-style", "italic");
+      }
+      else {
+        $sampleText.find(".font-text").css("font-style", "normal");
+      }
     });
   }
 
@@ -174,15 +281,38 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   }
 
   function _getAdditionalParams(){
-    var additionalParams = {};
+    var additionalParams = {},
+        headerStylingData = _getFontStylingData("header");
 
     additionalParams["url"] = encodeURI($.trim(_el.urlInp.val()));
     additionalParams["sheet"] = encodeURI(_el.sheetSel.val());
-    additionalParams["column-header-font"] =
-      _el.headerFontPicker.data("plugin_fontPicker").getFont();
-    additionalParams["column-header-color"] = _el.headerColorPicker.val();
+
+    $.extend(additionalParams, headerStylingData.additional);
 
     return additionalParams;
+  }
+
+  function _getFontStylingData(prefix){
+    var data = {},
+      $fontPicker = $("." + prefix + "-font-picker"),
+      $fontSizePicker = $("." + prefix + "-font-size-picker"),
+      $bold = $("#" + prefix + "-bold"),
+      $italic = $("#" + prefix + "-italic"),
+      $colorPicker = $("#" + prefix + "-color-picker");
+
+    data["additional"] = {};
+    data["additional"][prefix + "-font"] =
+      $fontPicker.data("plugin_fontPicker").getFont();
+
+    data["additional"][prefix + "-color"] =
+      $colorPicker.spectrum("get").toHexString();
+
+    data.params = "&up_" + prefix + "-font-size=" +
+      $fontSizePicker.data("plugin_fontSizePicker").getFontSize() +
+      "&up_" + prefix + "-bold=" + $bold.is(":checked").toString() +
+      "&up_" + prefix + "-italic=" + $italic.is(":checked").toString();
+
+    return data;
   }
 
   function _getSheets(fileID, callbackFn){
@@ -230,7 +360,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   }
 
   function _getParams(){
-    var params = "";
+    var params = "",
+        headerStylingData = _getFontStylingData("header");
 
     /* Only save spreadsheet metadata settings if file has been selected
     using Google Picker(i.e. if fileID has a value).
@@ -267,10 +398,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       params += "&up_column-padding=" + $.trim(_el.columnPaddingInp.val());
     }
 
-    params += "&up_column-header-font-size=" +
-      _el.headerFontSizePicker.data("plugin_fontSizePicker").getFontSize() +
-      "&up_column-header-bold=" + _el.headerBold.is(":checked").toString() +
-      "&up_column-header-italic=" + _el.headerItalic.is(":checked").toString();
+    params += headerStylingData.params;
 
     return params;
   }
@@ -334,7 +462,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       settings = {
         "params" : _getParams(),
         "additionalParams" : JSON.stringify(_getAdditionalParams())
-      }
+      };
 
       gadgets.rpc.call("", "rscmd_saveSettings", null, settings);
     }
@@ -430,7 +558,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
-        var headerColor = null;
+        var headerStyling = {};
 
         _prefs = new gadgets.Prefs();
 
@@ -496,18 +624,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             _el.columnPaddingInp.val(_prefs.getInt("column-padding"));
           }
 
-          _el.headerFontPicker.fontPicker({
-            "font" : result["column-header-font"]
-          });
-
-          _el.headerFontSizePicker.fontSizePicker({
-            "font-size": _prefs.getString("column-header-font-size")
-          });
-
-          _el.headerBold.attr("checked", _prefs.getBool("column-header-bold"));
-          _el.headerItalic.attr("checked", _prefs.getBool("column-header-italic"));
-
-          headerColor = result["column-header-color"];
+          headerStyling.font = result["header-font"];
+          headerStyling.fontSize =  _prefs.getString("header-font-size");
+          headerStyling.bold = _prefs.getBool("header-bold");
+          headerStyling.italic = _prefs.getBool("header-italic");
+          headerStyling.color = result["header-color"];
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
@@ -534,18 +655,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           // Set default scroll resume
           _el.scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
 
-          // Default column header font
-          _el.headerFontPicker.fontPicker({
-            "font" : "Verdana"
-          });
-
-          // Default column header font size
-          _el.headerFontSizePicker.fontSizePicker({
-            "font-size":"18"
-          });
-
-          // Default column header colour
-          headerColor = "#000";
+          $.extend(headerStyling, DEFAULT_FONT_STYLING);
         }
 
         /* Manually trigger event handlers so that the visibility of fields
@@ -555,15 +665,12 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         $("input[name='scroll-direction']").trigger("change");
 
         i18n.init({ fallbackLng: "en" }, function(t) {
-          /* Configure colour pickers, has to be after i18n has initialized
-           because button labels rely on translations
+          /* Configure font styling UI, has to be after i18n has initialized
+           because color picker button labels rely on translations
            */
-
-          // Configure Column Header colour picker
-          _configureColorPicker({
-            elem: _el.headerColorPicker,
-            type: "background",
-            color: headerColor
+          _configureFontStyling({
+            prefix: "header",
+            styling: headerStyling
           });
 
           _el.wrapperCtn.i18n().show();

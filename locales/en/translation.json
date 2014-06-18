@@ -44,7 +44,8 @@
       "bold": "Bold",
       "italic": "Italic"
     },
-    "color": "Column Header Color"
+    "color": "Column Header Color",
+    "text": "Column Header Sample Text"
   },
   "common": {
     "buttons":{

@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/spectrum/spectrum.css">
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/bootstrap-select/bootstrap-select.min.css">
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/bootstrap-form-helper/bootstrap-formhelpers.min.css">
+  <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/bootstrap-font-picker/bootstrap-fontpicker.min.css">
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/rise/css/rise.min.css">
 
   <style type="text/css">
@@ -195,42 +196,50 @@
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-sm-6 col-lg-3">
-          <div class="form-group">
-            <label data-i18n="header.font"></label>
-            <div class="header-font-picker"></div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="form-group">
-            <label data-i18n="header.font-size"></label>
-            <div class="header-font-size-picker"></div>
-          </div>
-        </div>
-        <div class="clearfix hidden-lg"></div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="form-group">
-            <label data-i18n="header.font-variants.label"></label>
-            <div class="checkbox">
-              <label for="header-bold" data-i18n="header.font-variants.bold"></label>
-              <input id="header-bold" name="header-bold" type="checkbox" value="header-bold">
-            </div>
-            <div class="checkbox">
-              <label for="header-italic" data-i18n="header.font-variants.italic"></label>
-              <input id="header-italic" name="header-italic" type="checkbox" value="header-italic">
+      <div id="column-header-font">
+        <div class="row">
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label data-i18n="header.font"></label>
+              <div class="header-font-picker"></div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-6 col-lg-3">
-          <div class="form-group">
-            <label for="header-color-picker" data-i18n="header.color"></label>
-            <div class="color-picker">
-              <input id='header-color-picker' type='color'>
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label data-i18n="header.font-size"></label>
+              <div class="header-font-size-picker"></div>
             </div>
+          </div>
+          <div class="clearfix hidden-lg"></div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label data-i18n="header.font-variants.label"></label>
+              <div class="checkbox">
+                <label for="header-bold" data-i18n="header.font-variants.bold"></label>
+                <input id="header-bold" name="header-bold" type="checkbox" value="header-bold">
+              </div>
+              <div class="checkbox">
+                <label for="header-italic" data-i18n="header.font-variants.italic"></label>
+                <input id="header-italic" name="header-italic" type="checkbox" value="header-italic">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-3">
+            <div class="form-group">
+              <label for="header-color-picker" data-i18n="header.color"></label>
+              <div class="color-picker">
+                <input id='header-color-picker' type='color'>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="font-picker-text form-group"></div>
           </div>
         </div>
       </div>
+
     </form>
   </div>
 
