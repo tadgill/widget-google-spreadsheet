@@ -72,39 +72,39 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       if ($(this).is(":checked")) {
         if (val === "range") {
-          _el.rangeInp.prop('disabled', false);
+          _el.$rangeInp.prop('disabled', false);
           $("label[for='range']").removeClass('label-disabled');
         }
         else {
-          _el.rangeInp.val("");
-          _el.rangeInp.prop('disabled', true);
+          _el.$rangeInp.val("");
+          _el.$rangeInp.prop('disabled', true);
           $("label[for='range']").addClass('label-disabled');
         }
       }
 
-      if(_el.urlOptionsCtn.is(":visible")){ _configureURL(); }
+      if(_el.$urlOptionsCtn.is(":visible")){ _configureURL(); }
 
     });
 
-    _el.sheetSel.change(function() {
+    _el.$sheetSel.change(function() {
       _configureURL();
     });
 
-    _el.headerRowsSel.change(function() {
+    _el.$headerRowsSel.change(function() {
       _configureURL();
     });
 
-    _el.rangeInp.blur(function() {
+    _el.$rangeInp.blur(function() {
       _configureURL();
     });
 
     $("input[name='scroll-direction']").change(function() {
       if ($(this).is(":checked")) {
         if ($(this).val() === "none") {
-          _el.scrollOptionsCtn.hide();
+          _el.$scrollOptionsCtn.hide();
         }
         else {
-          _el.scrollOptionsCtn.show();
+          _el.$scrollOptionsCtn.show();
         }
       }
 
@@ -113,20 +113,20 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   function _cache() {
     _el = {
-      wrapperCtn:                   $(".widget-wrapper"),
-      alertCtn:                     $("#settings-alert"),
-      urlInp:                       $("#url"),
-      urlOptionsCtn:                $("div.url-options"),
-      sheetSel:                     $("#sheet"),
-      rangeInp:                     $("#range"),
-      headerRowsSel:                $("#headerRows"),
-      refreshInp:                   $("#refresh"),
-      scrollOptionsCtn:             $("#scroll-options"),
-      scrollBySel:                  $("#scroll-by"),
-      scrollSpeedSel:               $("#scroll-speed"),
-      scrollResumesInp:             $("#scroll-resumes"),
-      rowPaddingInp:                $("#row-padding"),
-      columnPaddingInp:             $("#column-padding")
+      $wrapperCtn:                   $(".widget-wrapper"),
+      $alertCtn:                     $("#settings-alert"),
+      $urlInp:                       $("#url"),
+      $urlOptionsCtn:                $("div.url-options"),
+      $sheetSel:                     $("#sheet"),
+      $rangeInp:                     $("#range"),
+      $headerRowsSel:                $("#headerRows"),
+      $refreshInp:                   $("#refresh"),
+      $scrollOptionsCtn:             $("#scroll-options"),
+      $scrollBySel:                  $("#scroll-by"),
+      $scrollSpeedSel:               $("#scroll-speed"),
+      $scrollResumesInp:             $("#scroll-resumes"),
+      $rowPaddingInp:                $("#row-padding"),
+      $columnPaddingInp:             $("#column-padding")
     };
   }
 
@@ -245,26 +245,26 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   }
 
   function _configureSheets(sheets){
-    _el.sheetSel.empty();
+    _el.$sheetSel.empty();
 
     $.each(sheets,function(i, item){
-      _el.sheetSel.append(item);
+      _el.$sheetSel.append(item);
     });
 
-    _el.sheetSel.selectpicker('refresh');
+    _el.$sheetSel.selectpicker('refresh');
   }
 
   function _configureURL(){
     // configure URL with value from sheets select element
-    var url = _el.sheetSel.val();
+    var url = _el.$sheetSel.val();
     // add header rows to URL
-    url += "&headers=" + _el.headerRowsSel.val();
+    url += "&headers=" + _el.$headerRowsSel.val();
     // add range to URL if applicable
-    if ($.trim(_el.rangeInp.val()) != "") {
-      url += "&range=" + $.trim(_el.rangeInp.val());
+    if ($.trim(_el.$rangeInp.val()) != "") {
+      url += "&range=" + $.trim(_el.$rangeInp.val());
     }
 
-    _el.urlInp.val(url);
+    _el.$urlInp.val(url);
   }
 
   function _createPicker(){
@@ -284,8 +284,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     var additionalParams = {},
         headerStylingData = _getFontStylingData("header");
 
-    additionalParams["url"] = encodeURI($.trim(_el.urlInp.val()));
-    additionalParams["sheet"] = encodeURI(_el.sheetSel.val());
+    additionalParams["url"] = encodeURI($.trim(_el.$urlInp.val()));
+    additionalParams["sheet"] = encodeURI(_el.$sheetSel.val());
 
     $.extend(additionalParams, headerStylingData.additional);
 
@@ -347,9 +347,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       })
       .fail(function(jqxhr) {
-        _el.alertCtn.empty().append(i18n.t("google-picker-fail")).show();
-        _el.urlOptionsCtn.hide();
-        _el.wrapperCtn.scrollTop(0);
+        _el.$alertCtn.empty().append(i18n.t("google-picker-fail")).show();
+        _el.$urlOptionsCtn.hide();
+        _el.$wrapperCtn.scrollTop(0);
 
         //console.log(jqxhr.status + " - " + jqxhr.statusText);
         //console.log(jqxhr.responseText);
@@ -370,32 +370,32 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       // If Range is chosen
       if($("#cells-range").is(":checked")){
         params += "&up_cells=" + $("#cells-range").val() +
-          "&up_range=" + $.trim(_el.rangeInp.val());
+          "&up_range=" + $.trim(_el.$rangeInp.val());
       } else {
         params += "&up_cells=" + $("#cells-sheet").val();
       }
 
-      params += "&up_headerRows=" + _el.headerRowsSel.val() +
+      params += "&up_headerRows=" + _el.$headerRowsSel.val() +
         "&up_fileID=" + _fileID;
     }
 
-    params += "&up_refresh=" + ($.trim(_el.refreshInp.val()) * 1000);
+    params += "&up_refresh=" + ($.trim(_el.$refreshInp.val()) * 1000);
 
     if($("#scroll-up").is(":checked")){
       params += "&up_scroll-direction=" + $("#scroll-up").val() +
-        "&up_scroll-by=" + _el.scrollBySel.val() +
-        "&up_scroll-speed=" + _el.scrollSpeedSel.val() +
-        "&up_scroll-resumes=" + ($.trim(_el.scrollResumesInp.val()) * 1000);
+        "&up_scroll-by=" + _el.$scrollBySel.val() +
+        "&up_scroll-speed=" + _el.$scrollSpeedSel.val() +
+        "&up_scroll-resumes=" + ($.trim(_el.$scrollResumesInp.val()) * 1000);
     } else {
       params += "&up_scroll-direction=" + $("#scroll-none").val();
     }
 
-    if(_el.rowPaddingInp.val() !== ""){
-      params += "&up_row-padding=" + $.trim(_el.rowPaddingInp.val());
+    if(_el.$rowPaddingInp.val() !== ""){
+      params += "&up_row-padding=" + $.trim(_el.$rowPaddingInp.val());
     }
 
-    if(_el.columnPaddingInp.val() !== ""){
-      params += "&up_column-padding=" + $.trim(_el.columnPaddingInp.val());
+    if(_el.$columnPaddingInp.val() !== ""){
+      params += "&up_column-padding=" + $.trim(_el.$columnPaddingInp.val());
     }
 
     params += headerStylingData.params;
@@ -433,7 +433,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     var doc;
 
     if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-      _el.urlInp.val("");
+      _el.$urlInp.val("");
 
       doc = data[google.picker.Response.DOCUMENTS][0];
 
@@ -442,9 +442,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           _fileID = doc.id;
           _configureSheets(sheets);
           _configureURL();
-          _el.headerRowsSel.val(DEFAULT_HEADER_ROWS);
-          _el.alertCtn.empty().hide();
-          _el.urlOptionsCtn.show();
+          _el.$headerRowsSel.val(DEFAULT_HEADER_ROWS);
+          _el.$alertCtn.empty().hide();
+          _el.$urlOptionsCtn.show();
         }
       });
     }
@@ -455,8 +455,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
     // validate
     if(!_validate()){
-      _el.alertCtn.show();
-      _el.wrapperCtn.scrollTop(0);
+      _el.$alertCtn.show();
+      _el.$wrapperCtn.scrollTop(0);
     } else {
       //construct settings object
       settings = {
@@ -482,7 +482,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       ],
       passed = true;
 
-    if(_el.scrollOptionsCtn.is(":visible")){
+    if(_el.$scrollOptionsCtn.is(":visible")){
       itemsToValidate.push({
         el: document.getElementById("scroll-resumes"),
         rules: "required|numeric",
@@ -490,7 +490,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       });
     }
 
-    if(_el.rowPaddingInp.val() !== ""){
+    if(_el.$rowPaddingInp.val() !== ""){
       itemsToValidate.push({
         el: document.getElementById("row-padding"),
         rules: "numeric",
@@ -498,7 +498,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       });
     }
 
-    if(_el.columnPaddingInp.val() !== ""){
+    if(_el.$columnPaddingInp.val() !== ""){
       itemsToValidate.push({
         el: document.getElementById("column-padding"),
         rules: "numeric",
@@ -506,7 +506,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       });
     }
 
-    _el.alertCtn.empty().hide();
+    _el.$alertCtn.empty().hide();
 
     for(var i = 0; i < itemsToValidate.length; i++){
       if(!_validateItem(itemsToValidate[i])){
@@ -553,8 +553,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       _cache();
       _bind();
 
-      _el.alertCtn.hide();
-      _el.urlOptionsCtn.hide();
+      _el.$alertCtn.hide();
+      _el.$urlOptionsCtn.hide();
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
@@ -581,24 +581,24 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
             // Range
             if(_prefs.getString("range") && _prefs.getString("range") !== ""){
-              _el.rangeInp.val(_prefs.getString("range"));
+              _el.$rangeInp.val(_prefs.getString("range"));
             }
 
             // Worksheets
             _getSheets(_prefs.getString("fileID"), function(sheets) {
               if (sheets.length > 0) {
                 _configureSheets(sheets);
-                _el.sheetSel.val(decodeURI(result["sheet"]));
-                _el.urlOptionsCtn.show();
+                _el.$sheetSel.val(decodeURI(result["sheet"]));
+                _el.$urlOptionsCtn.show();
               }
             });
 
             // Header Rows
-            _el.headerRowsSel.val(_prefs.getString("headerRows"));
+            _el.$headerRowsSel.val(_prefs.getString("headerRows"));
           }
 
-          _el.urlInp.val(decodeURI(result["url"]));
-          _el.refreshInp.val(_prefs.getInt("refresh") / 1000);
+          _el.$urlInp.val(decodeURI(result["url"]));
+          _el.$refreshInp.val(_prefs.getInt("refresh") / 1000);
 
           $("input[type='radio'][name='scroll-direction']").each(function() {
             if ($(this).val() === _prefs.getString("scroll-direction")) {
@@ -608,20 +608,20 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           });
 
           if(_prefs.getString("scroll-direction") !== "none"){
-            _el.scrollBySel.val(_prefs.getString("scroll-by"));
-            _el.scrollSpeedSel.val(_prefs.getString("scroll-speed"));
-            _el.scrollResumesInp.val(_prefs.getInt("scroll-resumes") / 1000);
+            _el.$scrollBySel.val(_prefs.getString("scroll-by"));
+            _el.$scrollSpeedSel.val(_prefs.getString("scroll-speed"));
+            _el.$scrollResumesInp.val(_prefs.getInt("scroll-resumes") / 1000);
           } else {
             // Set default scroll resume
-            _el.scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
+            _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
           }
 
           if(_prefs.getInt("row-padding")){
-            _el.rowPaddingInp.val(_prefs.getInt("row-padding"));
+            _el.$rowPaddingInp.val(_prefs.getInt("row-padding"));
           }
 
           if(_prefs.getInt("column-padding")){
-            _el.columnPaddingInp.val(_prefs.getInt("column-padding"));
+            _el.$columnPaddingInp.val(_prefs.getInt("column-padding"));
           }
 
           headerStyling.font = result["header-font"];
@@ -639,10 +639,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           });
 
           // Set default header rows
-          _el.headerRowsSel.val(DEFAULT_HEADER_ROWS);
+          _el.$headerRowsSel.val(DEFAULT_HEADER_ROWS);
 
           // Set default data refresh
-          _el.refreshInp.val(DEFAULT_REFRESH);
+          _el.$refreshInp.val(DEFAULT_REFRESH);
 
           // Set default radio button for scroll direction
           $("input[type='radio'][name='scroll-direction']").each(function() {
@@ -653,7 +653,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           });
 
           // Set default scroll resume
-          _el.scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
+          _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
 
           $.extend(headerStyling, DEFAULT_FONT_STYLING);
         }
@@ -673,7 +673,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             styling: headerStyling
           });
 
-          _el.wrapperCtn.i18n().show();
+          _el.$wrapperCtn.i18n().show();
           $(".form-control").selectpicker();
 
           // Set tooltips only after i18n has shown
@@ -681,9 +681,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
           //Set buttons to be sticky only after wrapper is visible.
           $(".sticky-buttons").sticky({
-            container : _el.wrapperCtn,
+            container : _el.$wrapperCtn,
             topSpacing : 41,	//top margin + border of wrapper
-            getWidthFrom : _el.wrapperCtn
+            getWidthFrom : _el.$wrapperCtn
           });
         });
       });
