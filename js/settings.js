@@ -133,8 +133,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
   }
 
   function _configureFontStyling(config){
-    var $fontPicker = $("." + config["prefix"] + "-font-picker"),
-        $fontSizePicker = $("." + config["prefix"] + "-font-size-picker"),
+    var $fontPicker = $("#" + config["prefix"] + "-font .font-picker"),
+        $fontSizePicker = $("#" + config["prefix"] + "-font .font-size-picker"),
         $bold = $("#" + config["prefix"] + "-bold"),
         $italic = $("#" + config["prefix"] + "-italic"),
         $colorPicker = $("#" + config["prefix"] + "-color-picker"),
@@ -306,8 +306,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
   function _getFontStylingData(prefix){
     var data = {},
-        $fontPicker = $("." + prefix + "-font-picker"),
-        $fontSizePicker = $("." + prefix + "-font-size-picker"),
+        $fontPicker = $("#" + prefix + "-font .font-picker"),
+        $fontSizePicker = $("#" + prefix + "-font .font-size-picker"),
         $bold = $("#" + prefix + "-bold"),
         $italic = $("#" + prefix + "-italic"),
         $colorPicker = $("#" + prefix + "-color-picker");
