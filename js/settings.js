@@ -150,19 +150,25 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     // Handler for font picker instantiation complete (fonts loaded)
     function onFontsLoaded(){
       var $textTemplate = $('<span class="font-text">' +
-        i18n.t(config["prefix"] + ".text") + '</span>');
+        i18n.t(config["prefix"] + ".text") + '</span>'),
+          fontStyle = config.styling["font-style"];
 
       // Apply the template to the sample text
       $sampleText.append($textTemplate);
 
       // Apply font family style
-      //TODO: possibly make this conditional based on font-style being "Google"
-      if(String(config.styling["font-style"]).indexOf(",") !== -1){
-        // It is a standard font so font family is accessible
-        $textTemplate.css("font-family",config.styling["font-style"]);
-      } else {
-        // It is a google or custom font, use just the font name
+      if(fontStyle.toLowerCase().indexOf("google") !== -1) {
+        // It is a google font, use just the font name
         $textTemplate.css("font-family",config.styling["font"]);
+      } else if(fontStyle.toLowerCase().indexOf("custom") !== -1) {
+        /* TODO: Font picker needs fixing to provide public API on
+        retrieving the custom font name, temporarily using font which doesn't
+        work right
+         */
+        $textTemplate.css("font-family",config.styling["font"]);
+      } else {
+        // It is a standard font so font family is accessible
+        $textTemplate.css("font-family",fontStyle);
       }
 
       // Apply font size
@@ -218,9 +224,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         $sampleText.find(".font-text").css("font-family",font);
       })
       .on("customFontSelected", function(e, font, fontURL) {
-        console.log("customFontSelected");
-        console.log(font, fontURL);
-        // TODO: sort out dealing with a custom font
+        $sampleText.find(".font-text").css("font-family", font);
       });
 
     // Font Size Picker change
