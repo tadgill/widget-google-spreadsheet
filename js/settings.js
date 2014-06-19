@@ -137,7 +137,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         $fontSizePicker = $("#" + config["prefix"] + "-font .font-size-picker"),
         $bold = $("#" + config["prefix"] + "-bold"),
         $italic = $("#" + config["prefix"] + "-italic"),
-        $colorPicker = $("#" + config["prefix"] + "-color-picker"),
         $sampleText = $("#" + config["prefix"] + "-font .font-picker-text");
 
     // Instantiate the font picker
@@ -204,14 +203,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     $italic.attr("checked", config.styling.italic);
 
     // Instantiate the color picker along with its change handler
-    $colorPicker.spectrum({
-      type: "background",
-      color: config.styling.color,
-      showInput: true,
-      chooseText: i18n.t("common.buttons.apply"),
-      cancelText: i18n.t("common.buttons.cancel"),
-      change: function(value) {
-        $sampleText.find(".font-text").css("color", value.toHexString());
+    _configureColorPicker({
+      "$elem": $("#" + config["prefix"] + "-color-picker"),
+      "options": {
+        "color": config.styling.color,
+        "change": function(value) {
+          $sampleText.find(".font-text").css("color", value.toHexString());
+        }
       }
     });
 
@@ -277,6 +275,20 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     _el.$urlInp.val(url);
   }
 
+  function _configureColorPicker(config){
+    var options = {
+      preferredFormat: "hex",
+      showInput: true,
+      type: "background",
+      chooseText: i18n.t("common.buttons.apply"),
+      cancelText: i18n.t("common.buttons.cancel")
+    };
+
+    $.extend(true, options, config.options);
+
+    config.$elem.spectrum(options);
+  }
+
   function _createPicker(){
     if(_pickerApiLoaded && RiseVision.Authorization.getAuthToken()){
           var picker = new google.picker.PickerBuilder().
@@ -300,6 +312,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
     $.extend(additionalParams, headerStylingData.additional);
     $.extend(additionalParams, dataStylingData.additional);
+
+    additionalParams["row-color"] =
+      $("#row-color-picker").spectrum("get").toHexString();
+    additionalParams["alt-row-color"] =
+      $("#alt-row-color-picker").spectrum("get").toHexString();
 
     return additionalParams;
   }
@@ -575,7 +592,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
-        var headerStyling = {}, dataStyling = {};
+        var headerStyling = {}, dataStyling = {}, rowColor = '',
+            altRowColor = '';
 
         _prefs = new gadgets.Prefs();
 
@@ -656,6 +674,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           dataStyling["bold"] = _prefs.getBool("data-bold");
           dataStyling["italic"] = _prefs.getBool("data-italic");
           dataStyling["color"] = result["data-color"];
+
+          rowColor = result["row-color"];
+          altRowColor = result["alt-row-color"];
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
@@ -693,8 +714,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
         $("input[name='scroll-direction']").trigger("change");
 
         i18n.init({ fallbackLng: "en" }, function(t) {
-          /* Configure font styling UI, has to be after i18n has initialized
-           because color picker button labels rely on translations
+          /* Configure font styling and color picking UI.
+          It has to be after i18n has initialized because color picker
+          button labels rely on translations
            */
           _configureFontStyling({
             prefix: "header",
@@ -704,7 +726,23 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           _configureFontStyling({
             prefix: "data",
             styling: dataStyling
-          })
+          });
+
+          _configureColorPicker({
+            "$elem": $("#row-color-picker"),
+            "options": {
+              "color": rowColor,
+              "allowEmpty": true
+            }
+          });
+
+          _configureColorPicker({
+            "$elem": $("#alt-row-color-picker"),
+            "options": {
+              "color": altRowColor,
+              "allowEmpty": true
+            }
+          });
 
           _el.$wrapperCtn.i18n().show();
           $(".form-control").selectpicker();

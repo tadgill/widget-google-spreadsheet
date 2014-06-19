@@ -48,6 +48,8 @@
     "color": "Data Color",
     "text": "Data Sample Text"
   },
+  "row-color": "Row Color",
+  "alt-row-color": "Alternate Row Color",
   "common": {
     "buttons":{
       "save": "Save",
