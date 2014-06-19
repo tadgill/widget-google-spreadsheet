@@ -50,6 +50,7 @@
   },
   "row-color": "Row Color",
   "alt-row-color": "Alternate Row Color",
+  "background-color": "Background Color",
   "common": {
     "buttons":{
       "save": "Save",

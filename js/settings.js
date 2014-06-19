@@ -313,10 +313,20 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     $.extend(additionalParams, headerStylingData.additional);
     $.extend(additionalParams, dataStylingData.additional);
 
-    additionalParams["row-color"] =
-      $("#row-color-picker").spectrum("get").toHexString();
-    additionalParams["alt-row-color"] =
-      $("#alt-row-color-picker").spectrum("get").toHexString();
+    if($("#row-color-picker").spectrum("get")){
+      additionalParams["row-color"] =
+        $("#row-color-picker").spectrum("get").toHexString();
+    }
+
+    if($("#alt-row-color-picker").spectrum("get")){
+      additionalParams["alt-row-color"] =
+        $("#alt-row-color-picker").spectrum("get").toHexString();
+    }
+
+    if($("#background-color-picker").spectrum("get")){
+      additionalParams["background-color"] =
+        $("#background-color-picker").spectrum("get").toHexString();
+    }
 
     return additionalParams;
   }
@@ -593,7 +603,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
         var headerStyling = {}, dataStyling = {}, rowColor = '',
-            altRowColor = '';
+            altRowColor = '', backgroundColor = '';
 
         _prefs = new gadgets.Prefs();
 
@@ -677,6 +687,8 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
           rowColor = result["row-color"];
           altRowColor = result["alt-row-color"];
+          backgroundColor = result["background-color"];
+
         } else {
           // Set default radio button selected to be Entire Sheet
           $("input[type='radio'][name='cells']").each(function() {
@@ -740,6 +752,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             "$elem": $("#alt-row-color-picker"),
             "options": {
               "color": altRowColor,
+              "allowEmpty": true
+            }
+          });
+
+          _configureColorPicker({
+            "$elem": $("#background-color-picker"),
+            "options": {
+              "color": backgroundColor,
               "allowEmpty": true
             }
           });
