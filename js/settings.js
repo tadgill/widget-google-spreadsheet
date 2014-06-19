@@ -23,7 +23,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
     "color": "#000",
     "bold": false,
     "italic": false
-  }
+  };
 
   // private variables
   var _prefs = null, _pickerApiLoaded = false, _authScope,
@@ -602,8 +602,17 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
 
       //Request additional parameters from the Viewer.
       gadgets.rpc.call("", "rscmd_getAdditionalParams", function(result) {
-        var headerStyling = {}, dataStyling = {}, rowColor = '',
-            altRowColor = '', backgroundColor = '';
+        var fontStyling = [{"prefix": "header"}, {"prefix": "data"}],
+            colorStyling = [{"prefix": "row"}, {"prefix": "alt-row"},
+              {"prefix": "background"}];
+
+        // Apply the default color styling data  of non font color pickers
+        $.each(colorStyling, function(index, item){
+          item["$elem"] = $("#" + item.prefix + "-color-picker");
+          item["options"] = {};
+          item["options"]["allowEmpty"] = true;
+          item["options"]["color"] = '';
+        });
 
         _prefs = new gadgets.Prefs();
 
@@ -669,25 +678,22 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
             _el.$columnPaddingInp.val(_prefs.getInt("column-padding"));
           }
 
-          headerStyling["font"] = result["header-font"];
-          headerStyling["font-style"] = result["header-font-style"];
-          headerStyling["font-url"] = result["header-font-url"];
-          headerStyling["font-size"] =  _prefs.getString("header-font-size");
-          headerStyling["bold"] = _prefs.getBool("header-bold");
-          headerStyling["italic"] = _prefs.getBool("header-italic");
-          headerStyling["color"] = result["header-color"];
+          // Apply the font styling data
+          $.each(fontStyling, function(index, item){
+            item["options"] = {};
+            item["options"]["font"] = result[item.prefix + "-font"];
+            item["options"]["font-style"] = result[item.prefix + "-font-style"];
+            item["options"]["font-url"] = result[item.prefix + "-font-url"];
+            item["options"]["font-size"] = _prefs.getString(item.prefix + "-font-size");
+            item["options"]["bold"] = _prefs.getBool(item.prefix + "-bold");
+            item["options"]["italic"] = _prefs.getBool(item.prefix + "-italic");
+            item["options"]["color"] = result[item.prefix + "-color"];
+          });
 
-          dataStyling["font"] = result["data-font"];
-          dataStyling["font-style"] = result["data-font-style"];
-          dataStyling["font-url"] = result["data-font-url"];
-          dataStyling["font-size"] =  _prefs.getString("data-font-size");
-          dataStyling["bold"] = _prefs.getBool("data-bold");
-          dataStyling["italic"] = _prefs.getBool("data-italic");
-          dataStyling["color"] = result["data-color"];
-
-          rowColor = result["row-color"];
-          altRowColor = result["alt-row-color"];
-          backgroundColor = result["background-color"];
+          // Apply the saved colors (non font color pickers)
+          $.each(colorStyling, function(index, item){
+            item["options"]["color"] = result[item.prefix + "-color"];
+          });
 
         } else {
           // Set default radio button selected to be Entire Sheet
@@ -715,8 +721,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           // Set default scroll resume
           _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
 
-          $.extend(headerStyling, DEFAULT_FONT_STYLING);
-          $.extend(dataStyling, DEFAULT_FONT_STYLING);
+          // Apply the default font styling data
+          $.each(fontStyling, function(index, item){
+            item["options"] = $.extend({}, DEFAULT_FONT_STYLING);
+          });
         }
 
         /* Manually trigger event handlers so that the visibility of fields
@@ -730,38 +738,18 @@ RiseVision.GoogleSpreadsheet.Settings = (function($,gadgets, i18n, gapi) {
           It has to be after i18n has initialized because color picker
           button labels rely on translations
            */
-          _configureFontStyling({
-            prefix: "header",
-            styling: headerStyling
+          $.each(fontStyling, function(index,item){
+            _configureFontStyling({
+              prefix: item.prefix,
+              styling: item.options
+            });
           });
 
-          _configureFontStyling({
-            prefix: "data",
-            styling: dataStyling
-          });
-
-          _configureColorPicker({
-            "$elem": $("#row-color-picker"),
-            "options": {
-              "color": rowColor,
-              "allowEmpty": true
-            }
-          });
-
-          _configureColorPicker({
-            "$elem": $("#alt-row-color-picker"),
-            "options": {
-              "color": altRowColor,
-              "allowEmpty": true
-            }
-          });
-
-          _configureColorPicker({
-            "$elem": $("#background-color-picker"),
-            "options": {
-              "color": backgroundColor,
-              "allowEmpty": true
-            }
+          $.each(colorStyling, function(index, item){
+            _configureColorPicker({
+              $elem: item.$elem,
+              options: item.options
+            });
           });
 
           _el.$wrapperCtn.i18n().show();
