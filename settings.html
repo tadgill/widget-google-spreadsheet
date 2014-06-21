@@ -18,7 +18,7 @@
     body,html {
       background-color: transparent;
     }
-    .widget-wrapper {
+    .wrapper {
       display: none;
     }
     div.input-link{
@@ -34,280 +34,286 @@
   </style>
 </head>
 <body>
-  <div class="widget-overlay"></div>
-  <div class="widget-wrapper container modal-content">
-    <div class="modal-header">
-      <h2 id="settings-title" data-i18n="[prepend]settings">
-        <button id="settings-close" type="button" class="close"
-                aria-hidden="true">
-          <i class="glyphicons remove_2"></i>
-        </button>
-      </h2>
-      <div class="sticky-wrapper">
-        <div class="btn-toolbar sticky-buttons">
-          <button id="save" class="btn btn-primary" type="button">
-            <span data-i18n="common.buttons.save"></span>
-            <i class="glyphicons white ok_2 icon-right"></i>
-          </button>
-          <button id="cancel" class="btn btn-primary" type="button">
-            <span data-i18n="common.buttons.cancel"></span>
-            <i class="glyphicons white remove_2 icon-right"></i>
-          </button>
-          <button id="help" class="btn btn-primary" type="button">
-            <span data-i18n="common.buttons.help"></span>
-            <i class="glyphicons white circle_question_mark icon-right"></i>
-          </button>
+  <div class="widget">
+    <div class="overlay"></div>
+    <div class="settings">
+      <div class="settings-center">
+        <div class="wrapper container-fluid modal-content">
+          <div class="modal-header">
+            <h2 id="settings-title" data-i18n="[prepend]settings">
+              <button id="settings-close" type="button" class="close"
+                      aria-hidden="true">
+                <i class="glyphicons remove_2"></i>
+              </button>
+            </h2>
+            <div class="sticky-wrapper">
+              <div class="btn-toolbar sticky-buttons">
+                <button id="save" class="btn btn-primary" type="button">
+                  <span data-i18n="common.buttons.save"></span>
+                  <i class="glyphicons white ok_2 icon-right"></i>
+                </button>
+                <button id="cancel" class="btn btn-primary" type="button">
+                  <span data-i18n="common.buttons.cancel"></span>
+                  <i class="glyphicons white remove_2 icon-right"></i>
+                </button>
+                <button id="help" class="btn btn-primary" type="button">
+                  <span data-i18n="common.buttons.help"></span>
+                  <i class="glyphicons white circle_question_mark icon-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div id="settings-alert" class="alert alert-danger"></div>
+          <form role="form">
+            <div class="row">
+              <div class="col-xs-8">
+                <div class="form-group">
+                  <label for="url" data-i18n="url"></label>
+                  <input id="url" name="url" type="text" class="form-control dataURL" />
+                </div>
+              </div>
+              <div class="col-xs-3">
+                <div class="form-group">
+                  <div class="input-link">
+                    <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row url-options">
+              <div class="col-md-3">
+                <label for="cells" data-i18n="cells.label"></label>
+                <div class="radio">
+                  <label for="cells-sheet" data-i18n="cells.sheet"></label>
+                  <input id="cells-sheet" type="radio" name="cells" value="sheet">
+                </div>
+                <div class="radio">
+                  <label for="cells-range" data-i18n="cells.range"></label>
+                  <input id="cells-range" type="radio" name="cells" value="range">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="range" data-i18n="range"></label>
+                  <input id="range" name="range" class="small form-control" type="text" />
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="sheet" data-i18n="sheet"></label>
+                  <select id="sheet" name="sheet" class="form-control"></select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="headerRows" data-i18n="headerRows"></label>
+                  <select id="headerRows" name="headerRows" class="form-control">
+                    <option value="-1">Auto</option>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-xs-6 col-sm-5 col-md-4">
+                <div class="form-group">
+                  <label for="refresh" data-i18n="refresh.label"></label>
+                  <button type="button"
+                          class="btn btn-link btn-help"
+                          data-toggle="popover" data-placement="top"
+                          data-i18n="[data-content]refresh.tooltip">
+                    <span class="glyphicons circle_question_mark"></span>
+                  </button>
+                  <input id="refresh" name="refresh" type="text" class="form-control" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3">
+                <label for="scroll-direction" data-i18n="scroll-direction.label"></label>
+                <div class="radio">
+                  <label for="scroll-none" data-i18n="scroll-direction.none"></label>
+                  <input id="scroll-none" type="radio" name="scroll-direction" value="none">
+                </div>
+                <div class="radio">
+                  <label for="scroll-up" data-i18n="scroll-direction.up"></label>
+                  <input id="scroll-up" type="radio" name="scroll-direction" value="up">
+                </div>
+              </div>
+            </div>
+            <div id="scroll-options">
+              <div class="row">
+                <div class="col-xs-6 col-md-4">
+                  <div class="form-group">
+                    <label for="scroll-by" data-i18n="scroll-by.label"></label>
+                    <select id="scroll-by" name="scroll-by" class="form-control">
+                      <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
+                      <option value="page" data-i18n="scroll-by.page"></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-xs-6 col-md-4">
+                  <div class="form-group">
+                    <label for="scroll-speed" data-i18n="scroll-speed.label"></label>
+                    <select id="scroll-speed" name="scroll-speed" class="form-control">
+                      <option value="slowest" data-i18n="scroll-speed.slowest"></option>
+                      <option value="slow" data-i18n="scroll-speed.slow"></option>
+                      <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
+                      <option value="fast" data-i18n="scroll-speed.fast"></option>
+                      <option value="fastest" data-i18n="scroll-speed.fastest"></option>
+                    </select>
+                  </div>
+                </div>
+                <div class="clearfix visible-xs"></div>
+                <div class="col-xs-6 col-md-4">
+                  <div class="form-group">
+                    <label for="scroll-resumes" data-i18n="scroll-resumes"></label>
+                    <input id="scroll-resumes" name="scroll-resumes" type="text" class="form-control" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-xs-6 col-md-4">
+                <div class="form-group">
+                  <label for="row-padding" data-i18n="row-padding"></label>
+                  <input id="row-padding" name="row-padding" type="text" class="form-control" />
+                </div>
+              </div>
+              <div class="col-xs-6 col-md-4">
+                <div class="form-group">
+                  <label for="column-padding" data-i18n="column-padding"></label>
+                  <input id="column-padding" name="column-padding" type="text" class="form-control" />
+                </div>
+              </div>
+            </div>
+            <div id="header-font">
+              <div class="row">
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label data-i18n="header.font"></label>
+                    <div class="font-picker"></div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label data-i18n="header.font-size"></label>
+                    <div class="font-size-picker"></div>
+                  </div>
+                </div>
+                <div class="clearfix hidden-lg"></div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label data-i18n="common.font-variants.label"></label>
+                    <div class="checkbox">
+                      <label for="header-bold" data-i18n="common.font-variants.bold"></label>
+                      <input id="header-bold" name="header-bold" type="checkbox" value="header-bold">
+                    </div>
+                    <div class="checkbox">
+                      <label for="header-italic" data-i18n="common.font-variants.italic"></label>
+                      <input id="header-italic" name="header-italic" type="checkbox" value="header-italic">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label for="header-color-picker" data-i18n="header.color"></label>
+                    <div>
+                      <input id='header-color-picker' type='text'>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="font-picker-text form-group"></div>
+                </div>
+              </div>
+            </div>
+            <div id="data-font">
+              <div class="row">
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label data-i18n="data.font"></label>
+                    <div class="font-picker"></div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label data-i18n="data.font-size"></label>
+                    <div class="font-size-picker"></div>
+                  </div>
+                </div>
+                <div class="clearfix hidden-lg"></div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label data-i18n="common.font-variants.label"></label>
+                    <div class="checkbox">
+                      <label for="data-bold" data-i18n="common.font-variants.bold"></label>
+                      <input id="data-bold" name="data-bold" type="checkbox" value="data-bold">
+                    </div>
+                    <div class="checkbox">
+                      <label for="data-italic" data-i18n="common.font-variants.italic"></label>
+                      <input id="data-italic" name="data-italic" type="checkbox" value="data-italic">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                    <label for="data-color-picker" data-i18n="data.color"></label>
+                    <div>
+                      <input id='data-color-picker' type='text'>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="font-picker-text form-group"></div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6 col-md-2">
+                <div class="form-group">
+                  <label for="row-color-picker" data-i18n="row-color"></label>
+                  <div>
+                    <input id="row-color-picker" type="text">
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-6 col-md-2">
+                <div class="form-group">
+                  <label for="alt-row-color-picker" data-i18n="alt-row-color"></label>
+                  <div>
+                    <input id="alt-row-color-picker" type="text">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="form-group">
+              <label for="background-color-picker" data-i18n="background-color"></label>
+              <div>
+                <input id="background-color-picker" type="text">
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-    <div id="settings-alert" class="alert alert-danger"></div>
-    <form role="form">
-      <div class="row">
-        <div class="col-xs-8">
-          <div class="form-group">
-            <label for="url" data-i18n="url"></label>
-            <input id="url" name="url" type="text" class="form-control dataURL" />
-          </div>
-        </div>
-        <div class="col-xs-3">
-          <div class="form-group">
-            <div class="input-link">
-              <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row url-options">
-        <div class="col-md-3">
-          <label for="cells" data-i18n="cells.label"></label>
-          <div class="radio">
-            <label for="cells-sheet" data-i18n="cells.sheet"></label>
-            <input id="cells-sheet" type="radio" name="cells" value="sheet">
-          </div>
-          <div class="radio">
-            <label for="cells-range" data-i18n="cells.range"></label>
-            <input id="cells-range" type="radio" name="cells" value="range">
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="range" data-i18n="range"></label>
-            <input id="range" name="range" class="small form-control" type="text" />
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="sheet" data-i18n="sheet"></label>
-            <select id="sheet" name="sheet" class="form-control"></select>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group">
-            <label for="headerRows" data-i18n="headerRows"></label>
-            <select id="headerRows" name="headerRows" class="form-control">
-              <option value="-1">Auto</option>
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
-              <option value="10">10</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <hr>
-      <div class="row">
-        <div class="col-xs-6 col-sm-5 col-md-4">
-          <div class="form-group">
-            <label for="refresh" data-i18n="refresh.label"></label>
-            <button type="button"
-                    class="btn btn-link btn-help"
-                    data-toggle="popover" data-placement="top"
-                    data-i18n="[data-content]refresh.tooltip">
-              <span class="glyphicons circle_question_mark"></span>
-            </button>
-            <input id="refresh" name="refresh" type="text" class="form-control" />
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">
-          <label for="scroll-direction" data-i18n="scroll-direction.label"></label>
-          <div class="radio">
-            <label for="scroll-none" data-i18n="scroll-direction.none"></label>
-            <input id="scroll-none" type="radio" name="scroll-direction" value="none">
-          </div>
-          <div class="radio">
-            <label for="scroll-up" data-i18n="scroll-direction.up"></label>
-            <input id="scroll-up" type="radio" name="scroll-direction" value="up">
-          </div>
-        </div>
-      </div>
-      <div id="scroll-options">
-        <div class="row">
-          <div class="col-xs-6 col-md-4">
-            <div class="form-group">
-              <label for="scroll-by" data-i18n="scroll-by.label"></label>
-              <select id="scroll-by" name="scroll-by" class="form-control">
-                <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
-                <option value="page" data-i18n="scroll-by.page"></option>
-              </select>
-            </div>
-          </div>
-          <div class="col-xs-6 col-md-4">
-            <div class="form-group">
-              <label for="scroll-speed" data-i18n="scroll-speed.label"></label>
-              <select id="scroll-speed" name="scroll-speed" class="form-control">
-                <option value="slowest" data-i18n="scroll-speed.slowest"></option>
-                <option value="slow" data-i18n="scroll-speed.slow"></option>
-                <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
-                <option value="fast" data-i18n="scroll-speed.fast"></option>
-                <option value="fastest" data-i18n="scroll-speed.fastest"></option>
-              </select>
-            </div>
-          </div>
-          <div class="clearfix visible-xs"></div>
-          <div class="col-xs-6 col-md-4">
-            <div class="form-group">
-              <label for="scroll-resumes" data-i18n="scroll-resumes"></label>
-              <input id="scroll-resumes" name="scroll-resumes" type="text" class="form-control" />
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr>
-      <div class="row">
-        <div class="col-xs-6 col-md-4">
-          <div class="form-group">
-            <label for="row-padding" data-i18n="row-padding"></label>
-            <input id="row-padding" name="row-padding" type="text" class="form-control" />
-          </div>
-        </div>
-        <div class="col-xs-6 col-md-4">
-          <div class="form-group">
-            <label for="column-padding" data-i18n="column-padding"></label>
-            <input id="column-padding" name="column-padding" type="text" class="form-control" />
-          </div>
-        </div>
-      </div>
-      <div id="header-font">
-        <div class="row">
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label data-i18n="header.font"></label>
-              <div class="font-picker"></div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label data-i18n="header.font-size"></label>
-              <div class="font-size-picker"></div>
-            </div>
-          </div>
-          <div class="clearfix hidden-lg"></div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label data-i18n="common.font-variants.label"></label>
-              <div class="checkbox">
-                <label for="header-bold" data-i18n="common.font-variants.bold"></label>
-                <input id="header-bold" name="header-bold" type="checkbox" value="header-bold">
-              </div>
-              <div class="checkbox">
-                <label for="header-italic" data-i18n="common.font-variants.italic"></label>
-                <input id="header-italic" name="header-italic" type="checkbox" value="header-italic">
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label for="header-color-picker" data-i18n="header.color"></label>
-              <div>
-                <input id='header-color-picker' type='text'>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="font-picker-text form-group"></div>
-          </div>
-        </div>
-      </div>
-      <div id="data-font">
-        <div class="row">
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label data-i18n="data.font"></label>
-              <div class="font-picker"></div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label data-i18n="data.font-size"></label>
-              <div class="font-size-picker"></div>
-            </div>
-          </div>
-          <div class="clearfix hidden-lg"></div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label data-i18n="common.font-variants.label"></label>
-              <div class="checkbox">
-                <label for="data-bold" data-i18n="common.font-variants.bold"></label>
-                <input id="data-bold" name="data-bold" type="checkbox" value="data-bold">
-              </div>
-              <div class="checkbox">
-                <label for="data-italic" data-i18n="common.font-variants.italic"></label>
-                <input id="data-italic" name="data-italic" type="checkbox" value="data-italic">
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-lg-3">
-            <div class="form-group">
-              <label for="data-color-picker" data-i18n="data.color"></label>
-              <div>
-                <input id='data-color-picker' type='text'>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div class="font-picker-text form-group"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-6 col-md-2">
-          <div class="form-group">
-            <label for="row-color-picker" data-i18n="row-color"></label>
-            <div>
-              <input id="row-color-picker" type="text">
-            </div>
-          </div>
-        </div>
-        <div class="col-xs-6 col-md-2">
-          <div class="form-group">
-            <label for="alt-row-color-picker" data-i18n="alt-row-color"></label>
-            <div>
-              <input id="alt-row-color-picker" type="text">
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr>
-      <div class="form-group">
-        <label for="background-color-picker" data-i18n="background-color"></label>
-        <div>
-          <input id="background-color-picker" type="text">
-        </div>
-      </div>
-    </form>
   </div>
 
   <script type="text/javascript" src="//apis.google.com/js/client.js"></script>

@@ -31,7 +31,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
 
   function _cache() {
     _el = {
-      $wrapperCtn:                   $(".widget-wrapper"),
+      $wrapperCtn:                   $(".wrapper"),
       $alertCtn:                     $("#settings-alert"),
       $urlInp:                       $("#url"),
       $urlOptionsCtn:                $("div.url-options"),
@@ -758,7 +758,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
           $(".sticky-buttons").sticky({
             container : _el.$wrapperCtn,
             //top margin + border of wrapper
-            topSpacing : 41,
+            topSpacing : 55,
             getWidthFrom : _el.$wrapperCtn
           });
         });
