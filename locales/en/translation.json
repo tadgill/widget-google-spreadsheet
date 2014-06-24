@@ -1,6 +1,7 @@
 {
   "settings": "Google Spreadsheet Settings",
-  "url": "Data URL*",
+  "url-heading": "URL",
+  "url": "Spreadsheet URL (required)",
   "google-drive": "Google Drive",
   "cells": {
     "label": "Cells",

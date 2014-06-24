@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/spectrum/spectrum.css">
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/bootstrap-select/bootstrap-select.min.css">
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/bootstrap-form-helper/bootstrap-formhelpers.min.css">
-  <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/bootstrap-font-picker/bootstrap-fontpicker.min.css">
   <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/rise/css/rise.min.css">
 
   <style type="text/css">
@@ -21,9 +20,9 @@
     .wrapper {
       display: none;
     }
-    div.input-link{
-      margin-top: 22px;
-      margin-left: -15px;
+    .btn-google {
+      padding-left: 0;
+      padding-top: 3px;
     }
     .checkbox, .radio {
       margin-top: 0px;
@@ -65,77 +64,76 @@
           </div>
           <div id="settings-alert" class="alert alert-danger"></div>
           <form role="form">
-            <div class="row">
-              <div class="col-xs-8">
-                <div class="form-group">
-                  <label for="url" data-i18n="url"></label>
-                  <input id="url" name="url" type="text" class="form-control dataURL" />
-                </div>
+            <div class="section">
+              <h5 data-i18n="url-heading"></h5>
+              <div class="form-group">
+                <label for="url" data-i18n="url"></label>
+                <input id="url" name="url" type="text" class="form-control dataURL" />
+                <button id="google-drive" class="btn btn-link btn-google" type="button"
+                        href="#" data-i18n="[prepend]google-drive"> &#8482;</button>
               </div>
-              <div class="col-xs-3">
+              <div class="url-options">
                 <div class="form-group">
-                  <div class="input-link">
-                    <a id="google-drive" href="#" data-for="url" data-i18n="[prepend]google-drive"> &#8482;</a>
+                  <label for="cells" data-i18n="cells.label"></label>
+                  <div class="radio">
+                    <label for="cells-sheet" data-i18n="cells.sheet"></label>
+                    <input id="cells-sheet" type="radio" name="cells" value="sheet">
+                  </div>
+                  <div class="radio">
+                    <label for="cells-range" data-i18n="cells.range"></label>
+                    <input id="cells-range" type="radio" name="cells" value="range">
+                  </div>
+                </div>
+                <label for="range" data-i18n="range"></label>
+                <div class="row">
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                      <input id="range" name="range" class="small form-control" type="text" />
+                    </div>
+                  </div>
+                </div>
+                <label for="sheet" data-i18n="sheet"></label>
+                <div class="row">
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                      <select id="sheet" name="sheet" class="form-control"></select>
+                    </div>
+                  </div>
+                </div>
+                <label for="headerRows" data-i18n="headerRows"></label>
+                <div class="row">
+                  <div class="col-xs-4 col-sm-3">
+                    <div class="form-group">
+                      <select id="headerRows" name="headerRows" class="form-control">
+                        <option value="-1">Auto</option>
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="row url-options">
-              <div class="col-md-3">
-                <label for="cells" data-i18n="cells.label"></label>
-                <div class="radio">
-                  <label for="cells-sheet" data-i18n="cells.sheet"></label>
-                  <input id="cells-sheet" type="radio" name="cells" value="sheet">
-                </div>
-                <div class="radio">
-                  <label for="cells-range" data-i18n="cells.range"></label>
-                  <input id="cells-range" type="radio" name="cells" value="range">
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="range" data-i18n="range"></label>
-                  <input id="range" name="range" class="small form-control" type="text" />
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="sheet" data-i18n="sheet"></label>
-                  <select id="sheet" name="sheet" class="form-control"></select>
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group">
-                  <label for="headerRows" data-i18n="headerRows"></label>
-                  <select id="headerRows" name="headerRows" class="form-control">
-                    <option value="-1">Auto</option>
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="row">
-              <div class="col-xs-6 col-sm-5 col-md-4">
-                <div class="form-group">
-                  <label for="refresh" data-i18n="refresh.label"></label>
-                  <button type="button"
-                          class="btn btn-link btn-help"
-                          data-toggle="popover" data-placement="top"
-                          data-i18n="[data-content]refresh.tooltip">
-                    <span class="glyphicons circle_question_mark"></span>
-                  </button>
-                  <input id="refresh" name="refresh" type="text" class="form-control" />
+              <label for="refresh" data-i18n="refresh.label"></label>
+              <button type="button"
+                      class="btn btn-link btn-help"
+                      data-toggle="popover" data-placement="top"
+                      data-i18n="[data-content]refresh.tooltip">
+                <span class="glyphicons circle_question_mark"></span>
+              </button>
+              <div class="row">
+                <div class="col-xs-4 col-sm-3">
+                  <div class="form-group">
+                    <input id="refresh" name="refresh" type="text" class="form-control form-element-small" />
+                  </div>
                 </div>
               </div>
             </div>

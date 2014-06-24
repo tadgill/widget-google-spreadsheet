@@ -514,7 +514,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       window.open(HELP_URL, "_blank");
     });
 
-    $("#google-drive").click(function () {
+    $("#google-drive").on("click", function () {
       if (_pickerApiLoaded && RiseVision.Authorization.getAuthToken()) {
         _createPicker();
         return;
