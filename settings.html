@@ -132,52 +132,53 @@
               <div class="row">
                 <div class="col-xs-4 col-sm-3">
                   <div class="form-group">
-                    <input id="refresh" name="refresh" type="text" class="form-control form-element-small" />
+                    <input id="refresh" name="refresh" type="text" class="form-control" />
                   </div>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-md-3">
+            <div class="section">
+              <h5 data-i18n="scrolling-heading"></h5>
+              <div class="form-group">
                 <div class="checkbox">
                   <label for="scroll-enabled" data-i18n="scroll-enabled"></label>
                   <input id="scroll-enabled" name="scroll-enabled" type="checkbox" value="scroll-enabled">
                 </div>
+                <div id="scroll-options">
+                  <label for="scroll-by" data-i18n="scroll-by.label"></label>
+                  <div class="row">
+                    <div class="col-xs-8">
+                      <div class="form-group">
+                        <select id="scroll-by" name="scroll-by" class="form-control">
+                          <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
+                          <option value="page" data-i18n="scroll-by.page"></option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <label for="scroll-speed" data-i18n="scroll-speed.label"></label>
+                  <div class="row">
+                    <div class="col-xs-8">
+                      <div class="form-group">
+                        <select id="scroll-speed" name="scroll-speed" class="form-control">
+                          <option value="slowest" data-i18n="scroll-speed.slowest"></option>
+                          <option value="slow" data-i18n="scroll-speed.slow"></option>
+                          <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
+                          <option value="fast" data-i18n="scroll-speed.fast"></option>
+                          <option value="fastest" data-i18n="scroll-speed.fastest"></option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <label for="scroll-resumes" data-i18n="scroll-resumes"></label>
+                  <div class="row">
+                    <div class="col-xs-4 col-sm-3">
+                      <input id="scroll-resumes" name="scroll-resumes" type="text" class="form-control" />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div id="scroll-options">
-              <div class="row">
-                <div class="col-xs-6 col-md-4">
-                  <div class="form-group">
-                    <label for="scroll-by" data-i18n="scroll-by.label"></label>
-                    <select id="scroll-by" name="scroll-by" class="form-control">
-                      <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
-                      <option value="page" data-i18n="scroll-by.page"></option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-xs-6 col-md-4">
-                  <div class="form-group">
-                    <label for="scroll-speed" data-i18n="scroll-speed.label"></label>
-                    <select id="scroll-speed" name="scroll-speed" class="form-control">
-                      <option value="slowest" data-i18n="scroll-speed.slowest"></option>
-                      <option value="slow" data-i18n="scroll-speed.slow"></option>
-                      <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
-                      <option value="fast" data-i18n="scroll-speed.fast"></option>
-                      <option value="fastest" data-i18n="scroll-speed.fastest"></option>
-                    </select>
-                  </div>
-                </div>
-                <div class="clearfix visible-xs"></div>
-                <div class="col-xs-6 col-md-4">
-                  <div class="form-group">
-                    <label for="scroll-resumes" data-i18n="scroll-resumes"></label>
-                    <input id="scroll-resumes" name="scroll-resumes" type="text" class="form-control" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <hr>
             <div class="row">
               <div class="col-xs-6 col-md-4">
                 <div class="form-group">

@@ -16,6 +16,7 @@
     "label": "Data Refresh Interval (seconds)",
     "tooltip": "Rate at which you want your data to refresh"
   },
+  "scrolling-heading": "Scrolling",
   "scroll-enabled": "Scroll Enabled",
   "scroll-by": {
     "label": "Scroll By",
