@@ -39,6 +39,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       $rangeInp:                     $("#range"),
       $headerRowsSel:                $("#headerRows"),
       $refreshInp:                   $("#refresh"),
+      $scrollEnabledCB:              $("#scroll-enabled"),
       $scrollOptionsCtn:             $("#scroll-options"),
       $scrollBySel:                  $("#scroll-by"),
       $scrollSpeedSel:               $("#scroll-speed"),
@@ -208,9 +209,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     var params = "",
       headerStylingData = _getFontStylingData("header"),
       dataStylingData = _getFontStylingData("data"),
-      $cellsRange = $("#cells-range"),
-      $scrollUp = $("#scroll-up");
-
+      $cellsRange = $("#cells-range");
 
     /* Only save spreadsheet metadata settings if file has been selected
      using Google Picker(i.e. if fileID has a value).
@@ -230,13 +229,13 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
 
     params += "&up_refresh=" + ($.trim(_el.$refreshInp.val()) * 1000);
 
-    if ($scrollUp.is(":checked")) {
-      params += "&up_scroll-direction=" + $scrollUp.val() +
+    if (_el.$scrollEnabledCB.is(":checked")) {
+      params += "&up_scroll-enabled=true" +
         "&up_scroll-by=" + _el.$scrollBySel.val() +
         "&up_scroll-speed=" + _el.$scrollSpeedSel.val() +
         "&up_scroll-resumes=" + ($.trim(_el.$scrollResumesInp.val()) * 1000);
     } else {
-      params += "&up_scroll-direction=" + $("#scroll-none").val();
+      params += "&up_scroll-enabled=false";
     }
 
     if (_el.$rowPaddingInp.val() !== "") {
@@ -569,13 +568,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       _configureURL();
     });
 
-    $("input[name='scroll-direction']").change(function () {
+    _el.$scrollEnabledCB.on("click", function(event) {
       if ($(this).is(":checked")) {
-        if ($(this).val() === "none") {
-          _el.$scrollOptionsCtn.hide();
-        } else {
-          _el.$scrollOptionsCtn.show();
-        }
+        _el.$scrollOptionsCtn.show();
+      } else {
+        _el.$scrollOptionsCtn.hide();
       }
     });
   }
@@ -650,14 +647,9 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
           _el.$urlInp.val(decodeURI(result.url));
           _el.$refreshInp.val(_prefs.getInt("refresh") / 1000);
 
-          $("input[type='radio'][name='scroll-direction']").each(function () {
-            if ($(this).val() === _prefs.getString("scroll-direction")) {
-              $(this).attr("checked", "checked");
-              return false;
-            }
-          });
+          _el.$scrollEnabledCB.attr("checked", _prefs.getBool("scroll-enabled"));
 
-          if (_prefs.getString("scroll-direction") !== "none") {
+          if (_prefs.getBool("scroll-enabled")) {
             _el.$scrollBySel.val(_prefs.getString("scroll-by"));
             _el.$scrollSpeedSel.val(_prefs.getString("scroll-speed"));
             _el.$scrollResumesInp.val(_prefs.getInt("scroll-resumes") / 1000);
@@ -706,14 +698,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
           // Set default data refresh
           _el.$refreshInp.val(DEFAULT_REFRESH);
 
-          // Set default radio button for scroll direction
-          $("input[type='radio'][name='scroll-direction']").each(function () {
-            if ($(this).val() === "none") {
-              $(this).attr("checked", "checked");
-              return false;
-            }
-          });
-
           // Set default scroll resume
           _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
 
@@ -727,7 +711,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
          can be set. */
         $("input[name='cells']").trigger("change");
 
-        $("input[name='scroll-direction']").trigger("change");
+        _el.$scrollEnabledCB.triggerHandler("click");
 
         i18n.init({ fallbackLng: "en" }, function (t) {
           /* Configure font styling and color picking UI.
@@ -777,7 +761,4 @@ RiseVision.Authorization.loadApi(function () {
   });
 
 });
-
-
-
 
