@@ -36,12 +36,7 @@
   "row-padding": "Row Padding (pixels)",
   "column-padding": "Column Padding (pixels)",
   "header-heading": "Header Format",
-  "data": {
-    "font": "Data Font",
-    "font-size": "Data Font Size",
-    "color": "Data Color",
-    "text": "Data Sample Text"
-  },
+  "data-heading": "Data Format",
   "row-color": "Row Color",
   "alt-row-color": "Alternate Row Color",
   "background-color": "Background Color",
