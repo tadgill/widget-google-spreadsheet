@@ -32,6 +32,7 @@
     "fastest": "Fastest"
   },
   "scroll-resumes": "Scroll Resumes (seconds)",
+  "column-format-heading": "Column / Row Format",
   "row-padding": "Row Padding (pixels)",
   "column-padding": "Column Padding (pixels)",
   "header": {
