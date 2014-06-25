@@ -262,7 +262,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     // Handler for font picker instantiation complete (fonts loaded)
     function onFontsLoaded() {
       var $textTemplate = $('<span class="font-text">' +
-          i18n.t(config.prefix + ".text") + '</span>'),
+          i18n.t("common.font-styling.text") + '</span>'),
         fontStyle = config.styling["font-style"];
 
       // Apply the template to the sample text

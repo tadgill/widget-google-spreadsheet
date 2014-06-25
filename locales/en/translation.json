@@ -35,12 +35,7 @@
   "column-format-heading": "Column / Row Format",
   "row-padding": "Row Padding (pixels)",
   "column-padding": "Column Padding (pixels)",
-  "header": {
-    "font": "Column Header Font",
-    "font-size": "Column Header Font Size",
-    "color": "Column Header Color",
-    "text": "Column Header Sample Text"
-  },
+  "header-heading": "Header Format",
   "data": {
     "font": "Data Font",
     "font-size": "Data Font Size",
@@ -57,10 +52,16 @@
       "help": "Help",
       "apply": "Apply"
     },
-    "font-variants":{
-      "label": "Font Variants",
-      "bold": "Bold",
-      "italic": "Italic"
+    "font-styling": {
+      "type": "Font Type",
+      "size": "Font Size",
+      "color": "Font Color",
+      "variants":{
+        "label": "Font Variants",
+        "bold": "Bold",
+        "italic": "Italic"
+      },
+      "text": "Sample Text"
     }
   },
   "validation": {
