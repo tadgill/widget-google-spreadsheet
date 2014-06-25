@@ -736,7 +736,14 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
           $(".form-control").selectpicker();
 
           // Set tooltips only after i18n has shown
-          $("label[for='refresh'] + button").popover({trigger: 'click'});
+          $("label[for='refresh'] + button, " +
+            "label[for='headerRows'] + button, " +
+            "label[for='url'] + button, " +
+            "label[for='range'] + button, " +
+            "label[for='scroll-by'] + button, " +
+            "label[for='scroll-resumes'] + button, " +
+            "label[for='row-padding'] + button, " +
+            "label[for='column-padding'] + button").popover({trigger: 'click'});
 
           //Set buttons to be sticky only after wrapper is visible.
           $(".sticky-buttons").sticky({
