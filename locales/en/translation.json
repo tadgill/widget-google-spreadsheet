@@ -37,6 +37,7 @@
   "column-padding": "Column Padding (pixels)",
   "header-heading": "Header Format",
   "data-heading": "Data Format",
+  "other-heading": "Other",
   "row-color": "Row Color",
   "alt-row-color": "Alternate Row Color",
   "background-color": "Background Color",
