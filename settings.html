@@ -84,26 +84,26 @@
                     <input id="cells-range" type="radio" name="cells" value="range">
                   </div>
                 </div>
-                <label for="range" data-i18n="range"></label>
-                <div class="row">
-                  <div class="col-xs-8">
-                    <div class="form-group">
+                <div class="form-group">
+                  <label for="range" data-i18n="range"></label>
+                  <div class="row">
+                    <div class="col-xs-8">
                       <input id="range" name="range" class="small form-control" type="text" />
                     </div>
                   </div>
                 </div>
-                <label for="sheet" data-i18n="sheet"></label>
-                <div class="row">
-                  <div class="col-xs-8">
-                    <div class="form-group">
+                <div class="form-group">
+                  <label for="sheet" data-i18n="sheet"></label>
+                  <div class="row">
+                    <div class="col-xs-8">
                       <select id="sheet" name="sheet" class="form-control"></select>
                     </div>
                   </div>
                 </div>
-                <label for="headerRows" data-i18n="headerRows"></label>
-                <div class="row">
-                  <div class="col-xs-4 col-sm-3">
-                    <div class="form-group">
+                <div class="form-group">
+                  <label for="headerRows" data-i18n="headerRows"></label>
+                  <div class="row">
+                    <div class="col-xs-4 col-sm-3">
                       <select id="headerRows" name="headerRows" class="form-control">
                         <option value="-1">Auto</option>
                         <option value="0">0</option>
@@ -120,18 +120,18 @@
                       </select>
                     </div>
                   </div>
-                </div>
               </div>
-              <label for="refresh" data-i18n="refresh.label"></label>
-              <button type="button"
-                      class="btn btn-link btn-help"
-                      data-toggle="popover" data-placement="top"
-                      data-i18n="[data-content]refresh.tooltip">
-                <span class="glyphicons circle_question_mark"></span>
-              </button>
-              <div class="row">
-                <div class="col-xs-4 col-sm-3">
-                  <div class="form-group">
+              </div>
+              <div class="form-group">
+                <label for="refresh" data-i18n="refresh.label"></label>
+                <button type="button"
+                        class="btn btn-link btn-help"
+                        data-toggle="popover" data-placement="top"
+                        data-i18n="[data-content]refresh.tooltip">
+                  <span class="glyphicons circle_question_mark"></span>
+                </button>
+                <div class="row">
+                  <div class="col-xs-4 col-sm-3">
                     <input id="refresh" name="refresh" type="text" class="form-control" />
                   </div>
                 </div>
@@ -144,32 +144,34 @@
                   <label for="scroll-enabled" data-i18n="scroll-enabled"></label>
                   <input id="scroll-enabled" name="scroll-enabled" type="checkbox" value="scroll-enabled">
                 </div>
-                <div id="scroll-options">
+              </div>
+              <div id="scroll-options">
+                <div class="form-group">
                   <label for="scroll-by" data-i18n="scroll-by.label"></label>
                   <div class="row">
                     <div class="col-xs-8">
-                      <div class="form-group">
-                        <select id="scroll-by" name="scroll-by" class="form-control">
-                          <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
-                          <option value="page" data-i18n="scroll-by.page"></option>
-                        </select>
-                      </div>
+                      <select id="scroll-by" name="scroll-by" class="form-control">
+                        <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
+                        <option value="page" data-i18n="scroll-by.page"></option>
+                      </select>
                     </div>
                   </div>
+                </div>
+                <div class="form-group">
                   <label for="scroll-speed" data-i18n="scroll-speed.label"></label>
                   <div class="row">
                     <div class="col-xs-8">
-                      <div class="form-group">
-                        <select id="scroll-speed" name="scroll-speed" class="form-control">
-                          <option value="slowest" data-i18n="scroll-speed.slowest"></option>
-                          <option value="slow" data-i18n="scroll-speed.slow"></option>
-                          <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
-                          <option value="fast" data-i18n="scroll-speed.fast"></option>
-                          <option value="fastest" data-i18n="scroll-speed.fastest"></option>
-                        </select>
-                      </div>
+                      <select id="scroll-speed" name="scroll-speed" class="form-control">
+                        <option value="slowest" data-i18n="scroll-speed.slowest"></option>
+                        <option value="slow" data-i18n="scroll-speed.slow"></option>
+                        <option value="medium" data-i18n="scroll-speed.medium" selected="selected"></option>
+                        <option value="fast" data-i18n="scroll-speed.fast"></option>
+                        <option value="fastest" data-i18n="scroll-speed.fastest"></option>
+                      </select>
                     </div>
                   </div>
+                </div>
+                <div class="form-group">
                   <label for="scroll-resumes" data-i18n="scroll-resumes"></label>
                   <div class="row">
                     <div class="col-xs-4 col-sm-3">
@@ -181,18 +183,18 @@
             </div>
             <div class="section">
               <h5 data-i18n="column-format-heading"></h5>
-              <label for="row-padding" data-i18n="row-padding"></label>
-              <div class="row">
-                <div class="col-xs-4 col-sm-3">
-                  <div class="form-group">
+              <div class="form-group">
+                <label for="row-padding" data-i18n="row-padding"></label>
+                <div class="row">
+                  <div class="col-xs-4 col-sm-3">
                     <input id="row-padding" name="row-padding" type="text" class="form-control" />
                   </div>
                 </div>
               </div>
-              <label for="column-padding" data-i18n="column-padding"></label>
-              <div class="row">
-                <div class="col-xs-4 col-sm-3">
-                  <div class="form-group">
+              <div class="form-group">
+                <label for="column-padding" data-i18n="column-padding"></label>
+                <div class="row">
+                  <div class="col-xs-4 col-sm-3">
                     <input id="column-padding" name="column-padding" type="text" class="form-control" />
                   </div>
                 </div>
