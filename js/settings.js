@@ -437,7 +437,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     var itemsToValidate = [
         { el: document.getElementById("url"),
           rules: "required|url",
-          fieldName: i18n.t("url") },
+          fieldName: i18n.t("url.label") },
         {
           el: document.getElementById("refresh"),
           rules: "required|numeric",
