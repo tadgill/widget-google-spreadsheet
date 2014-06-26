@@ -58,7 +58,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       $refreshInp:                   $("#refresh"),
       $scrollEnabledCB:              $("#scroll-enabled"),
       $scrollOptionsCtn:             $("#scroll-options"),
-      $scrollBySel:                  $("#scroll-by"),
       $scrollSpeedSel:               $("#scroll-speed"),
       $scrollResumesInp:             $("#scroll-resumes"),
       $rowPaddingInp:                $("#row-padding"),
@@ -350,9 +349,16 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     params += "&up_refresh=" + ($.trim(_el.$refreshInp.val()) * 1000);
 
     if (_el.$scrollEnabledCB.is(":checked")) {
-      params += "&up_scroll-enabled=true" +
-        "&up_scroll-by=" + _el.$scrollBySel.val() +
-        "&up_scroll-speed=" + _el.$scrollSpeedSel.val() +
+      params += "&up_scroll-enabled=true";
+      $("input[type='radio'][name='scroll-by']").each(function () {
+        var $sel = $(this);
+        if ($sel.is(":checked")) {
+          params += "&up_scroll-by=" + $sel.val();
+          return false;
+        }
+      });
+
+      params += "&up_scroll-speed=" + _el.$scrollSpeedSel.val() +
         "&up_scroll-resumes=" + ($.trim(_el.$scrollResumesInp.val()) * 1000);
     } else {
       params += "&up_scroll-enabled=false";
@@ -703,10 +709,25 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
           _el.$scrollEnabledCB.attr("checked", _prefs.getBool("scroll-enabled"));
 
           if (_prefs.getBool("scroll-enabled")) {
-            _el.$scrollBySel.val(_prefs.getString("scroll-by"));
+            $("input[type='radio'][name='scroll-by']").each(function () {
+              var $sel = $(this);
+              if ($sel.val() === _prefs.getString("scroll-by")) {
+                $sel.attr("checked", "checked");
+                return false;
+              }
+            });
             _el.$scrollSpeedSel.val(_prefs.getString("scroll-speed"));
             _el.$scrollResumesInp.val(_prefs.getInt("scroll-resumes") / 1000);
           } else {
+            // Set default radio button selected for Scroll By to be "continuous"
+            $("input[type='radio'][name='scroll-by']").each(function () {
+              var $sel = $(this);
+              if ($sel.val() === "continuous") {
+                $sel.attr("checked", "checked");
+                return false;
+              }
+            });
+
             // Set default scroll resume
             _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);
           }
@@ -750,6 +771,15 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
 
           // Set default data refresh
           _el.$refreshInp.val(DEFAULT_REFRESH);
+
+          // Set default radio button selected for Scroll By to be "continuous"
+          $("input[type='radio'][name='scroll-by']").each(function () {
+            var $sel = $(this);
+            if ($sel.val() === "continuous") {
+              $sel.attr("checked", "checked");
+              return false;
+            }
+          });
 
           // Set default scroll resume
           _el.$scrollResumesInp.val(DEFAULT_SCROLL_RESUME);

@@ -181,12 +181,14 @@
                           data-i18n="[data-content]scroll-by.tooltip">
                     <span class="glyphicons circle_question_mark"></span>
                   </button>
-                  <div class="row">
-                    <div class="col-xs-8">
-                      <select id="scroll-by" name="scroll-by" class="form-control">
-                        <option value="continuous" data-i18n="scroll-by.continuous" selected="selected"></option>
-                        <option value="page" data-i18n="scroll-by.page"></option>
-                      </select>
+                  <div class="form-group">
+                    <div class="radio">
+                      <label for="scroll-by-cont" data-i18n="scroll-by.continuous"></label>
+                      <input id="scroll-by-cont" type="radio" name="scroll-by" value="continuous">
+                    </div>
+                    <div class="radio">
+                      <label for="scroll-by-page" data-i18n="scroll-by.page"></label>
+                      <input id="scroll-by-page" type="radio" name="scroll-by" value="page">
                     </div>
                   </div>
                 </div>
