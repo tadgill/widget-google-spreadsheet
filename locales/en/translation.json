@@ -77,11 +77,12 @@
         "italic": "Italic"
       },
       "text": "Sample Text"
-    }
+    },
+    "validate-url": "Validate URL"
   },
   "validation": {
     "required": "__fieldName__ is a required field.",
-    "valid_url": "__fieldName__ must contain a valid URL.",
+    "valid_url": "Unable to validate URL for __fieldName__. Please un-check \"Validate URL\" to bypass validation. For more information on URL validation, please see the help file.",
     "numeric": "__fieldName__ must contain only numbers."
   }
 }

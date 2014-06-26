@@ -25,14 +25,31 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       "italic": false
     },
 
+    VALIDATIONS_MAP = {
+      "required": {
+        fn: RiseVision.Common.Validation.isValidRequired,
+        localize: "validation.required"
+      },
+      "url": {
+        fn: RiseVision.Common.Validation.isValidURL,
+        localize: "validation.valid_url"
+      },
+      "numeric": {
+        fn: RiseVision.Common.Validation.isValidNumber,
+        localize: "validation.numeric"
+      }
+    },
+
     // private variables
     _prefs = null, _pickerApiLoaded = false, _authScope,
-    _el, _fileID = null, _origin;
+    _el, _fileID = null, _origin, _validateUrl = true;
 
   function _cache() {
     _el = {
       $wrapperCtn:                   $(".wrapper"),
       $alertCtn:                     $("#settings-alert"),
+      $validateUrlCtn:               $("#validate-url-option"),
+      $validateUrlCB:                $("#validate-url"),
       $urlInp:                       $("#url"),
       $urlOptionsCtn:                $("div.url-options"),
       $sheetSel:                     $("#sheet"),
@@ -112,6 +129,81 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     return data;
   }
 
+  function _getRule (rule, $el, param) {
+    var ruleObj = $.extend({}, VALIDATIONS_MAP[rule]);
+
+    // Special handling of URL validation
+    if (rule === 'url'){
+      if ($el && typeof $el === 'object') {
+        ruleObj.activateFn = function () {
+          if (!$el.is(":visible")) {
+            $el.show();
+          }
+        }
+      }
+    }
+
+    ruleObj.param = param;
+
+    return ruleObj;
+  }
+
+  function _getItemsToValidate () {
+    var itemsToValidate = [],
+      urlInpRules = [_getRule("required")];
+
+    // check if a validation on the url value is necessary
+    if (_validateUrl) {
+      urlInpRules.push(_getRule("url", _el.$validateUrlCtn));
+    }
+
+    itemsToValidate.push({
+      el: _el.$urlInp[0],
+      rules: urlInpRules,
+      fieldName: i18n.t("url.label")
+    },{
+      el: _el.$refreshInp[0],
+      rules: [
+      _getRule("required"),
+      _getRule("numeric")
+      ],
+      fieldName: i18n.t("refresh.label")
+    });
+
+    if (_el.$scrollOptionsCtn.is(":visible")) {
+      itemsToValidate.push({
+        el: _el.$scrollResumesInp[0],
+        rules: [
+          _getRule("required"),
+          _getRule("numeric")
+        ],
+        fieldName: i18n.t("scroll-resumes.label")
+      });
+    }
+
+    if (_el.$rowPaddingInp.val() !== "") {
+      itemsToValidate.push({
+        el: _el.$rowPaddingInp[0],
+        rules: [
+          _getRule("numeric")
+        ],
+        fieldName: i18n.t("row-padding.label")
+      });
+    }
+
+    if (_el.$columnPaddingInp.val() !== "") {
+      itemsToValidate.push({
+        el: _el.$columnPaddingInp[0],
+        rules: [
+          _getRule("numeric")
+        ],
+        fieldName: i18n.t("column-padding.label")
+      });
+    }
+
+    return itemsToValidate;
+  }
+
   function _getSheets(fileID, callbackFn) {
     var option, href, sheets = [],
       api = SPREADSHEET_API.replace("{key}", fileID),
@@ -153,24 +245,52 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       });
   }
 
-  function _getValidationsMap() {
-    return {
-      "required": {
-        fn: RiseVision.Common.Validation.isValidRequired,
-        localize: "validation.required",
-        conditional: null
-      },
-      "url": {
-        fn: RiseVision.Common.Validation.isValidURL,
-        localize: "validation.valid_url",
-        conditional: null
-      },
-      "numeric": {
-        fn: RiseVision.Common.Validation.isValidNumber,
-        localize: "validation.numeric",
-        conditional: null
+  function _validateItem(item) {
+    var passed = true,
+      ruleLength = item.rules.length,
+      i, rule;
+
+    for (i = 0; i < ruleLength; i += 1) {
+      rule = item.rules[i];
+
+      // call this rule's validation function
+      if (rule.fn.apply(null,
+        [item.el, rule.param]) === false) {
+
+        passed = false;
+
+        // set the rule's failure message in the alert container
+        _el.$alertCtn.html(i18n.t(rule.localize,
+          { fieldName: item.fieldName }));
+
+        // if an activateFn was applied to this rule, call it (eg. URL validation)
+        if (rule.hasOwnProperty("activateFn") && typeof rule.activateFn === 'function') {
+          rule.activateFn.call(null);
+        }
+
+        break;
       }
-    };
+    }
+
+    return passed;
+  }
+
+  function _validate() {
+    var itemsToValidate = _getItemsToValidate(),
+      passed = true, i;
+
+    _el.$alertCtn.empty().hide();
+
+    if (itemsToValidate.length > 0) {
+      $.each(itemsToValidate, function (index, item) {
+        if(!_validateItem(item)){
+          passed = false;
+          return false;
+        }
+      });
+    }
+
+    return passed;
   }
 
   function _getAdditionalParams() {
@@ -410,78 +530,6 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     _createPicker();
   }
 
-  function _validateItem(item) {
-    var rules = item.rules.split('|'),
-      validationsMap = _getValidationsMap(),
-      alerts = document.getElementById("settings-alert"),
-      passed = true,
-      ruleLength = rules.length,
-      i, rule;
-
-    for (i = 0; i < ruleLength; i += 1) {
-      rule = rules[i];
-
-      if (validationsMap[rule].fn.apply(null,
-          [item.el, validationsMap[rule].conditional]) === false) {
-        passed = false;
-        alerts.innerHTML = i18n.t(validationsMap[rule].localize,
-          { fieldName: item.fieldName });
-        break;
-      }
-    }
-
-    return passed;
-  }
-
-  function _validate() {
-    var itemsToValidate = [
-        { el: document.getElementById("url"),
-          rules: "required|url",
-          fieldName: i18n.t("url.label") },
-        {
-          el: document.getElementById("refresh"),
-          rules: "required|numeric",
-          fieldName: i18n.t("refresh.label")
-        }
-      ],
-      passed = true, i;
-
-    if (_el.$scrollOptionsCtn.is(":visible")) {
-      itemsToValidate.push({
-        el: document.getElementById("scroll-resumes"),
-        rules: "required|numeric",
-        fieldName: i18n.t("scroll-resumes")
-      });
-    }
-
-    if (_el.$rowPaddingInp.val() !== "") {
-      itemsToValidate.push({
-        el: document.getElementById("row-padding"),
-        rules: "numeric",
-        fieldName: i18n.t("row-padding")
-      });
-    }
-
-    if (_el.$columnPaddingInp.val() !== "") {
-      itemsToValidate.push({
-        el: document.getElementById("column-padding"),
-        rules: "numeric",
-        fieldName: i18n.t("column-padding")
-      });
-    }
-
-    _el.$alertCtn.empty().hide();
-
-    for (i = 0; i < itemsToValidate.length; i += 1) {
-      if (!_validateItem(itemsToValidate[i])) {
-        passed = false;
-        break;
-      }
-    }
-
-    return passed;
-  }
-
   function _saveSettings() {
     var settings = null;
 
@@ -538,6 +586,10 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
 
     });
 
+    _el.$validateUrlCB.on("click", function (event) {
+      _validateUrl = $(this).is(":checked");
+    });
+
     $("input[name='cells']").change(function () {
       var val = $(this).val();
 
@@ -568,7 +620,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       _configureURL();
     });
 
-    _el.$scrollEnabledCB.on("click", function(event) {
+    _el.$scrollEnabledCB.on("click", function (event) {
       if ($(this).is(":checked")) {
         _el.$scrollOptionsCtn.show();
       } else {
@@ -591,6 +643,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       _bind();
 
       _el.$alertCtn.hide();
+      _el.$validateUrlCtn.hide();
       _el.$urlOptionsCtn.hide();
 
       //Request additional parameters from the Viewer.
