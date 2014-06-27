@@ -128,17 +128,17 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     return data;
   }
 
-  function _getRule (rule, $el, param) {
+  function _getRule(rule, $el, param) {
     var ruleObj = $.extend({}, VALIDATIONS_MAP[rule]);
 
     // Special handling of URL validation
-    if (rule === 'url'){
+    if (rule === 'url') {
       if ($el && typeof $el === 'object') {
         ruleObj.activateFn = function () {
           if (!$el.is(":visible")) {
             $el.show();
           }
-        }
+        };
       }
     }
 
@@ -147,7 +147,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
     return ruleObj;
   }
 
-  function _getItemsToValidate () {
+  function _getItemsToValidate() {
     var itemsToValidate = [],
       urlInpRules = [_getRule("required")];
 
@@ -160,11 +160,11 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
       el: _el.$urlInp[0],
       rules: urlInpRules,
       fieldName: i18n.t("url.label")
-    },{
+    }, {
       el: _el.$refreshInp[0],
       rules: [
-      _getRule("required"),
-      _getRule("numeric")
+        _getRule("required"),
+        _getRule("numeric")
       ],
       fieldName: i18n.t("refresh.label")
     });
@@ -254,7 +254,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
 
       // call this rule's validation function
       if (rule.fn.apply(null,
-        [item.el, rule.param]) === false) {
+          [item.el, rule.param]) === false) {
 
         passed = false;
 
@@ -282,7 +282,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
 
     if (itemsToValidate.length > 0) {
       $.each(itemsToValidate, function (index, item) {
-        if(!_validateItem(item)){
+        if (!_validateItem(item)) {
           passed = false;
           return false;
         }
@@ -832,7 +832,7 @@ RiseVision.GoogleSpreadsheet.Settings = (function ($, window, gadgets, i18n, gap
           $(".sticky-buttons").sticky({
             container : _el.$wrapperCtn,
             //top margin + border of wrapper
-            topSpacing : 55,
+            topSpacing : 56,
             getWidthFrom : _el.$wrapperCtn
           });
         });
