@@ -1,23 +1,35 @@
 {
   "settings": "Google Spreadsheet Settings",
-  "url": "Data URL*",
+  "url-heading": "URL",
+  "url": {
+    "label": "Spreadsheet URL (required)",
+    "tooltip": "Query data source URL of the spreadsheet that holds the data"
+  },
   "google-drive": "Google Drive",
   "cells": {
     "label": "Cells",
     "sheet": "Entire Sheet",
     "range": "Range"
   },
-  "range": "Range",
+  "range": {
+    "label": "Range",
+    "tooltip": "Range of cells in the format A1:B10"
+  },
   "sheet": "Worksheet",
-  "headerRows": "Number of Header Rows",
+  "headerRows": {
+    "label": "Number of Header Rows",
+    "tooltip": "Specify how many rows are header rows. These will be excluded from the data and assigned as column labels in the data table. If set to Auto, the spreadsheet will guess how many rows are header rows. Note that if all your columns are string data, the spreadsheet might have difficulty determining which rows are header rows without this parameter set to something other than Auto."
+  },
   "google-picker-fail": "To use this spreadsheet, it first needs to be published to the web. From the Google Spreadsheet menu, select <em>File > Publish to the web</em>, and then click the <em>Start Publishing</em> button. Once done, select your file from the Google Drive link again.",
   "refresh": {
     "label": "Data Refresh Interval (seconds)",
-    "tooltip": "Rate at which you want your data to refresh"
+    "tooltip": "How often to check the spreadsheet for new data"
   },
+  "scrolling-heading": "Scrolling",
   "scroll-enabled": "Scroll Enabled",
   "scroll-by": {
     "label": "Scroll By",
+    "tooltip": "How to scroll the data if not all of it is visible",
     "continuous": "Continuous",
     "page": "Page"
   },
@@ -29,21 +41,22 @@
     "fast": "Fast",
     "fastest": "Fastest"
   },
-  "scroll-resumes": "Scroll Resumes (seconds)",
-  "row-padding": "Row Padding (pixels)",
-  "column-padding": "Column Padding (pixels)",
-  "header": {
-    "font": "Column Header Font",
-    "font-size": "Column Header Font Size",
-    "color": "Column Header Color",
-    "text": "Column Header Sample Text"
+  "scroll-resumes": {
+    "label": "Scroll Resumes (seconds)",
+    "tooltip": "Number of seconds to pause after scrolling is stopped by a touch"
   },
-  "data": {
-    "font": "Data Font",
-    "font-size": "Data Font Size",
-    "color": "Data Color",
-    "text": "Data Sample Text"
+  "column-format-heading": "Column / Row Format",
+  "row-padding": {
+    "label": "Row Padding (pixels)",
+    "tooltip": "Amount of space between rows"
   },
+  "column-padding": {
+    "label": "Column Padding (pixels)",
+    "tooltip": "Amount of space between columns"
+  },
+  "header-heading": "Header Format",
+  "data-heading": "Data Format",
+  "other-heading": "Other",
   "row-color": "Row Color",
   "alt-row-color": "Alternate Row Color",
   "background-color": "Background Color",
@@ -54,15 +67,22 @@
       "help": "Help",
       "apply": "Apply"
     },
-    "font-variants":{
-      "label": "Font Variants",
-      "bold": "Bold",
-      "italic": "Italic"
-    }
+    "font-styling": {
+      "type": "Font Type",
+      "size": "Font Size",
+      "color": "Font Color",
+      "variants":{
+        "label": "Font Variants",
+        "bold": "Bold",
+        "italic": "Italic"
+      },
+      "text": "Sample Text"
+    },
+    "validate-url": "Validate URL"
   },
   "validation": {
     "required": "__fieldName__ is a required field.",
-    "valid_url": "__fieldName__ must contain a valid URL.",
+    "valid_url": "Unable to validate URL for __fieldName__. Please un-check \"Validate URL\" to bypass validation. For more information on URL validation, please see the help file.",
     "numeric": "__fieldName__ must contain only numbers."
   }
 }
