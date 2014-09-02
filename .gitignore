@@ -1,7 +1,7 @@
 *.log
 src/components/
 node_modules/
-test_reports/
+dist/
 coverage/
 src/config/config.js
 tmp
