@@ -4,10 +4,68 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Google Spreadsheet Settings</title>
 
-  <link rel="stylesheet" href="//s3.amazonaws.com/rise-common-test/styles/glyphicons/glyphicons.min.css">
+  <!-- build:css css/all.min.css -->
+  <link rel="stylesheet" href="components/common-style/dist/css/rise.min.css">
+  <link rel="stylesheet" href="components/spectrum/spectrum.css">
+  <link rel="stylesheet" href="components/rv-bootstrap-formhelpers/dist/css/rv-bootstrap-formhelpers.css">
+  <!-- endbuild -->
+
+  <!-- build:js settings/google-spreadsheet.min.js -->
+  <script src="components/angular/angular.js"></script>
+  <script src="components/angular-translate/angular-translate.js"></script>
+  <script src="components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+  <script src="components/jquery/dist/jquery.min.js"></script>
+  <script src="components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
+  <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+  <script src="config/config.js"></script>
+  <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:e2egadgets -->
+  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
+  <!-- endbuild -->
+
 
 </head>
-<body>
-
+<body ng-app="risevision.widget.googleSpreadsheet.settings" ng-controller="settingsController">
+  <div class="widget">
+    <div class="overlay"></div>
+    <div class="settings">
+      <div class="settings-center">
+        <div class="wrapper container-fluid modal-content">
+          <div class="modal-header">
+            <h2 id="settings-title"> {{"settings" | translate }}
+              <button id="settings-close" type="button" class="close">
+                <span>&times;</span>
+                <span class="sr-only">Close</span>
+              </button>
+            </h2>
+            <div class="sticky-wrapper">
+              <div class="btn-toolbar sticky-buttons">
+                <button id="save" class="btn btn-success btn-fixed-width" type="button">
+                  <span>{{'common.buttons.save' | translate}}</span>
+                  <i class="fa fa-white fa-check icon-right"></i>
+                </button>
+                <button id="cancel" class="btn btn-primary" type="button">
+                  <span>{{'common.buttons.cancel' | translate}}</span>
+                  <i class="fa fa-white fa-times icon-right"></i>
+                </button>
+                <button id="help" class="btn btn-rv-help" type="button">
+                  <span>{{'common.buttons.help' | translate}}</span>
+                  <i class="fa fa-question-circle icon-right"></i>
+                </button>
+                <a type="button" class="btn btn-rv-help"
+                   href="https://github.com/Rise-Vision/style-guide" target="_blank">
+                  Contribute <i class="fa fa-github fa-lg "></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div id="settings-alert" class="alert alert-danger"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
