@@ -22,12 +22,15 @@
   <script src="settings/settings-app.js"></script>
   <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
   <script src="settings/ctr-google-spreadsheet-settings.js"></script>
+
+  <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
+  <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
+  <script src="components/google-spreadsheet-controls/dist/js/angular/google-spreadsheet-controls.js"></script>
   <!-- endbuild -->
 
   <!-- build:e2egadgets -->
   <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
   <!-- endbuild -->
-
 
 </head>
 <body ng-app="risevision.widget.googleSpreadsheet.settings" ng-controller="settingsController">
@@ -65,9 +68,15 @@
             </div>
           </div>
           <div id="settings-alert" class="alert alert-danger"></div>
+          <form role="form">
+            <spreadsheet-controls spreadsheet="settings.additionalParams.spreadsheet"></spreadsheet-controls>
+          </form>
         </div>
       </div>
     </div>
   </div>
+
+  <script src="//apis.google.com/js/client.js?onload=handleClientJSLoad"></script>
+
 </body>
 </html>
