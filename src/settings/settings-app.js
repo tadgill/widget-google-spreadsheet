@@ -1,6 +1,8 @@
 angular.module("risevision.widget.googleSpreadsheet.settings",
   ["risevision.widget.common",
-    "risevision.widget.common.translate"]);
+  "risevision.widget.common.translate",
+  "risevision.widget.common.tooltip",
+  "risevision.widget.common.google-spreadsheet-controls"]);
 
 angular.module("risevision.widget.common.translate", ["pascalprecht.translate"])
   .config(["$translateProvider", function ($translateProvider) {
