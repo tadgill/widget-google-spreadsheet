@@ -19,7 +19,9 @@
   <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
   <script src="config/config.js"></script>
+  <script src="settings/settings-app.js"></script>
   <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
+  <script src="settings/ctr-google-spreadsheet-settings.js"></script>
   <!-- endbuild -->
 
   <!-- build:e2egadgets -->
@@ -33,7 +35,7 @@
     <div class="overlay"></div>
     <div class="settings">
       <div class="settings-center">
-        <div class="wrapper container-fluid modal-content">
+        <div class="wrapper container-fluid modal-content" ng-controller="spreadsheetSettingsController">
           <div class="modal-header">
             <h2 id="settings-title"> {{"settings" | translate }}
               <button id="settings-close" type="button" class="close">
@@ -44,19 +46,19 @@
             <div class="sticky-wrapper">
               <div class="btn-toolbar sticky-buttons">
                 <button id="save" class="btn btn-success btn-fixed-width" type="button">
-                  <span>{{'common.buttons.save' | translate}}</span>
+                  <span>{{"common.buttons.save" | translate}}</span>
                   <i class="fa fa-white fa-check icon-right"></i>
                 </button>
                 <button id="cancel" class="btn btn-primary" type="button">
-                  <span>{{'common.buttons.cancel' | translate}}</span>
+                  <span>{{"common.buttons.cancel" | translate}}</span>
                   <i class="fa fa-white fa-times icon-right"></i>
                 </button>
                 <button id="help" class="btn btn-rv-help" type="button">
-                  <span>{{'common.buttons.help' | translate}}</span>
+                  <span>{{"common.buttons.help" | translate}}</span>
                   <i class="fa fa-question-circle icon-right"></i>
                 </button>
-                <a type="button" class="btn btn-rv-help"
-                   href="https://github.com/Rise-Vision/style-guide" target="_blank">
+                <a type="button" class="btn btn-rv-help" title="Contribute on Github"
+                   href="https://github.com/Rise-Vision/widget-google-spreadsheet" target="_blank">
                   Contribute <i class="fa fa-github fa-lg "></i>
                 </a>
               </div>
