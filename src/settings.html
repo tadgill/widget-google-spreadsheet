@@ -26,6 +26,7 @@
   <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
   <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
   <script src="components/google-spreadsheet-controls/dist/js/angular/google-spreadsheet-controls.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/scroll-setting.js"></script>
   <!-- endbuild -->
 
   <!-- build:e2egadgets -->
@@ -70,6 +71,7 @@
           <div id="settings-alert" class="alert alert-danger"></div>
           <form role="form">
             <spreadsheet-controls spreadsheet="settings.additionalParams.spreadsheet"></spreadsheet-controls>
+            <scroll-setting scroll="settings.additionalParams.scroll"></scroll-setting>
           </form>
         </div>
       </div>
