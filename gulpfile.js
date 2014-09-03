@@ -139,25 +139,18 @@
   gulp.task("html:e2e", factory.htmlE2E());
   gulp.task("webdriver_update", factory.webdriveUpdate());
   gulp.task("e2e:server-close", factory.testServerClose());
-  gulp.task("test:ensure-directory", factory.ensureReportDirectory());
-  gulp.task("test:e2e:ng:core", factory.testE2EAngular());
   gulp.task("test:metrics", factory.metrics());
 
   gulp.task("e2e:server", ["config", "html:e2e"], factory.testServer());
 
-  gulp.task("test:e2e:settings", ["webdriver_update"], function (cb) {
-    return runSequence("e2e:server", "test:e2e:ng:core",
-      function (err) {
-        gulp.run("e2e:server-close");
-        cb(err);
-      });
+  gulp.task("test:e2e:settings", ["webdriver_update", "html:e2e", "e2e:server"], factory.testE2EAngular());
+
+  gulp.task("test", function(cb) {
+    runSequence("test:e2e:settings", "e2e:server-close", "test:metrics", cb);
   });
 
-  gulp.task("test", ["build"], function (cb) {
-    runSequence("test:e2e:settings", "test:metrics", cb);
+  gulp.task("default", function(cb) {
+    runSequence("test", "build", cb);
   });
-
-  gulp.task("default", ["test"]);
-
 
 })();
