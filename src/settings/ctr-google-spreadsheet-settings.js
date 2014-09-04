@@ -7,6 +7,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
   .value("defaultSettings", {
     params: {},
     additionalParams: {
-      spreadsheet: {}
+      spreadsheet: {},
+      scroll: {}
     }
   });
