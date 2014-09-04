@@ -9,6 +9,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
     additionalParams: {
       spreadsheet: {},
       scroll: {},
-      table: {}
+      table: {},
+      background: {}
     }
   });
