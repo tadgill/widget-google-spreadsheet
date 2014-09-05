@@ -44,6 +44,8 @@
 
   <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
   <script src="components/google-spreadsheet-controls/dist/js/angular/google-spreadsheet-controls.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/column-selector.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/column-setting.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/scroll-setting.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/table-setting.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/background-setting.js"></script>
@@ -91,6 +93,8 @@
           <div id="settings-alert" class="alert alert-danger"></div>
           <form role="form">
             <spreadsheet-controls spreadsheet="settings.additionalParams.spreadsheet"></spreadsheet-controls>
+            <column-selector columns="settings.additionalParams.columns" column-names="sheetColumns"
+                             ng-model="columnselector"></column-selector>
             <scroll-setting scroll="settings.additionalParams.scroll"></scroll-setting>
             <table-setting table="settings.additionalParams.table"></table-setting>
             <background-setting background="settings.additionalParams.background"></background-setting>
