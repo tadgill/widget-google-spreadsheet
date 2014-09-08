@@ -1,5 +1,6 @@
 angular.module("risevision.widget.googleSpreadsheet.settings",
   ["risevision.widget.common",
+  "risevision.widget.common.visualization",
   "risevision.widget.common.translate",
   "risevision.widget.common.tooltip",
   "risevision.widget.common.google-spreadsheet-controls",
