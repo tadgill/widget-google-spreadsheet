@@ -27,6 +27,7 @@
   <script src="settings/settings-app.js"></script>
   <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
   <script src="settings/ctr-google-spreadsheet-settings.js"></script>
+  <script src="settings/svc-columns-settings.js"></script>
 
   <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/alignment.js"></script>
@@ -98,8 +99,7 @@
           <div id="settings-alert" class="alert alert-danger"></div>
           <form role="form">
             <spreadsheet-controls spreadsheet="settings.additionalParams.spreadsheet"></spreadsheet-controls>
-            <column-selector columns="settings.additionalParams.columns" column-names="sheetColumns"
-                             ng-model="columnselector"></column-selector>
+            <column-selector columns="settings.additionalParams.columns" column-names="sheetColumns"></column-selector>
             <scroll-setting scroll="settings.additionalParams.scroll"></scroll-setting>
             <table-setting table="settings.additionalParams.table"></table-setting>
             <background-setting background="settings.additionalParams.background"></background-setting>
