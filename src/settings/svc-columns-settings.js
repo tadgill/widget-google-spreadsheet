@@ -32,6 +32,7 @@
           }
 
           columnNames.push({
+            id: dataTable.getColumnId(columnIndexes[i]),
             name: columnLabel,
             type: dataTable.getColumnType(columnIndexes[i])
           });

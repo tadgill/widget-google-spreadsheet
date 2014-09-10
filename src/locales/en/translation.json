@@ -1,21 +1,11 @@
 {
   "settings": "Google Spreadsheet Settings",
-  "spreadsheet-heading": "Spreadsheet",
   "common": {
     "buttons" : {
       "save": "Save",
       "apply": "Apply",
       "cancel": "Cancel",
       "help": "Help"
-    },
-    "font-variants": {
-      "label": "Font Variants",
-      "bold": "Bold",
-      "italic": "Italic"
     }
-  },
-  "validation": {
-    "required": "__fieldName__ is a required field.",
-    "numeric": "__fieldName__ must contain only numbers."
   }
 }
