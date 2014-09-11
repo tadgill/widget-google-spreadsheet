@@ -21,7 +21,11 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
             // reset the column selector
             $scope.sheetColumns = [];
-            $scope.settings.additionalParams.columns = [];
+
+            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
+              // widget settings have already gone through initialization, safe to reset columns array
+              $scope.settings.additionalParams.columns = [];
+            }
 
             if (newUrl !== "") {
               $scope.getColumns(newUrl);
