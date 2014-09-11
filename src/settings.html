@@ -11,6 +11,12 @@
   <link rel="stylesheet" href="components/rv-bootstrap-formhelpers/dist/css/rv-bootstrap-formhelpers.css">
   <!-- endbuild -->
 
+  <style type="text/css">
+    .text-validation {
+      margin-top: -15px;
+    }
+  </style>
+
   <!-- build:js js/settings.min.js -->
   <script src="components/angular/angular.js"></script>
   <script src="components/angular-translate/angular-translate.js"></script>
@@ -77,15 +83,18 @@
             </h2>
             <div class="sticky-wrapper">
               <div class="btn-toolbar sticky-buttons">
-                <button id="save" class="btn btn-success btn-fixed-width" type="button">
+                <button id="save" class="btn btn-success btn-fixed-width" type="button"
+                        ng-click="saveSettings();" ng-disabled="settingsForm.$invalid">
                   <span>{{"common.buttons.save" | translate}}</span>
                   <i class="fa fa-white fa-check icon-right"></i>
                 </button>
-                <button id="cancel" class="btn btn-primary" type="button">
+                <button id="cancel" class="btn btn-primary" type="button"
+                        ng-click="closeSettings();">
                   <span>{{"common.buttons.cancel" | translate}}</span>
                   <i class="fa fa-white fa-times icon-right"></i>
                 </button>
-                <button id="help" class="btn btn-rv-help" type="button">
+                <button id="help" class="btn btn-rv-help" type="button"
+                        href="http://www.risevision.com/help/users/what-are-gadgets/free-gadgets/rise-vision-google-spreadsheet/">
                   <span>{{"common.buttons.help" | translate}}</span>
                   <i class="fa fa-question-circle icon-right"></i>
                 </button>
@@ -96,9 +105,14 @@
               </div>
             </div>
           </div>
-          <div id="settings-alert" class="alert alert-danger"></div>
-          <form role="form">
-            <spreadsheet-controls spreadsheet="settings.additionalParams.spreadsheet"></spreadsheet-controls>
+          <form role="form" name="settingsForm">
+            <div ng-class="{'form-group':true, 'has-error':settingsForm.spreadsheet.$invalid}">
+              <spreadsheet-controls name="spreadsheet" spreadsheet="settings.additionalParams.spreadsheet"
+                                    ng-model="spreadsheetselector" required></spreadsheet-controls>
+              <p class="text-danger text-validation" ng-show="settingsForm.spreadsheet.$error.required">
+                {{"validation.spreadsheet.required" | translate}}
+              </p>
+            </div>
             <column-selector columns="settings.additionalParams.columns" column-names="sheetColumns"></column-selector>
             <scroll-setting scroll="settings.additionalParams.scroll"></scroll-setting>
             <table-setting table="settings.additionalParams.table"></table-setting>

@@ -1,11 +1,8 @@
 {
   "settings": "Google Spreadsheet Settings",
-  "common": {
-    "buttons" : {
-      "save": "Save",
-      "apply": "Apply",
-      "cancel": "Cancel",
-      "help": "Help"
+  "validation": {
+    "spreadsheet": {
+      "required": "Please choose a spreadsheet."
     }
   }
 }
