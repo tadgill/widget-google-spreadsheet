@@ -10,7 +10,7 @@
       function configureColumns(response) {
         var dataTable = response.getDataTable(),
           columnNames = [],
-          columnIndexes = [], cellValue, columnLabel, i, j;
+          columnIndexes = [], cellValue, columnLabel, columnId, i, j;
 
         // narrow down actual columns being used
         for (i = 0; i < dataTable.getNumberOfColumns(); i += 1) {
@@ -31,8 +31,12 @@
             columnLabel = dataTable.getColumnId(columnIndexes[i]);
           }
 
+          // create an id that can be referenced again when restoring saved widget settings
+          columnId = dataTable.getColumnId(columnIndexes[i]) + "_" + dataTable.getColumnType(columnIndexes[i]) +
+            "_" + columnLabel;
+
           columnNames.push({
-            id: dataTable.getColumnId(columnIndexes[i]),
+            id: columnId,
             name: columnLabel,
             type: dataTable.getColumnType(columnIndexes[i])
           });
