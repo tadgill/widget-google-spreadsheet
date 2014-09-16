@@ -60,7 +60,7 @@
       expect(element(by.css("form[name=settingsForm].ng-invalid")).isPresent()).
         to.eventually.be.true;
 
-      expect(element(by.css("form[name=settingsform].ng-valid")).isPresent()).
+      expect(element(by.css("form[name=settingsForm].ng-valid")).isPresent()).
         to.eventually.be.false;
 
       // the only validation error is associated with spreadsheet controls and is a "required" validation
@@ -73,8 +73,143 @@
         to.eventually.be.true;
     });
 
-    //TODO: Provide fake data and use mock visualization api to test saving and restoring settings
+    it("Should show and populate controls and column selector by selecting a published file", function () {
+      // open dialog
+      element(by.css(".btn-google-drive")).click();
 
+      // simulate picking a file
+      browser.executeScript(function () {
+        window.pickFiles([{
+          id: "published",
+          name: "Rise Training Spreadsheet Example",
+          url: "https://test-published/"
+        }]);
+      });
+
+      // spreadsheet controls should show
+      expect(element(by.id("spreadsheet-controls")).isDisplayed()).
+        to.eventually.not.be.null;
+
+      // spreadsheet document hyperlink should show
+      expect(element(by.id("spreadsheet")).isDisplayed()).
+        to.eventually.be.true;
+
+      // spreadsheet hyperlink href value should be the published one
+      expect(element(by.css("#spreadsheet a")).getAttribute("href")).
+        to.eventually.equal("https://test-published/");
+
+      // column selector has 3 options (4 counting internal default)
+      expect(element.all(by.css("#column-selector option")).count()).
+        to.eventually.equal(4);
+
+    });
+
+    it("Should show valid form", function () {
+      // open dialog
+      element(by.css(".btn-google-drive")).click();
+
+      // simulate picking a file
+      browser.executeScript(function () {
+        window.pickFiles([{
+          id: "published",
+          name: "Rise Training Spreadsheet Example",
+          url: "https://test-published/"
+        }]);
+      });
+
+      expect(element(by.css("form[name=settingsForm].ng-invalid")).isPresent()).
+        to.eventually.be.false;
+
+      expect(element(by.css("form[name=settingsForm].ng-valid")).isPresent()).
+        to.eventually.be.true;
+
+      // the only validation error is associated with spreadsheet controls and is a "required" validation
+      // should initially show
+      expect(element(by.css(".text-danger")).isDisplayed()).
+        to.eventually.be.false;
+
+      // save button should be enabled
+      expect(element(by.css("button#save[disabled=disabled")).isPresent()).
+        to.eventually.be.false;
+    });
+
+    it("Should correctly save settings", function (done) {
+      var settings = {
+        params: {},
+        additionalParams: {
+          "spreadsheet": {
+            "fileId":"published",
+            "url":"https://test=published&sheet=test1&headers=-1",
+            "sheetIndex":0,
+            "cells":"sheet",
+            "range":"",
+            "headerRow":"-1",
+            "refresh":"60",
+            "docName":"Test File",
+            "docURL":"https://test-published"
+          },
+          "columns": [],
+          "scroll": {
+            "by":"none",
+            "speed":"medium",
+            "pause":"5"
+          },
+          "table": {
+            "colHeaderFont": {
+              "font": {
+                "family":"Verdana"
+              },
+              "size":"20",
+              "bold":false,
+              "italic":false,
+              "underline":false,
+              "color":"black",
+              "highlightColor":"transparent",
+              "align":"left"
+            },
+            "dataFont": {
+              "font": {
+                "family":"Verdana"
+              },
+              "size":"20",
+              "bold":false,
+              "italic":false,
+              "underline":false,
+              "color":"black",
+              "highlightColor":"transparent",
+              "align":"left"
+            },
+            "rowColor":"transparent",
+            "altRowColor":"transparent",
+            "rowPadding":"0",
+            "colPadding":"0"
+          },
+          "background": {
+            "color": "transparent"
+          }
+        }
+      };
+
+      // open dialog
+      element(by.css(".btn-google-drive")).click();
+
+      // simulate picking a file
+      browser.executeScript(function () {
+        window.pickFiles([{
+          id: "published",
+          name: "Test File",
+          url: "https://test-published"
+        }]);
+      });
+
+      element(by.id("save")).click();
+
+      expect(browser.executeScript("return window.result")).to.eventually.deep.equal(
+        {
+          'additionalParams': JSON.stringify(settings.additionalParams),
+          'params': '?'
+        });
+    });
 
   });
 

@@ -136,7 +136,16 @@
     runSequence(["clean", "config"], ["html", "css", "fonts", "i18n"], cb);
   });
 
-  gulp.task("html:e2e", factory.htmlE2E());
+  gulp.task("html:e2e",
+    factory.htmlE2E({
+      e2eAngularMocks: "components/angular-mocks/angular-mocks.js",
+      e2eVisualization: "../node_modules/widget-tester/mocks/visualization-api-mock.js",
+      e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
+      e2eSpreadsheetHTTP: "../node_modules/widget-tester/mocks/spreadsheet-controls-http-mock.js",
+      e2eTestApp: "../test/e2e/settings-app.js",
+      e2eAppReplace: "../test/e2e/settings-app-replace.js"
+    }));
+
   gulp.task("webdriver_update", factory.webdriveUpdate());
   gulp.task("e2e:server-close", factory.testServerClose());
   gulp.task("test:metrics", factory.metrics());
