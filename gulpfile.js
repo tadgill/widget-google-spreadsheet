@@ -146,6 +146,23 @@
       e2eAppReplace: "../test/e2e/settings-app-replace.js"
     }));
 
+  gulp.task("test:unit:ng", factory.testUnitAngular(
+    {testFiles: [
+      "src/components/q/q.js",
+      "src/components/angular/angular.js",
+      "src/components/angular-translate/angular-translate.js",
+      "src/components/angular-translate-loader-static-files/angular-translate-loader-static-files.js",
+      "src/components/angular-route/angular-route.js",
+      "src/components/angular-mocks/angular-mocks.js",
+      "node_modules/widget-tester/mocks/common-mock.js",
+      "src/components/widget-settings-ui-core/dist/*.js",
+      "src/config/test.js",
+      "src/settings/settings-app.js",
+      "src/settings/**/*.js",
+      "test/unit/mock-modules/settings-modules.js",
+      "test/unit/**/*spec.js"]}
+  ));
+
   gulp.task("webdriver_update", factory.webdriveUpdate());
   gulp.task("e2e:server-close", factory.testServerClose());
   gulp.task("test:metrics", factory.metrics());
@@ -155,7 +172,7 @@
   gulp.task("test:e2e:settings", ["webdriver_update", "html:e2e", "e2e:server"], factory.testE2EAngular());
 
   gulp.task("test", function(cb) {
-    runSequence("test:e2e:settings", "e2e:server-close", "test:metrics", cb);
+    runSequence("test:unit:ng", "test:e2e:settings", "e2e:server-close", "test:metrics", cb);
   });
 
   gulp.task("default", function(cb) {
