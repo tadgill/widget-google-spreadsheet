@@ -19,14 +19,11 @@
   var path = require("path");
   var rename = require("gulp-rename");
   var factory = require("widget-tester").gulpTaskFactory;
+  var rubySass = require('gulp-ruby-sass');
 
   var appJSFiles = [
     "src/**/*.js",
     "!./src/components/**/*"
-  ];
-
-  var cssFiles = [
-    "src/css/**/*.css"
   ];
 
   var languages = fs.readdirSync("src/locales")
@@ -64,26 +61,26 @@
   gulp.task("lint", function() {
     return gulp.src(appJSFiles)
       .pipe(jshint())
-      .pipe(jshint.reporter("jshint-stylish"));
-    // .pipe(jshint.reporter("fail"));
+      .pipe(jshint.reporter("jshint-stylish"))
+      .pipe(jshint.reporter("fail"));
   });
 
-  gulp.task("html", ["lint"], function () {
+  gulp.task("source", ["lint"], function () {
     return gulp.src(['./src/*.html'])
       .pipe(usemin({
-        js: [uglify({
-          mangle:true,
-          outSourceMap: false // source map generation doesn't seem to function correctly
-        })]
+        css: [minifyCSS(), 'concat'],
+        js: [uglify()]
       }))
       .pipe(gulp.dest("dist/"));
   });
 
-  gulp.task("css", function () {
-    return gulp.src(cssFiles)
-      .pipe(minifyCSS({keepBreaks:true}))
-      .pipe(concat("all.min.css"))
-      .pipe(gulp.dest("dist/css"));
+  gulp.task("widget-styles", function () {
+    return gulp.src("src/widget/styles/*.scss")
+      .pipe(rubySass({
+        style: "expanded",
+        precision: 10
+      }))
+      .pipe(gulp.dest("src/widget/styles"));
   });
 
   gulp.task("fonts", function() {
@@ -132,8 +129,8 @@
     runSequence("json-move", "json-combine", cb);
   });
 
-  gulp.task('build', function (cb) {
-    runSequence(["clean", "config"], ["html", "css", "fonts", "i18n"], cb);
+  gulp.task("build", function (cb) {
+    runSequence(["clean", "config", "widget-styles"], ["source", "fonts", "i18n"], cb);
   });
 
   gulp.task("html:e2e",
@@ -171,8 +168,13 @@
 
   gulp.task("test:e2e:settings", ["webdriver_update", "html:e2e", "e2e:server"], factory.testE2EAngular());
 
-  gulp.task("test", function(cb) {
+  gulp.task("test", ["widget-styles"], function(cb) {
     runSequence("test:unit:ng", "test:e2e:settings", "e2e:server-close", "test:metrics", cb);
+  });
+
+  gulp.task("dev",function(){
+    console.log("watching ./src/**/* for changes");
+    gulp.watch("./src/**/*", ["build"]);
   });
 
   gulp.task("default", function(cb) {

@@ -181,8 +181,7 @@
             },
             "rowColor":"transparent",
             "altRowColor":"transparent",
-            "rowPadding":"0",
-            "colPadding":"0"
+            "rowPadding":"0"
           },
           "background": {
             "color": "transparent"
