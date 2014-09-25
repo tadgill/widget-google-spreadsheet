@@ -17,57 +17,6 @@
     }
   </style>
 
-  <!-- build:js js/settings.min.js -->
-  <script src="components/angular/angular.js"></script>
-  <script src="components/angular-translate/angular-translate.js"></script>
-  <script src="components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
-  <script src="components/jquery/dist/jquery.min.js"></script>
-
-  <script src="components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
-  <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-  <script src="components/bootstrap-select/bootstrap-select.js"></script>
-  <script src="components/rv-bootstrap-formhelpers/dist/js/rv-bootstrap-formhelpers.js"></script>
-  <script src="components/spectrum/spectrum.js"></script>
-
-  <script src="config/config.js"></script>
-  <script src="settings/settings-app.js"></script>
-  <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
-  <script src="settings/ctr-google-spreadsheet-settings.js"></script>
-  <script src="settings/svc-columns-settings.js"></script>
-
-  <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/alignment.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/alignment.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/color-picker.js"></script>
-
-  <script src="components/widget-settings-ui-components/dist/js/url-field.js"></script>
-  <script src="components/bootstrap-form-components/dist/js/bootstrap-font-picker.js"></script>
-  <script src="components/bootstrap-form-components/dist/js/angular/bootstrap-font-picker.js"></script>
-  <script src="components/bootstrap-form-components/dist/js/bootstrap-font-size-picker.js"></script>
-  <script src="components/bootstrap-form-components/dist/js/angular/bootstrap-font-size-picker.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/font-style.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/font-style.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/font-setting.js"></script>
-
-  <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
-  <script src="components/google-spreadsheet-controls/dist/js/angular/google-spreadsheet-controls.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/column-selector.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/column-setting.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/scroll-setting.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/table-setting.js"></script>
-  <script src="components/widget-settings-ui-components/dist/js/angular/background-setting.js"></script>
-  <!-- endbuild -->
-
-  <!-- build:e2eTestApp -->
-  <!-- endbuild -->
-
-  <!-- build:e2eAngularMocks -->
-  <!-- endbuild -->
-
-  <!-- build:e2egadgets -->
-  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
-  <!-- endbuild -->
-
 </head>
 <body ng-app="risevision.widget.googleSpreadsheet.settings" ng-controller="settingsController">
   <div class="widget">
@@ -123,6 +72,62 @@
       </div>
     </div>
   </div>
+
+  <!-- build:e2ejQuery -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:e2eAngular -->
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:js js/settings.min.js -->
+  <script src="components/angular-translate/angular-translate.js"></script>
+  <script src="components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+  <script src="components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
+  <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+  <script src="components/bootstrap-select/bootstrap-select.js"></script>
+  <script src="components/rv-bootstrap-formhelpers/dist/js/rv-bootstrap-formhelpers.js"></script>
+  <script src="components/spectrum/spectrum.js"></script>
+
+  <script src="config/config.js"></script>
+  <script src="settings/settings-app.js"></script>
+  <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
+  <script src="settings/ctr-google-spreadsheet-settings.js"></script>
+  <script src="settings/svc-columns-settings.js"></script>
+
+  <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/alignment.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/alignment.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/color-picker.js"></script>
+
+  <script src="components/widget-settings-ui-components/dist/js/url-field.js"></script>
+  <script src="components/bootstrap-form-components/dist/js/bootstrap-font-picker.js"></script>
+  <script src="components/bootstrap-form-components/dist/js/angular/bootstrap-font-picker.js"></script>
+  <script src="components/bootstrap-form-components/dist/js/bootstrap-font-size-picker.js"></script>
+  <script src="components/bootstrap-form-components/dist/js/angular/bootstrap-font-size-picker.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/font-style.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/font-style.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/font-setting.js"></script>
+
+  <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
+  <script src="components/google-spreadsheet-controls/dist/js/angular/google-spreadsheet-controls.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/column-selector.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/column-setting.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/scroll-setting.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/table-setting.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/background-setting.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:e2eTestApp -->
+  <!-- endbuild -->
+
+  <!-- build:e2eAngularMocks -->
+  <!-- endbuild -->
+
+  <!-- build:e2egadgets -->
+  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
+  <!-- endbuild -->
 
   <script src="//s3.amazonaws.com/rise-common/scripts/i18next/i18next.min.js"></script>
 
