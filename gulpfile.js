@@ -19,7 +19,8 @@
   var path = require("path");
   var rename = require("gulp-rename");
   var factory = require("widget-tester").gulpTaskFactory;
-  var rubySass = require('gulp-ruby-sass');
+  var sass = require('gulp-sass');
+  var sourcemaps = require("gulp-sourcemaps");
 
   var appJSFiles = [
     "src/**/*.js",
@@ -68,17 +69,16 @@
   gulp.task("source", ["lint"], function () {
     return gulp.src(['./src/*.html'])
       .pipe(usemin({
-        css: [minifyCSS(), 'concat'],
-        js: [uglify()]
+        css: [sourcemaps.init(), minifyCSS(), sourcemaps.write()],
+        js: [sourcemaps.init(), uglify(), sourcemaps.write()]
       }))
       .pipe(gulp.dest("dist/"));
   });
 
   gulp.task("widget-styles", function () {
     return gulp.src("src/widget/styles/*.scss")
-      .pipe(rubySass({
-        style: "expanded",
-        precision: 10
+      .pipe(sass({
+        errLogToConsole: true
       }))
       .pipe(gulp.dest("src/widget/styles"));
   });
