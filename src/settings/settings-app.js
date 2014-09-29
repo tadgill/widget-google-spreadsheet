@@ -7,7 +7,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings",
   "risevision.widget.common.column-selector",
   "risevision.widget.common.scroll-setting",
   "risevision.widget.common.table-setting",
-  "risevision.widget.common.background-setting"]);
+  "risevision.widget.common.background-setting",
+  "risevision.widget.common.widget-button-toolbar"]);
 
 angular.module("risevision.widget.common.translate", ["pascalprecht.translate"])
   .config(["$translateProvider", function ($translateProvider) {

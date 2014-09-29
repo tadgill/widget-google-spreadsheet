@@ -32,27 +32,10 @@
               </button>
             </h2>
             <div class="sticky-wrapper">
-              <div class="btn-toolbar sticky-buttons">
-                <button id="save" class="btn btn-success btn-fixed-width" type="button"
-                        ng-click="saveSettings();" ng-disabled="settingsForm.$invalid">
-                  <span>{{"common.buttons.save" | translate}}</span>
-                  <i class="fa fa-white fa-check icon-right"></i>
-                </button>
-                <button id="cancel" class="btn btn-primary" type="button"
-                        ng-click="closeSettings();">
-                  <span>{{"common.buttons.cancel" | translate}}</span>
-                  <i class="fa fa-white fa-times icon-right"></i>
-                </button>
-                <button id="help" class="btn btn-rv-help" type="button"
-                        href="http://www.risevision.com/help/users/what-are-gadgets/free-gadgets/rise-vision-google-spreadsheet/">
-                  <span>{{"common.buttons.help" | translate}}</span>
-                  <i class="fa fa-question-circle icon-right"></i>
-                </button>
-                <a type="button" class="btn btn-rv-help" title="Contribute on Github"
-                   href="https://github.com/Rise-Vision/widget-google-spreadsheet" target="_blank">
-                  Contribute <i class="fa fa-github fa-lg "></i>
-                </a>
-              </div>
+              <widget-button-toolbar
+                save="saveSettings()" cancel="closeSettings()" disable-save="settingsForm.$invalid"
+                help="http://www.risevision.com/help/users/what-are-gadgets/free-gadgets/rise-vision-google-spreadsheet/"
+                contribute="https://github.com/Rise-Vision/widget-google-spreadsheet"></widget-button-toolbar>
             </div>
           </div>
           <form role="form" name="settingsForm">
@@ -96,6 +79,7 @@
   <script src="settings/ctr-google-spreadsheet-settings.js"></script>
   <script src="settings/svc-columns-settings.js"></script>
 
+  <script src="components/widget-settings-ui-components/dist/js/angular/widget-button-toolbar.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/alignment.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/alignment.js"></script>
