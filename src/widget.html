@@ -6,16 +6,22 @@
   <title>Google Spreadsheet Widget</title>
 
   <!-- build:css css/widget.min.css -->
+  <link rel="stylesheet" href="components/normalize-css/normalize.css">
   <link rel="stylesheet" href="widget/styles/main.css">
   <!-- endbuild -->
 </head>
 <body>
 
-
+  <script src="http://www.google.com/jsapi"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
 
   <!-- build:js js/widget.min.js -->
+  <script src="components/widget-common/src/visualization.js"></script>
+  <script src="components/rv-data-tables/media/js/jquery.dataTables.js"></script>
+  <script src="widget/spreadsheet.js"></script>
+  <script src="widget/main.js"></script>
+  <script src="widget/analytics.js"></script>
   <!-- endbuild -->
 </body>
 </html>
