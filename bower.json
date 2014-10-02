@@ -37,7 +37,6 @@
     "google-drive-picker": "https://github.com/Rise-Vision/component-google-drive-picker.git",
     "google-spreadsheet-controls": "https://github.com/Rise-Vision/component-google-spreadsheet-controls.git",
     "jquery": "1.11.0",
-    "normalize-css": "~3.0.1",
     "rv-data-tables": "https://github.com/Rise-Vision/DataTables.git",
     "underscore": "1.6.0",
     "widget-common": "https://github.com/Rise-Vision/widget-common.git",
