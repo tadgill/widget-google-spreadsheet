@@ -46,8 +46,37 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     gadgets.rpc.call("", "rsevent_ready", null, _prefs.getString("id"), true, true, true, true, true);
   }
 
+  function _hasHeadings() {
+    var hasHeading = false;
+
+    for (var col = 0; col < _vizData.getNumberOfColumns(); col++) {
+      var label = _vizData.getColumnLabel(col);
+
+      if (label && label !== "") {
+        hasHeading = true;
+        break;
+      }
+    }
+
+    return hasHeading;
+  }
+
   function _renderHeadings() {
-    // TODO: logic to come
+    var $thead = $("<thead>"),
+      $tr = $("<tr>");
+
+    for (var col = 0; col < _vizData.getNumberOfColumns(); col++) {
+      var $th = $("<th class='heading_font-style'>");
+
+      if (_hasHeadings()) {
+        $th.html(_vizData.getColumnLabel(col));
+      }
+
+      $tr.append($th);
+    }
+
+    $thead.append($tr);
+    $el.page.append($thead);
   }
 
   function _addCell($tr, value, style, className) {
@@ -83,8 +112,31 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     $el.page.append($tr);
   }
 
-  function _formatColumns(/*$elem*/) {
-    // TODO: logic to come
+  function _formatColumns($elem) {
+    $.each(_columnsData, function(index, column) {
+      var colId = column.id.slice(0,(column.id.indexOf("_"))),
+        $columns = $("." + colId),
+        colIndex = $("." + colId + ":first").parent().children().index($("." + colId + ":first")),
+        width;
+
+      if ($columns.length > 0) {
+        //Header Text
+        if (column.headerText !== "") {
+          $elem.eq(colIndex).html(column.headerText);
+        }
+
+        if (_isLoading) {
+          width = column.width / _prefs.getInt("rsW") * 100;
+          column.width = width.toString() + "%";
+        }
+
+        $elem.eq(colIndex).css("text-align", column.align);
+        $columns.css("text-align", column.align);
+
+        // TODO: Decimals and Sign
+
+      }
+    });
   }
 
   function _createDataTable() {
@@ -106,7 +158,22 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     _formatColumns($("." + CLASS_PAGE + " th"));
     _dataTableOptions.columnDefs = [];
 
-    // TODO: continue logic from here
+    // Apply widths to customized columns
+    $.each(_columnsData, function(index, column) {
+      var colId = column.id.slice(0,(column.id.indexOf("_"))),
+        colWidth = column.width;
+
+      _dataTableOptions.columnDefs.push({
+       "width": colWidth,
+       "targets": [$("." + colId + ":first").parent().children().index($("." + colId + ":first"))]
+       });
+    });
+
+    // Instantiate the data table
+    _dataTable = $el.page.dataTable(_dataTableOptions);
+    // Set the height on the data table scroll body
+    $("." + CLASS_DT_SCROLL_BODY).height(($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).height()) /
+     _prefs.getInt("rsH") * 100 + "%");
   }
 
   function _updateHeadings() {
@@ -166,8 +233,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     // TODO: font sizes, scrolling, and conditions
 
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
-      "padding-top": _rowData.rowPadding,
-      "padding-bottom": _rowData.rowPadding
+      "padding-top": _rowData.padding,
+      "padding-bottom": _rowData.padding
       // TODO: maybe right and left padding should be added (column padding used to be in Table Setting component)
     });
 
@@ -241,7 +308,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
         _rowData.rowColor = value.table.rowColor;
         _rowData.altRowColor = value.table.altRowColor;
-        _rowData.padding = value.table.rowPadding;
+        _rowData.padding = parseInt(value.table.rowPadding / 2) + "px";
 
         // set the document background with value saved in settings
         document.body.style.background = value.background.color;
