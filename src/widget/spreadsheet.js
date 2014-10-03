@@ -230,14 +230,15 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         // store the columns data that was saved in settings
         _columnsData = $.extend([], value.columns);
 
+        // set the document background with value saved in settings
+        document.body.style.background = value.background.color;
+
         //Inject CSS fonts into the DOM since they are stored as additional parameters.
         styleNode.appendChild(document.createTextNode(utils.getFontCssStyle(CLASS_FONT_HEADING, value.table.colHeaderFont)));
         styleNode.appendChild(document.createTextNode(utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont)));
         styleNode.appendChild(document.createTextNode("a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont)));
 
         document.getElementsByTagName("head")[0].appendChild(styleNode);
-
-        //TODO: more handling of CSS for a table layout
 
         _getData();
       }

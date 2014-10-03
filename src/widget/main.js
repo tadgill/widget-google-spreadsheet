@@ -29,7 +29,8 @@
     gadgets.rpc.register("rscmd_stop_" + id, stop);
   }
 
-  //TODO: either deal with document background colour here or in spreadsheet
+  // ensuring a transparent background immediately
+  document.body.style.background = "transparent";
 
   google.setOnLoadCallback(function() {
     gadgets.rpc.register("rsparam_set_" + id, RiseVision.Spreadsheet.additionalParams);
