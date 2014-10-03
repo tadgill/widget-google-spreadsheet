@@ -12,22 +12,25 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     CLASS_FONT_DATA = "data_font-style",
     CLASS_PAGE = "page",
     CLASS_TR_ITEM = "item",
-    CLASS_DT_SCROLL_BODY = "dataTables_scrollBody";
+    CLASS_DT_SCROLL_BODY = "dataTables_scrollBody",
+    CLASS_DT_SCROLL_HEAD = "dataTables_scrollHead";
 
   // private variables
   var _prefs = null,
     _spreadsheetData = {},
     _columnsData = [],
+    _rowData = {},
     _isLoading = true,
     _dataTable = null,
-    _sortConfig = {
-      bDestroy: true,
-      bFilter: false,
-      bInfo: false,
-      bLengthChange: false,
-      bPaginate: false,
-      bSort: false,
-      sScrollY: "500px"
+    _dataTableOptions = {
+      destroy: true,
+      searching: false,
+      info: false,
+      lengthChange: false,
+      paging: false,
+      ordering: false,
+      scrollY: "500px",
+      scrollCollapse: true
     },
     _tableCols = [],
     _vizData, _viz, $el;
@@ -85,8 +88,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   }
 
   function _createDataTable() {
-    $el.container.width(_prefs.getString("rsW"));
-    $el.container.height(_prefs.getString("rsH"));
+    $el.container.width(_prefs.getInt("rsW"));
+    $el.container.height(_prefs.getInt("rsH"));
 
     $el.page.empty();
 
@@ -101,7 +104,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     }
 
     _formatColumns($("." + CLASS_PAGE + " th"));
-    _sortConfig.aoColumnDefs = [];
+    _dataTableOptions.columnDefs = [];
 
     // TODO: continue logic from here
   }
@@ -160,7 +163,13 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
 
-    // TODO: configure padding, font sizes, scrolling, and conditions
+    // TODO: font sizes, scrolling, and conditions
+
+    $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
+      "padding-top": _rowData.rowPadding,
+      "padding-bottom": _rowData.rowPadding
+      // TODO: maybe right and left padding should be added (column padding used to be in Table Setting component)
+    });
 
     if (_isLoading) {
       _isLoading = false;
@@ -229,6 +238,10 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
         // store the columns data that was saved in settings
         _columnsData = $.extend([], value.columns);
+
+        _rowData.rowColor = value.table.rowColor;
+        _rowData.altRowColor = value.table.altRowColor;
+        _rowData.padding = value.table.rowPadding;
 
         // set the document background with value saved in settings
         document.body.style.background = value.background.color;
