@@ -15,6 +15,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     CLASS_DT_SCROLL_BODY = "dataTables_scrollBody",
     CLASS_DT_SCROLL_HEAD = "dataTables_scrollHead";
 
+  var DEFAULT_BODY_SIZE = 16;
+
   // private variables
   var _prefs = null,
     _spreadsheetData = {},
@@ -133,8 +135,54 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         $elem.eq(colIndex).css("text-align", column.align);
         $columns.css("text-align", column.align);
 
-        // TODO: Decimals and Sign
+        // Decimals and signs
+        $.each($columns, function () {
+          var $el = $(this),
+            logosURL = "https://s3.amazonaws.com/risecontentlogos/financial/",
+            val, $img;
 
+          if ($el.text() && $.trim($el.text()) !== "" && !isNaN($el.text())) {
+
+            $el.text(parseFloat($el.text()).toFixed(column.decimals));
+
+            val = $el.text();
+
+            switch(column.sign) {
+              case "none":
+                $el.html(Math.abs(val).toFixed(column.decimals));
+                break;
+              case "pos-neg":
+                if (parseFloat(val) > 0) {
+                  $el.html("+" + val);
+                }
+                break;
+              case "bracket":
+                if (parseFloat(val) < 0) {
+                  $el.html("(" + Math.abs(val).toFixed(column.decimals) + ")");
+                }
+                break;
+              case "arrow":
+                $img = $("<img class='arrow'>");
+
+                $img.height($el.height());
+
+                $el.html(Math.abs(val).toFixed(column.decimals));
+
+                if (parseFloat(val) < 0) {
+                  $img.attr("src", logosURL + "animated-red-arrow.gif");
+                }
+                else if (parseFloat(val) >= 0) {
+                  $img.attr("src", logosURL + "animated-green-arrow.gif");
+                }
+
+                $el.prepend($img);
+                break;
+              default:
+                // includes sign type "neg", do nothing, default behaviour
+                break;
+            }
+          }
+        });
       }
     });
   }
@@ -204,6 +252,17 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     _formatColumns($("." + CLASS_PAGE + " th"));
   }
 
+  function _setFontSizes() {
+    var $headingFont = $("." + CLASS_FONT_HEADING),
+      $dataFont = $("." + CLASS_FONT_DATA),
+      headingFontSize = parseInt($headingFont.css("font-size")) / DEFAULT_BODY_SIZE,
+      dataFontSize = parseInt($dataFont.css("font-size")) / DEFAULT_BODY_SIZE;
+
+    $headingFont.css("font-size", headingFontSize + "em");
+    $dataFont.css("font-size", dataFontSize + "em");
+    $(".tableMenuButton").css("font-size", dataFontSize + "em");
+  }
+
   function _showLayout() {
     if (!_isLoading && !_dataTable) {
       _dataTable.fnClearTable(false);
@@ -230,13 +289,25 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
 
-    // TODO: font sizes, scrolling, and conditions
+    // TODO: scrolling, and conditions
 
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
       "padding-top": _rowData.padding,
       "padding-bottom": _rowData.padding
       // TODO: maybe right and left padding should be added (column padding used to be in Table Setting component)
     });
+
+    //First cell shouldn't have any padding in front of it.
+    $("." + CLASS_DT_SCROLL_HEAD + " table tr th:first-child, td:first-child").css({
+      "padding-left": "10px"
+    });
+
+    //Last cell shouldn't have any padding after it.
+    $("." + CLASS_DT_SCROLL_HEAD + " table tr th:last-child, td:last-child").css({
+      "padding-right": "10px"
+    });
+
+    _setFontSizes();
 
     if (_isLoading) {
       _isLoading = false;
