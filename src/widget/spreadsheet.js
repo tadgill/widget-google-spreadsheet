@@ -225,7 +225,15 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   }
 
   function _updateHeadings() {
-    // TODO: logic to come
+    var $th, col;
+
+    for (col = 0; col < _vizData.getNumberOfColumns(); col += 1) {
+      $th = $("." + CLASS_PAGE + " thead th").eq(col);
+
+      if (_hasHeadings() && ($th.length > 0)) {
+        $th.html(_vizData.getColumnLabel(col));
+      }
+    }
   }
 
   function _addRows() {
