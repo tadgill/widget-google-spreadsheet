@@ -375,8 +375,6 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
     if (name === "additionalParams") {
       if (value) {
-        var styleNode = document.createElement("style");
-
         value = JSON.parse(value);
 
         // store the spreadsheet data that was saved in settings
@@ -393,11 +391,11 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         document.body.style.background = value.background.color;
 
         //Inject CSS fonts into the DOM since they are stored as additional parameters.
-        styleNode.appendChild(document.createTextNode(utils.getFontCssStyle(CLASS_FONT_HEADING, value.table.colHeaderFont)));
-        styleNode.appendChild(document.createTextNode(utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont)));
-        styleNode.appendChild(document.createTextNode("a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont)));
-
-        document.getElementsByTagName("head")[0].appendChild(styleNode);
+        utils.addCSSRules([
+          utils.getFontCssStyle(CLASS_FONT_HEADING, value.table.colHeaderFont),
+          utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont),
+          "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont)
+        ]);
 
         _getData();
       }
