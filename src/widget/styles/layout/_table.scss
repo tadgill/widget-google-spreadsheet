@@ -21,12 +21,12 @@ th, td {
 .changeDownDecrease,
 .valuePositivePositive,
 .valueNegativeNegative {
-  color: $color_condition_positive;
+  color: $color_condition_positive !important;
 }
 
 .changeUpDecrease,
 .changeDownIncrease,
 .valuePositiveNegative,
 .valueNegativePositive {
-  color: $color_condition_negative;
+  color: $color_condition_negative !important;
 }

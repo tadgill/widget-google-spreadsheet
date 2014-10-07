@@ -60,7 +60,7 @@ th, td {
   box-sizing: border-box; }
 
 .changeUpIncrease, .changeDownDecrease, .valuePositivePositive, .valueNegativeNegative {
-  color: lime; }
+  color: lime !important; }
 
 .changeUpDecrease, .changeDownIncrease, .valuePositiveNegative, .valueNegativePositive {
-  color: red; }
+  color: red !important; }

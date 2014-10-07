@@ -205,7 +205,7 @@
       expect(browser.executeScript("return window.result")).to.eventually.deep.equal(
         {
           'additionalParams': JSON.stringify(settings.additionalParams),
-          'params': '?'
+          'params': ''
         });
     });
 
