@@ -8,6 +8,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   "use strict";
 
   // private constants
+
+  // CSS classes
   var CLASS_FONT_HEADING = "heading_font-style",
     CLASS_FONT_DATA = "data_font-style",
     CLASS_PAGE = "page",
@@ -15,8 +17,16 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     CLASS_DT_SCROLL_BODY = "dataTables_scrollBody",
     CLASS_DT_SCROLL_HEAD = "dataTables_scrollHead";
 
+  // Plugins
   var PLUGIN_SCROLL = "plugin_autoScroll";
 
+  // Condition values
+  var CONDITION_CHANGE_UP = "change-up",
+    CONDITION_CHANGE_DOWN = "change-down",
+    CONDITION_VALUE_POSITIVE = "value-positive",
+    CONDITION_VALUE_NEGATIVE = "value-negative";
+
+  // Defaults
   var DEFAULT_BODY_SIZE = 16;
 
   // private variables
@@ -38,6 +48,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       scrollCollapse: true
     },
     _tableCols = [],
+    _conditions = null,
     _vizData, _viz, $el;
 
   function _cache() {
@@ -123,9 +134,10 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
   function _formatColumns($elem) {
     $.each(_columnsData, function(index, column) {
-      var colId = column.id.slice(0,(column.id.indexOf("_"))),
-        $columns = $("." + colId),
-        colIndex = $("." + colId + ":first").parent().children().index($("." + colId + ":first")),
+      column.id = column.id.slice(0,(column.id.indexOf("_")));
+
+      var $columns = $("." + column.id),
+        colIndex = $("." + column.id + ":first").parent().children().index($("." + column.id + ":first")),
         width;
 
       if ($columns.length > 0) {
@@ -215,12 +227,9 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
     // Apply widths to customized columns
     $.each(_columnsData, function(index, column) {
-      var colId = column.id.slice(0,(column.id.indexOf("_"))),
-        colWidth = column.width;
-
       _dataTableOptions.columnDefs.push({
-       "width": colWidth,
-       "targets": [$("." + colId + ":first").parent().children().index($("." + colId + ":first"))]
+       "width": column.width,
+       "targets": [$("." + column.id + ":first").parent().children().index($("." + column.id + ":first"))]
        });
     });
 
@@ -286,6 +295,148 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       });
   }
 
+  function _checkConditions(conditionColumn, condition) {
+    var colIndex = $("." + conditionColumn.id + ":first").parent().children().index($("." + conditionColumn.id + ":first")),
+      numRows = _vizData.getNumberOfRows(),
+      row, current, previous;
+
+    for (row = 0; row < numRows; row += 1) {
+      current = _vizData.getValue(row, colIndex);
+      previous = conditionColumn.values[row];
+
+      if (current !== "" && isNaN(current)) {
+        current = current.replace(/[^0-9\.-]+/g,"");
+        current = parseFloat(current);
+      }
+
+      if (previous !== "" && isNaN(previous)) {
+        previous = previous.replace(/[^0-9\.-]+/g,"");
+        previous = parseFloat(previous);
+      }
+
+      //The data type of a column can still be a number even if there is string data in it.
+      //To be sure, let's check that the values we are comparing are numbers.
+      if (current !== previous && current !== "" && previous !== "") {
+        if (!isNaN(current) && !isNaN(previous)) {
+          var $cell = $("." + conditionColumn.id).eq(row);
+
+          if (condition === CONDITION_CHANGE_UP) {
+            if (current > previous) {
+              $cell.addClass("changeUpIncrease");
+            }
+            else {
+              $cell.addClass("changeUpDecrease");
+            }
+          }
+          else {
+            if (current < previous) {
+              $cell.addClass("changeDownDecrease");
+            }
+            else {
+              $cell.addClass("changeDownIncrease");
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function _checkSigns(columnId, condition){
+    var colIndex = $("." + columnId + ":first").parent().children().index($("." + columnId + ":first")),
+      numRows = _vizData.getNumberOfRows(),
+      row, current;
+
+    for (row = 0; row < numRows; row += 1) {
+      current = _vizData.getValue(row, colIndex);
+
+      if (current !== "" && isNaN(current)) {
+        current = current.replace(/[^0-9\.-]+/g,"");
+        current = parseFloat(current);
+      }
+
+      if (current !== "" && !isNaN(current)) {
+        var $cell = $("." + _tableCols[colIndex]).eq(row);
+
+        if (condition === CONDITION_VALUE_POSITIVE) {
+          if (current >= 0) {
+            $cell.addClass("valuePositivePositive");
+          }
+          else {
+            $cell.addClass("valuePositiveNegative");
+          }
+        }
+        else {
+          if (current < 0) {
+            $cell.addClass("valueNegativeNegative");
+          }
+          else {
+            $cell.addClass("valueNegativePositive");
+          }
+        }
+      }
+    }
+  }
+
+  function _saveConditions() {
+    _conditions.columns = [];
+
+    $.each(_columnsData, function(index, column) {
+      var numRows = _vizData.getNumberOfRows(),
+        values = [],
+        colIndex, row;
+
+      if (typeof column.colorCondition !== "undefined") {
+        if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
+
+          colIndex = $("." + column.id + ":first").parent().children().index($("." + column.id + ":first"));
+
+          for (row = 0; row < numRows; row += 1) {
+            values.push(_vizData.getValue(row, colIndex));
+          }
+
+          _conditions.columns.push({
+            id: column.id,
+            values: values
+          });
+
+        }
+      }
+
+    });
+  }
+
+  function _handleConditions() {
+    var colIndex = -1;
+
+    //No need to save conditions if the data is not set to ever refresh.
+    if (_spreadsheetData.refresh > 0) {
+      if (!_conditions) {
+        _conditions = {};
+      }
+
+      $.each(_columnsData, function(index, column) {
+        if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
+          if (_conditions.hasOwnProperty("columns")) {
+            $.each(_conditions.columns, function(conditionIndex, condition) {
+              if (condition.columnId === column.id) {
+                colIndex = conditionIndex;
+
+                return false;
+              }
+            });
+
+            _checkConditions(_conditions.columns[colIndex], column.colorCondition);
+          }
+        }
+        else if (column.colorCondition === CONDITION_VALUE_POSITIVE || column.colorCondition === CONDITION_VALUE_NEGATIVE) {
+          _checkSigns(column.id, column.colorCondition);
+        }
+      });
+
+      _saveConditions();	//TODO: Maybe need to save from _checkSigns?
+    }
+  }
+
   function _showLayout() {
     if (!_isLoading && !_dataTable) {
       _dataTable.fnClearTable(false);
@@ -312,8 +463,6 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
 
-    // TODO: conditions
-
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
       "padding-top": _rowData.padding,
       "padding-bottom": _rowData.padding
@@ -331,8 +480,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     });
 
     _setFontSizes();
+    _handleConditions();
     _configureScrolling();
-
 
     if (_isLoading) {
       _isLoading = false;
