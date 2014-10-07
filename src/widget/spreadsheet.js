@@ -15,12 +15,15 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     CLASS_DT_SCROLL_BODY = "dataTables_scrollBody",
     CLASS_DT_SCROLL_HEAD = "dataTables_scrollHead";
 
+  var PLUGIN_SCROLL = "plugin_autoScroll";
+
   var DEFAULT_BODY_SIZE = 16;
 
   // private variables
   var _prefs = null,
     _spreadsheetData = {},
     _columnsData = [],
+    _scrollData = {},
     _rowData = {},
     _isLoading = true,
     _dataTable = null,
@@ -46,6 +49,10 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
   function _ready() {
     gadgets.rpc.call("", "rsevent_ready", null, _prefs.getString("id"), true, true, true, true, true);
+  }
+
+  function _done() {
+    gadgets.rpc.call("", "rsevent_done", null, _prefs.getString("id"));
   }
 
   function _hasHeadings() {
@@ -219,9 +226,6 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
     // Instantiate the data table
     _dataTable = $el.page.dataTable(_dataTableOptions);
-    // Set the height on the data table scroll body
-    $("." + CLASS_DT_SCROLL_BODY).height(($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).height()) /
-     _prefs.getInt("rsH") * 100 + "%");
   }
 
   function _updateHeadings() {
@@ -271,6 +275,17 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     $(".tableMenuButton").css("font-size", dataFontSize + "em");
   }
 
+  function _configureScrolling() {
+    // Set the height on the data table scroll body
+    $("." + CLASS_DT_SCROLL_BODY).height($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
+
+    // Intitiate auto scrolling on the data table scroll body
+    $("." + CLASS_DT_SCROLL_BODY).autoScroll(_scrollData)
+      .on("done", function() {
+        _done();
+      });
+  }
+
   function _showLayout() {
     if (!_isLoading && !_dataTable) {
       _dataTable.fnClearTable(false);
@@ -297,7 +312,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
 
-    // TODO: scrolling, and conditions
+    // TODO: conditions
 
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
       "padding-top": _rowData.padding,
@@ -316,22 +331,24 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     });
 
     _setFontSizes();
+    _configureScrolling();
+
 
     if (_isLoading) {
       _isLoading = false;
       _ready();
     }
-    /*else {
-      // TODO: start infinite scrolling
-    }*/
+    else {
+      _play();
+    }
   }
 
   function _pause() {
-    //TODO: logic to come
+    $("." + CLASS_DT_SCROLL_BODY).data(PLUGIN_SCROLL).pause();
   }
 
   function _play() {
-    //TODO: logic to come
+    $("." + CLASS_DT_SCROLL_BODY).data(PLUGIN_SCROLL).play();
   }
 
   function _onDataLoaded(data) {
@@ -342,7 +359,6 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
     else {
-      _pause();
       // store the table data from visualization
       _vizData = data;
 
@@ -382,6 +398,9 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
         // store the columns data that was saved in settings
         _columnsData = $.extend([], value.columns);
+
+        // store the scrolling data that was saved in settings
+        _scrollData = $.extend({}, value.scroll);
 
         _rowData.rowColor = value.table.rowColor;
         _rowData.altRowColor = value.table.altRowColor;
