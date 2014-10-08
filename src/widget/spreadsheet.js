@@ -504,6 +504,9 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   }
 
   function _onDataLoaded(data) {
+    var empty = true,
+      numOfRows, cellValue, indexCount, j;
+
     if (!data) {
       if (_isLoading) {
         _isLoading = false;
@@ -511,7 +514,28 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
     else {
-      // store the table data from visualization
+      numOfRows = data.getNumberOfRows();
+      indexCount = data.getNumberOfColumns() - 1;
+
+      while (indexCount > -1 ) {
+        for (j = 0; j < numOfRows; j += 1) {
+          cellValue = data.getValue(j, indexCount);
+          if (cellValue && cellValue !== "") {
+            empty = false;
+            break;
+          }
+        }
+
+        if (empty) {
+          // remove unused column
+          data.removeColumn(indexCount);
+        }
+
+        empty = true;
+        indexCount -= 1;
+      }
+
+      // store the visualization data table
       _vizData = data;
 
       _showLayout();
