@@ -438,7 +438,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   }
 
   function _showLayout() {
-    if (!_isLoading && !_dataTable) {
+    if (!_isLoading && _dataTable) {
       _dataTable.fnClearTable(false);
     }
 
