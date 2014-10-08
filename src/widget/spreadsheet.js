@@ -252,7 +252,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   function _addRows() {
     var numRows = _vizData.getNumberOfRows(),
       numCols = _vizData.getNumberOfColumns(),
-      newRow, row, col;
+      newRow, row, col, rows = [];
 
     for (row = 0; row < numRows; row += 1) {
       newRow = [];
@@ -261,8 +261,11 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         newRow.push(_vizData.getFormattedValue(row, col));
       }
 
-      _dataTable.fnAddData(newRow);
+      rows.push(newRow);
     }
+
+    _dataTable.api().rows.add(rows).draw();
+
     $("." + CLASS_DT_SCROLL_BODY + " table tbody tr").addClass(CLASS_TR_ITEM);
     $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td").addClass(CLASS_FONT_DATA);
 
@@ -439,7 +442,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
   function _showLayout() {
     if (!_isLoading && _dataTable) {
-      _dataTable.fnClearTable(false);
+      _dataTable.api().clear();
     }
 
     _tableCols = [];
@@ -453,7 +456,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     }
     else {
       if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
-        _dataTable.fnDestroy(true);
+        _dataTable.api().destroy(true);
         _dataTable = null;
         _createDataTable();
       }
