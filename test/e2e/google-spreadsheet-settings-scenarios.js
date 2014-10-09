@@ -144,7 +144,7 @@
             "cells":"sheet",
             "range":"",
             "headerRow":"-1",
-            "refresh":"60",
+            "refresh": 5,
             "docName":"Test File",
             "docURL":"https://test-published"
           },
