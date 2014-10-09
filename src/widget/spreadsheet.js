@@ -411,33 +411,30 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   function _handleConditions() {
     var colIndex = -1;
 
-    //No need to save conditions if the data is not set to ever refresh.
-    if (_spreadsheetData.refresh > 0) {
-      if (!_conditions) {
-        _conditions = {};
-      }
-
-      $.each(_columnsData, function(index, column) {
-        if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
-          if (_conditions.hasOwnProperty("columns")) {
-            $.each(_conditions.columns, function(conditionIndex, condition) {
-              if (condition.columnId === column.id) {
-                colIndex = conditionIndex;
-
-                return false;
-              }
-            });
-
-            _checkConditions(_conditions.columns[colIndex], column.colorCondition);
-          }
-        }
-        else if (column.colorCondition === CONDITION_VALUE_POSITIVE || column.colorCondition === CONDITION_VALUE_NEGATIVE) {
-          _checkSigns(column.id, column.colorCondition);
-        }
-      });
-
-      _saveConditions();	//TODO: Maybe need to save from _checkSigns?
+    if (!_conditions) {
+      _conditions = {};
     }
+
+    $.each(_columnsData, function(index, column) {
+      if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
+        if (_conditions.hasOwnProperty("columns")) {
+          $.each(_conditions.columns, function(conditionIndex, condition) {
+            if (condition.columnId === column.id) {
+              colIndex = conditionIndex;
+
+              return false;
+            }
+          });
+
+          _checkConditions(_conditions.columns[colIndex], column.colorCondition);
+        }
+      }
+      else if (column.colorCondition === CONDITION_VALUE_POSITIVE || column.colorCondition === CONDITION_VALUE_NEGATIVE) {
+        _checkSigns(column.id, column.colorCondition);
+      }
+    });
+
+    _saveConditions();	//TODO: Maybe need to save from _checkSigns?
   }
 
   function _showLayout() {
@@ -549,7 +546,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
     _viz.getData({
       url: _spreadsheetData.url,
-      refreshInterval: parseInt(_spreadsheetData.refresh,10),
+      refreshInterval: _spreadsheetData.refresh,
       callback: _onDataLoaded
     });
   }
