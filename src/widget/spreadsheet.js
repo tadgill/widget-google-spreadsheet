@@ -35,7 +35,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     _columnsData = [],
     _scrollData = {},
     _rowData = {},
-    _isLoading = true,
+    _initialLoad = true,
     _dataTable = null,
     _dataTableOptions = {
       destroy: true,
@@ -146,7 +146,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
           $elem.eq(colIndex).html(column.headerText);
         }
 
-        if (_isLoading) {
+        if (_initialLoad) {
           width = column.width / _prefs.getInt("rsW") * 100;
           column.width = width.toString() + "%";
         }
@@ -438,7 +438,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   }
 
   function _showLayout() {
-    if (!_isLoading && _dataTable) {
+    if (!_initialLoad && _dataTable) {
       _dataTable.api().clear();
     }
 
@@ -448,7 +448,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       _tableCols.push(_vizData.getColumnId(col));
     }
 
-    if (_isLoading) {
+    if (_initialLoad) {
       _createDataTable();
     }
     else {
@@ -483,8 +483,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     _handleConditions();
     _configureScrolling();
 
-    if (_isLoading) {
-      _isLoading = false;
+    if (_initialLoad) {
+      _initialLoad = false;
       _ready();
     }
     else {
@@ -493,11 +493,19 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
   }
 
   function _pause() {
-    $("." + CLASS_DT_SCROLL_BODY).data(PLUGIN_SCROLL).pause();
+    var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
+
+    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
+      $scrollBody.data(PLUGIN_SCROLL).pause();
+    }
   }
 
   function _play() {
-    $("." + CLASS_DT_SCROLL_BODY).data(PLUGIN_SCROLL).play();
+    var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
+
+    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
+      $scrollBody.data(PLUGIN_SCROLL).play();
+    }
   }
 
   function _onDataLoaded(data) {
@@ -505,8 +513,8 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       numOfRows, cellValue, indexCount, j;
 
     if (!data) {
-      if (_isLoading) {
-        _isLoading = false;
+      if (_initialLoad) {
+        _initialLoad = false;
         _ready();
       }
     }
@@ -546,7 +554,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
     _viz.getData({
       url: _spreadsheetData.url,
-      refreshInterval: _spreadsheetData.refresh,
+      refreshInterval: _spreadsheetData.refresh * 60,
       callback: _onDataLoaded
     });
   }
