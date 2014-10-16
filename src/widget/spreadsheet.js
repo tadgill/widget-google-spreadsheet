@@ -47,7 +47,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       scrollY: "500px",
       scrollCollapse: true
     },
-    _tableCols = [],
+    _tableColumnIds = [],
     _conditions = null,
     _vizData, _viz, $el;
 
@@ -126,16 +126,15 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         style = style.substring(0, style.indexOf("font-family:"));
       }
 
-      _addCell($tr, value, style, _tableCols[col]);
+      _addCell($tr, value, style, _tableColumnIds[col]);
     }
 
     $el.page.append($tr);
   }
 
   function _formatColumns($elem) {
-    $.each(_columnsData, function(index, column) {
-      column.id = column.id.slice(0,(column.id.indexOf("_")));
 
+    $.each(_columnsData, function(index, column) {
       var $columns = $("." + column.id),
         colIndex = $("." + column.id + ":first").parent().children().index($("." + column.id + ":first")),
         width;
@@ -249,7 +248,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     }
   }
 
-  function _addRows() {
+  function _updateRows() {
     var numRows = _vizData.getNumberOfRows(),
       numCols = _vizData.getNumberOfColumns(),
       newRow, row, col, rows = [];
@@ -270,7 +269,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td").addClass(CLASS_FONT_DATA);
 
     for (col = 0; col < numCols; col++) {
-      $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td:nth-child(" + (col + 1) + ")").addClass(_tableCols[col]);
+      $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td:nth-child(" + (col + 1) + ")").addClass(_tableColumnIds[col]);
     }
 
     _formatColumns($("." + CLASS_PAGE + " th"));
@@ -287,7 +286,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     $(".tableMenuButton").css("font-size", dataFontSize + "em");
   }
 
-  function _configureScrolling() {
+  function _setScrolling() {
     // Set the height on the data table scroll body
     $("." + CLASS_DT_SCROLL_BODY).height($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
 
@@ -358,7 +357,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
 
       if (current !== "" && !isNaN(current)) {
-        var $cell = $("." + _tableCols[colIndex]).eq(row);
+        var $cell = $("." + _tableColumnIds[colIndex]).eq(row);
 
         if (condition === CONDITION_VALUE_POSITIVE) {
           if (current >= 0) {
@@ -408,7 +407,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     });
   }
 
-  function _handleConditions() {
+  function _setConditions() {
     var colIndex = -1;
 
     if (!_conditions) {
@@ -437,32 +436,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     _saveConditions();	//TODO: Maybe need to save from _checkSigns?
   }
 
-  function _showLayout() {
-    if (!_initialLoad && _dataTable) {
-      _dataTable.api().clear();
-    }
-
-    _tableCols = [];
-
-    for (var col = 0, totalCols = _vizData.getNumberOfColumns(); col < totalCols; col += 1) {
-      _tableCols.push(_vizData.getColumnId(col));
-    }
-
-    if (_initialLoad) {
-      _createDataTable();
-    }
-    else {
-      if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
-        _dataTable.api().destroy(true);
-        _dataTable = null;
-        _createDataTable();
-      }
-      else {
-        _updateHeadings();
-        _addRows();
-      }
-    }
-
+  function _setPadding() {
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
       "padding-top": _rowData.padding,
       "padding-bottom": _rowData.padding
@@ -478,18 +452,69 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th:last-child, td:last-child").css({
       "padding-right": "10px"
     });
+  }
 
-    _setFontSizes();
-    _handleConditions();
-    _configureScrolling();
+  function _configureColumnIds() {
+    _tableColumnIds = [];
 
-    if (_initialLoad) {
-      _initialLoad = false;
-      _ready();
+    for (var col = 0, totalCols = _vizData.getNumberOfColumns(); col < totalCols; col += 1) {
+      _tableColumnIds.push(_vizData.getColumnId(col));
+    }
+  }
+
+  function _configureVizData(data) {
+    var empty = true,
+      numOfRows, cellValue, indexCount, j;
+
+    numOfRows = data.getNumberOfRows();
+    indexCount = data.getNumberOfColumns() - 1;
+
+    while (indexCount > -1 ) {
+      for (j = 0; j < numOfRows; j += 1) {
+        cellValue = data.getValue(j, indexCount);
+        if (cellValue && cellValue !== "") {
+          empty = false;
+          break;
+        }
+      }
+
+      if (empty) {
+        // remove unused column
+        data.removeColumn(indexCount);
+      }
+
+      empty = true;
+      indexCount -= 1;
+    }
+
+    return data;
+  }
+
+  function _build(isUpdate) {
+    if (!isUpdate) {
+      _configureColumnIds();
+      _createDataTable();
     }
     else {
-      _play();
+      _dataTable.api().clear();
+
+      _configureColumnIds();
+
+      if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
+        _dataTable.api().destroy(true);
+        _dataTable = null;
+        _createDataTable();
+      }
+      else {
+        _updateHeadings();
+        _updateRows();
+      }
     }
+
+    _setPadding();
+    _setFontSizes();
+    _setConditions();
+    _setScrolling();
   }
 
   function _pause() {
@@ -508,10 +533,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     }
   }
 
-  function _onDataLoaded(data) {
-    var empty = true,
-      numOfRows, cellValue, indexCount, j;
-
+  function _onVizDataLoaded(data) {
     if (!data) {
       if (_initialLoad) {
         _initialLoad = false;
@@ -519,31 +541,18 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       }
     }
     else {
-      numOfRows = data.getNumberOfRows();
-      indexCount = data.getNumberOfColumns() - 1;
-
-      while (indexCount > -1 ) {
-        for (j = 0; j < numOfRows; j += 1) {
-          cellValue = data.getValue(j, indexCount);
-          if (cellValue && cellValue !== "") {
-            empty = false;
-            break;
-          }
-        }
-
-        if (empty) {
-          // remove unused column
-          data.removeColumn(indexCount);
-        }
-
-        empty = true;
-        indexCount -= 1;
-      }
-
       // store the visualization data table
-      _vizData = data;
+      _vizData = _configureVizData(data);
 
-      _showLayout();
+      _build(!_initialLoad);
+
+      if (_initialLoad) {
+        _initialLoad = false;
+        _ready();
+      }
+      else {
+        _play();
+      }
     }
   }
 
@@ -555,7 +564,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     _viz.getData({
       url: _spreadsheetData.url,
       refreshInterval: _spreadsheetData.refresh * 60,
-      callback: _onDataLoaded
+      callback: _onVizDataLoaded
     });
   }
 
@@ -579,6 +588,11 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
         // store the columns data that was saved in settings
         _columnsData = $.extend([], value.columns);
+
+        // return the column ids to the actual id values in the spreadsheet
+        $.each(_columnsData, function(index, column) {
+          column.id = column.id.slice(0, (column.id.indexOf("_")));
+        });
 
         // store the scrolling data that was saved in settings
         _scrollData = $.extend({}, value.scroll);
