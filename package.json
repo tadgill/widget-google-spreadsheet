@@ -13,7 +13,7 @@
   },
   "author": "Rise Vision",
   "license": "GPLv3",
-  "bucket": "Widget-Google-Spreadsheet",
+  "bucket": "widget-google-spreadsheet",
   "bugs": {
     "url": "https://github.com/Rise-Vision/widget-google-spreadsheet/issues"
   },
