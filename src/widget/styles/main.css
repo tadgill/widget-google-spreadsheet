@@ -48,6 +48,9 @@ body {
   -ms-user-select: none;
   user-select: none; }
 
+.arrow {
+  vertical-align: top; }
+
 table {
   width: 100%;
   border-collapse: collapse; }

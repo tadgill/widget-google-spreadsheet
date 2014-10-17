@@ -604,11 +604,13 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         // set the document background with value saved in settings
         document.body.style.background = value.background.color;
 
-        //Inject CSS fonts into the DOM since they are stored as additional parameters.
+        //Inject CSS into the DOM since they are stored as additional parameters.
         utils.addCSSRules([
           utils.getFontCssStyle(CLASS_FONT_HEADING, value.table.colHeaderFont),
           utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont),
-          "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont)
+          "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, value.table.dataFont),
+          ".even {background-color: " + _rowData.rowColor + "}",
+          ".odd {background-color: " + _rowData.altRowColor + "}"
         ]);
 
         _getData();
