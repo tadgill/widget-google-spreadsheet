@@ -140,9 +140,7 @@
       e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
       e2eSpreadsheetHTTP: "../node_modules/widget-tester/mocks/spreadsheet-controls-http-mock.js",
       e2eTestApp: "../test/e2e/settings-app.js",
-      e2eAppReplace: "../test/e2e/settings-app-replace.js",
-      e2ejQuery: "components/jquery/dist/jquery.min.js",
-      e2eAngular: "components/angular/angular.js"
+      e2eAppReplace: "../test/e2e/settings-app-replace.js"
     }));
 
   gulp.task("test:unit:ng", factory.testUnitAngular(
