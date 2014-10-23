@@ -33,7 +33,7 @@
   document.body.style.background = "transparent";
 
   google.setOnLoadCallback(function() {
-    gadgets.rpc.register("rsparam_set_" + id, RiseVision.Spreadsheet.additionalParams);
+    gadgets.rpc.register("rsparam_set_" + id, RiseVision.Spreadsheet.setParams);
     gadgets.rpc.register("rscmd_getSpreadsheetData", function (url) {
       RiseVision.Spreadsheet.getData(url);
     });
