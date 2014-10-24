@@ -37,7 +37,7 @@
     gadgets.rpc.register("rscmd_getSpreadsheetData", function (url) {
       RiseVision.Spreadsheet.getData(url);
     });
-    gadgets.rpc.call("", "rsparam_get", null, id, "additionalParams");
+    gadgets.rpc.call("", "rsparam_get", null, id, ["additionalParams"]);
   });
 
 })(window, document, google, gadgets);

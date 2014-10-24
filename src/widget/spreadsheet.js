@@ -94,10 +94,11 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     });
   }
 
-  function _setParams(name, value) {
+  function _setParams(names, values) {
     var columnsData = {},
       scrollData = {},
-      tableData = {};
+      tableData = {},
+      value;
 
     // create visualization instance
     if (!_viz) {
@@ -111,9 +112,9 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
 
     _prefs = new gadgets.Prefs();
 
-    if (name === "additionalParams") {
-      if (value) {
-        value = JSON.parse(value);
+    if (Array.isArray(names) && names.length > 0 && names[0] === "additionalParams") {
+      if (Array.isArray(values) && values.length > 0) {
+        value = JSON.parse(values[0]);
 
         // store the spreadsheet data that was saved in settings
         _spreadsheetData = $.extend({}, value.spreadsheet);
