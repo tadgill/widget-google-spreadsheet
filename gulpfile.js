@@ -135,15 +135,17 @@
 
   gulp.task("html:e2e",
     factory.htmlE2E({
+      files: ["./src/settings.html", "./src/widget.html"],
       e2eAngularMocks: "components/angular-mocks/angular-mocks.js",
       e2eVisualization: "../node_modules/widget-tester/mocks/visualization-api-mock.js",
       e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
       e2eSpreadsheetHTTP: "../node_modules/widget-tester/mocks/spreadsheet-controls-http-mock.js",
       e2eTestApp: "../test/e2e/settings-app.js",
-      e2eAppReplace: "../test/e2e/settings-app-replace.js"
+      e2eAppReplace: "../test/e2e/settings-app-replace.js",
+      e2eMockData: "../test/mock-data.js"
     }));
 
-  gulp.task("test:unit:ng", factory.testUnitAngular(
+  gulp.task("test:unit:settings", factory.testUnitAngular(
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
       "src/components/q/q.js",
@@ -163,7 +165,22 @@
       "src/config/test.js",
       "src/settings/settings-app.js",
       "src/settings/**/*.js",
-      "test/unit/**/*spec.js"]}
+      "test/unit/settings/**/*spec.js"]}
+  ));
+
+  gulp.task("test:unit:widget", factory.testUnitAngular(
+    {testFiles: [
+      "src/components/jquery/dist/jquery.js",
+      "test/mock-data.js",
+      "node_modules/widget-tester/mocks/gadget-mocks.js",
+      "node_modules/widget-tester/mocks/visualization-api-mock.js",
+      "src/config/test.js",
+      "src/components/widget-common/dist/visualization.js",
+      "src/components/widget-common/dist/common.js",
+      "src/widget/spreadsheet.js",
+      "src/widget/table.js",
+      "src/widget/main.js",
+      "test/unit/widget/**/*spec.js"]}
   ));
 
   gulp.task("webdriver_update", factory.webdriveUpdate());
@@ -172,10 +189,24 @@
 
   gulp.task("e2e:server", ["config", "html:e2e"], factory.testServer());
 
-  gulp.task("test:e2e:settings", ["webdriver_update", "html:e2e", "e2e:server"], factory.testE2EAngular());
+  gulp.task("test:e2e:widget", factory.testE2E({
+      testFiles: "test/e2e/widget-scenarios.js"}
+  ));
+
+  gulp.task("test:e2e:settings", ["webdriver_update"], factory.testE2EAngular({
+      testFiles: "test/e2e/settings-scenarios.js"}
+  ));
+
+  gulp.task("test:e2e", function(cb) {
+    runSequence(["html:e2e", "e2e:server"], "test:e2e:widget", "test:e2e:settings", "e2e:server-close", cb);
+  });
+
+  gulp.task("test:unit", function(cb) {
+    runSequence("test:unit:widget", "test:unit:settings", cb);
+  });
 
   gulp.task("test", ["widget-styles"], function(cb) {
-    runSequence("test:unit:ng", "test:e2e:settings", "e2e:server-close", "test:metrics", cb);
+    runSequence("test:unit", "test:e2e", "test:metrics", cb);
   });
 
   gulp.task("dev",function(){
