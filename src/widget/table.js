@@ -43,6 +43,9 @@ RiseVision.Spreadsheet.Table = function () {
     _tableColumnIds = [],
     _conditions = null,
     _initialBuild = true,
+    _isScrolling = false,
+    _scrollDoneFn = null,
+    _updateWaiting = false,
     _vizData, $el;
 
   function _cache() {
@@ -132,6 +135,16 @@ RiseVision.Spreadsheet.Table = function () {
         }
       }
     }
+  }
+
+  function _getScrollEl() {
+    var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
+
+    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
+      return $scrollBody.data(PLUGIN_SCROLL);
+    }
+
+    return null;
   }
 
   function _saveConditions() {
@@ -382,15 +395,27 @@ RiseVision.Spreadsheet.Table = function () {
     $(".tableMenuButton").css("font-size", dataFontSize + "em");
   }
 
-  function _setScrolling(cb) {
+  function _setScrolling() {
     // Set the height on the data table scroll body
     $("." + CLASS_DT_SCROLL_BODY).height($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
 
-    // Intitiate auto scrolling on the data table scroll body
-    $("." + CLASS_DT_SCROLL_BODY).autoScroll(_scrollData)
-      .on("done", function() {
-        cb();
-      });
+    if (!_getScrollEl()) {
+      // Intitiate auto scrolling on the data table scroll body
+      $("." + CLASS_DT_SCROLL_BODY).autoScroll(_scrollData)
+        .on("done", function() {
+          if (_updateWaiting) {
+            _update();
+            _updateWaiting = false;
+          }
+
+          _isScrolling = false;
+
+          if (_scrollDoneFn) {
+            _scrollDoneFn();
+          }
+        });
+    }
+
   }
 
   function _setConditions() {
@@ -449,49 +474,69 @@ RiseVision.Spreadsheet.Table = function () {
   }
 
   function _scrollPlay() {
-    var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
+    var $scroll = _getScrollEl();
 
-    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
-      $scrollBody.data(PLUGIN_SCROLL).play();
+    if ($scroll && $scroll.canScroll() && !_isScrolling) {
+      $scroll.play();
+      _isScrolling = true;
     }
   }
 
   function _scrollPause() {
-    var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
+    var $scroll = _getScrollEl();
 
-    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
-      $scrollBody.data(PLUGIN_SCROLL).pause();
+    if ($scroll && $scroll.canScroll()) {
+      $scroll.pause();
+      _isScrolling = false;
     }
   }
 
-  function _build(vizData, scrollDoneFn) {
-    _vizData = vizData;
+  function _update() {
+    _dataTable.api().clear();
 
-    if (_initialBuild) {
-      _configureColumnIds();
+    _configureColumnIds();
+
+    if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
+      _dataTable.api().destroy(true);
+      _dataTable = null;
       _createDataTable();
-      _initialBuild = false;
     }
     else {
-      _dataTable.api().clear();
-
-      _configureColumnIds();
-
-      if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
-        _dataTable.api().destroy(true);
-        _dataTable = null;
-        _createDataTable();
-      }
-      else {
-        _updateHeadings();
-        _updateRows();
-      }
+      _updateHeadings();
+      _updateRows();
     }
 
     _setPadding();
     _setFontSizes();
     _setConditions();
-    _setScrolling(scrollDoneFn);
+    _setScrolling();
+  }
+
+  function _build(vizData, scrollDoneFn) {
+    var $scroll = _getScrollEl();
+
+    _vizData = vizData;
+
+    if (scrollDoneFn && typeof scrollDoneFn === "function") {
+      _scrollDoneFn = scrollDoneFn;
+    }
+
+    if (_initialBuild) {
+      _configureColumnIds();
+      _createDataTable();
+      _setPadding();
+      _setFontSizes();
+      _setConditions();
+      _setScrolling();
+      _initialBuild = false;
+    }
+    else {
+      if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+        _update();
+      } else {
+        _updateWaiting = true;
+      }
+    }
 
   }
 
