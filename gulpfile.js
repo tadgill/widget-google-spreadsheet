@@ -165,6 +165,8 @@
       "src/config/test.js",
       "src/settings/settings-app.js",
       "src/settings/**/*.js",
+      "node_modules/widget-tester/mocks/visualization-api-mock.js",
+      "test/mock-data.js",
       "test/unit/settings/**/*spec.js"]}
   ));
 
