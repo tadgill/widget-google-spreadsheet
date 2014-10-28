@@ -1,3 +1,5 @@
+/* global CONFIG */
+
 var RiseVision = RiseVision || {};
 RiseVision.Spreadsheet = RiseVision.Spreadsheet || {};
 
@@ -199,7 +201,6 @@ RiseVision.Spreadsheet.Table = function () {
         // Decimals and signs
         $.each($columns, function () {
           var $el = $(this),
-            logosURL = "https://s3.amazonaws.com/risecontentlogos/financial/",
             val, $img;
 
           if ($el.text() && $.trim($el.text()) !== "" && !isNaN($el.text())) {
@@ -230,10 +231,10 @@ RiseVision.Spreadsheet.Table = function () {
                 $el.html(Math.abs(val).toFixed(column.decimals));
 
                 if (parseFloat(val) < 0) {
-                  $img.attr("src", logosURL + "animated-red-arrow.gif");
+                  $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-red-arrow.gif");
                 }
                 else if (parseFloat(val) >= 0) {
-                  $img.attr("src", logosURL + "animated-green-arrow.gif");
+                  $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-green-arrow.gif");
                 }
 
                 $el.prepend($img);

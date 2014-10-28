@@ -179,7 +179,9 @@
       "src/config/test.js",
       "src/components/widget-common/dist/visualization.js",
       "src/components/widget-common/dist/common.js",
+      "src/config/test.js",
       "src/widget/spreadsheet.js",
+      "src/widget/arrows.js",
       "src/widget/table.js",
       "src/widget/main.js",
       "test/unit/widget/**/*spec.js"]}

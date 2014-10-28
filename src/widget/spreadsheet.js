@@ -134,7 +134,10 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         // initialize the spreadsheet table with settings data
         _spreadsheetTable.init(utils, _prefs, columnsData, tableData, scrollData);
 
-        _getData();
+        RiseVision.Spreadsheet.Arrows.load(function() {
+          _getData();
+        });
+
       }
     }
   }
