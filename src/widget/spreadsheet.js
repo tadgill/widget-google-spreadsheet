@@ -3,7 +3,7 @@
 var RiseVision = RiseVision || {};
 RiseVision.Spreadsheet = {};
 
-RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualization) {
+RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
 
   "use strict";
 
@@ -29,7 +29,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     numOfRows = data.getNumberOfRows();
     indexCount = data.getNumberOfColumns() - 1;
 
-    while (indexCount > -1 ) {
+    while (indexCount > -1) {
       for (j = 0; j < numOfRows; j += 1) {
         cellValue = data.getValue(j, indexCount);
         if (cellValue && cellValue !== "") {
@@ -66,8 +66,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         _initialLoad = false;
         _ready();
       }
-    }
-    else {
+    } else {
       vizData = _configureVizData(data);
 
       _spreadsheetTable.build(vizData, _done);
@@ -75,8 +74,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
       if (_initialLoad) {
         _initialLoad = false;
         _ready();
-      }
-      else {
+      } else {
         _play();
       }
     }
@@ -124,7 +122,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         columnsData = $.extend([], value.columns);
 
         // return the column ids to the actual id values in the spreadsheet
-        $.each(columnsData, function(index, column) {
+        $.each(columnsData, function (index, column) {
           column.id = column.id.slice(0, (column.id.indexOf("_")));
         });
 
@@ -134,7 +132,7 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
         // initialize the spreadsheet table with settings data
         _spreadsheetTable.init(utils, _prefs, columnsData, tableData, scrollData);
 
-        RiseVision.Spreadsheet.Arrows.load(function() {
+        RiseVision.Spreadsheet.Arrows.load(function () {
           _getData();
         });
 
@@ -149,6 +147,6 @@ RiseVision.Spreadsheet = (function (window, document, gadgets, utils, Visualizat
     play: _play
   };
 
-})(window, document, gadgets, RiseVision.Common.Utilities, RiseVision.Common.Visualization);
+})(document, gadgets, RiseVision.Common.Utilities, RiseVision.Common.Visualization);
 
 

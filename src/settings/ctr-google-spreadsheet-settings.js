@@ -16,13 +16,13 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       };
 
       $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
-        if (typeof newUrl !== "undefined") {
+        if (newUrl !== "undefined") {
           if (newUrl !== oldUrl) {
 
             // reset the column selector
             $scope.sheetColumns = [];
 
-            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
+            if (oldUrl !== "undefined" && oldUrl !== "") {
               // widget settings have already gone through initialization, safe to reset columns array
               $scope.settings.additionalParams.columns = [];
             }
