@@ -2,6 +2,6 @@
 /* exported CONFIG */
 if (typeof CONFIG === "undefined") {
   var CONFIG = {
-    // variables go here
+    ARROW_LOGOS_URL: "https://s3.amazonaws.com/risecontentlogos/financial/"
   };
 }
