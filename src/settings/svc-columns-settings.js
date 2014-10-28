@@ -24,7 +24,7 @@
         }
 
         // configure the column objects and populate columnNames array
-        for (i = 0; i < columnIndexes.length; i +=1) {
+        for (i = 0; i < columnIndexes.length; i += 1) {
           columnLabel = dataTable.getColumnLabel(columnIndexes[i]);
           if (columnLabel === "") {
             // there's no header row or the column is just untitled, use the column id instead (eg. A)
@@ -58,11 +58,9 @@
           query.send(function (response) {
             if (!response) {
               deferred.reject("No response");
-            }
-            else if (response.isError()) {
+            } else if (response.isError()) {
               deferred.reject(response.getMessage());
-            }
-            else {
+            } else {
               deferred.resolve(configureColumns(response));
             }
           });

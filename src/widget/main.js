@@ -32,7 +32,7 @@
   // ensuring a transparent background immediately
   document.body.style.background = "transparent";
 
-  google.setOnLoadCallback(function() {
+  google.setOnLoadCallback(function () {
     gadgets.rpc.register("rsparam_set_" + id, RiseVision.Spreadsheet.setParams);
     gadgets.rpc.register("rscmd_getSpreadsheetData", function (url) {
       RiseVision.Spreadsheet.getData(url);

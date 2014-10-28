@@ -58,21 +58,22 @@ RiseVision.Spreadsheet.Table = function () {
   }
 
   function _checkConditions(conditionColumn, condition) {
-    var colIndex = $("." + conditionColumn.id + ":first").parent().children().index($("." + conditionColumn.id + ":first")),
+    var $colEl = $("." + conditionColumn.id + ":first"),
+      colIndex = $colEl.parent().children().index($colEl),
       numRows = _vizData.getNumberOfRows(),
-      row, current, previous;
+      row, current, previous, $cell;
 
     for (row = 0; row < numRows; row += 1) {
       current = _vizData.getValue(row, colIndex);
       previous = conditionColumn.values[row];
 
       if (current !== "" && isNaN(current)) {
-        current = current.replace(/[^0-9\.-]+/g,"");
+        current = current.replace(/[^0-9\.-]+/g, "");
         current = parseFloat(current);
       }
 
       if (previous !== "" && isNaN(previous)) {
-        previous = previous.replace(/[^0-9\.-]+/g,"");
+        previous = previous.replace(/[^0-9\.-]+/g, "");
         previous = parseFloat(previous);
       }
 
@@ -80,21 +81,18 @@ RiseVision.Spreadsheet.Table = function () {
       //To be sure, let's check that the values we are comparing are numbers.
       if (current !== previous && current !== "" && previous !== "") {
         if (!isNaN(current) && !isNaN(previous)) {
-          var $cell = $("." + conditionColumn.id).eq(row);
+          $cell = $("." + conditionColumn.id).eq(row);
 
           if (condition === CONDITION_CHANGE_UP) {
             if (current > previous) {
               $cell.addClass("changeUpIncrease");
-            }
-            else {
+            } else {
               $cell.addClass("changeUpDecrease");
             }
-          }
-          else {
+          } else {
             if (current < previous) {
               $cell.addClass("changeDownDecrease");
-            }
-            else {
+            } else {
               $cell.addClass("changeDownIncrease");
             }
           }
@@ -103,35 +101,33 @@ RiseVision.Spreadsheet.Table = function () {
     }
   }
 
-  function _checkSigns(columnId, condition){
-    var colIndex = $("." + columnId + ":first").parent().children().index($("." + columnId + ":first")),
+  function _checkSigns(columnId, condition) {
+    var $colEl = $("." + columnId + ":first"),
+      colIndex = $colEl.parent().children().index($colEl),
       numRows = _vizData.getNumberOfRows(),
-      row, current;
+      row, current, $cell;
 
     for (row = 0; row < numRows; row += 1) {
       current = _vizData.getValue(row, colIndex);
 
       if (current !== "" && isNaN(current)) {
-        current = current.replace(/[^0-9\.-]+/g,"");
+        current = current.replace(/[^0-9\.-]+/g, "");
         current = parseFloat(current);
       }
 
       if (current !== "" && !isNaN(current)) {
-        var $cell = $("." + _tableColumnIds[colIndex]).eq(row);
+        $cell = $("." + _tableColumnIds[colIndex]).eq(row);
 
         if (condition === CONDITION_VALUE_POSITIVE) {
           if (current >= 0) {
             $cell.addClass("valuePositivePositive");
-          }
-          else {
+          } else {
             $cell.addClass("valuePositiveNegative");
           }
-        }
-        else {
+        } else {
           if (current < 0) {
             $cell.addClass("valueNegativeNegative");
-          }
-          else {
+          } else {
             $cell.addClass("valueNegativePositive");
           }
         }
@@ -142,7 +138,7 @@ RiseVision.Spreadsheet.Table = function () {
   function _getScrollEl() {
     var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
 
-    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
+    if ($scrollBody.length > 0 && $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
       return $scrollBody.data(PLUGIN_SCROLL);
     }
 
@@ -152,15 +148,16 @@ RiseVision.Spreadsheet.Table = function () {
   function _saveConditions() {
     _conditions.columns = [];
 
-    $.each(_columnsData, function(index, column) {
+    $.each(_columnsData, function (index, column) {
       var numRows = _vizData.getNumberOfRows(),
         values = [],
+        $colEl = $("." + column.id + ":first"),
         colIndex, row;
 
-      if (typeof column.colorCondition !== "undefined") {
+      if (column.colorCondition !== "undefined") {
         if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
 
-          colIndex = $("." + column.id + ":first").parent().children().index($("." + column.id + ":first"));
+          colIndex = $colEl.parent().children().index($colEl);
 
           for (row = 0; row < numRows; row += 1) {
             values.push(_vizData.getValue(row, colIndex));
@@ -179,9 +176,10 @@ RiseVision.Spreadsheet.Table = function () {
 
   function _formatColumns($elem) {
 
-    $.each(_columnsData, function(index, column) {
+    $.each(_columnsData, function (index, column) {
       var $columns = $("." + column.id),
-        colIndex = $("." + column.id + ":first").parent().children().index($("." + column.id + ":first")),
+        $colEl = $("." + column.id + ":first"),
+        colIndex = $colEl.parent().children().index($colEl),
         width;
 
       if ($columns.length > 0) {
@@ -200,48 +198,47 @@ RiseVision.Spreadsheet.Table = function () {
 
         // Decimals and signs
         $.each($columns, function () {
-          var $el = $(this),
+          var $element = $(this),
             val, $img;
 
-          if ($el.text() && $.trim($el.text()) !== "" && !isNaN($el.text())) {
+          if ($element.text() && $.trim($element.text()) !== "" && !isNaN($element.text())) {
 
-            $el.text(parseFloat($el.text()).toFixed(column.decimals));
+            $element.text(parseFloat($element.text()).toFixed(column.decimals));
 
-            val = $el.text();
+            val = $element.text();
 
-            switch(column.sign) {
-              case "none":
-                $el.html(Math.abs(val).toFixed(column.decimals));
-                break;
-              case "pos-neg":
-                if (parseFloat(val) > 0) {
-                  $el.html("+" + val);
-                }
-                break;
-              case "bracket":
-                if (parseFloat(val) < 0) {
-                  $el.html("(" + Math.abs(val).toFixed(column.decimals) + ")");
-                }
-                break;
-              case "arrow":
-                $img = $("<img class='arrow'>");
+            switch (column.sign) {
+            case "none":
+              $element.html(Math.abs(val).toFixed(column.decimals));
+              break;
+            case "pos-neg":
+              if (parseFloat(val) > 0) {
+                $element.html("+" + val);
+              }
+              break;
+            case "bracket":
+              if (parseFloat(val) < 0) {
+                $element.html("(" + Math.abs(val).toFixed(column.decimals) + ")");
+              }
+              break;
+            case "arrow":
+              $img = $("<img class='arrow'>");
 
-                $img.height($el.height());
+              $img.height($element.height());
 
-                $el.html(Math.abs(val).toFixed(column.decimals));
+              $element.html(Math.abs(val).toFixed(column.decimals));
 
-                if (parseFloat(val) < 0) {
-                  $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-red-arrow.gif");
-                }
-                else if (parseFloat(val) >= 0) {
-                  $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-green-arrow.gif");
-                }
+              if (parseFloat(val) < 0) {
+                $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-red-arrow.gif");
+              } else if (parseFloat(val) >= 0) {
+                $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-green-arrow.gif");
+              }
 
-                $el.prepend($img);
-                break;
-              default:
-                // includes sign type "neg", do nothing, default behaviour
-                break;
+              $element.prepend($img);
+              break;
+            default:
+              // includes sign type "neg", do nothing, default behaviour
+              break;
             }
           }
         });
@@ -249,12 +246,29 @@ RiseVision.Spreadsheet.Table = function () {
     });
   }
 
+  function _hasHeadings() {
+    var hasHeading = false,
+      col, label;
+
+    for (col = 0; col < _vizData.getNumberOfColumns(); col += 1) {
+      label = _vizData.getColumnLabel(col);
+
+      if (label && label !== "") {
+        hasHeading = true;
+        break;
+      }
+    }
+
+    return hasHeading;
+  }
+
   function _renderHeadings() {
     var $thead = $("<thead>"),
-      $tr = $("<tr>");
+      $tr = $("<tr>"),
+      col, $th;
 
-    for (var col = 0; col < _vizData.getNumberOfColumns(); col++) {
-      var $th = $("<th class='heading_font-style'>");
+    for (col = 0; col < _vizData.getNumberOfColumns(); col += 1) {
+      $th = $("<th class='heading_font-style'>");
 
       if (_hasHeadings()) {
         $th.html(_vizData.getColumnLabel(col));
@@ -281,11 +295,9 @@ RiseVision.Spreadsheet.Table = function () {
 
   function _renderRow(colsCount, row) {
     var $tr = $("<tr class='" + CLASS_TR_ITEM + "'>"),
-      col;
+      value, style, col;
 
     for (col = 0; col < colsCount; col += 1) {
-      var value = "", style = "";
-
       value = _vizData.getFormattedValue(row, col);
       style = _vizData.getProperty(row, col, "style");
 
@@ -301,6 +313,9 @@ RiseVision.Spreadsheet.Table = function () {
   }
 
   function _createDataTable() {
+    var numRows = _vizData.getNumberOfRows(),
+      row;
+
     $el.container.width(_prefs.getInt("rsW"));
     $el.container.height(_prefs.getInt("rsH"));
 
@@ -312,7 +327,7 @@ RiseVision.Spreadsheet.Table = function () {
     }
 
     //Add rows.
-    for (var row = 0, numRows = _vizData.getNumberOfRows(); row < numRows; row += 1) {
+    for (row = 0; row < numRows; row += 1) {
       _renderRow(_vizData.getNumberOfColumns(), row);
     }
 
@@ -320,10 +335,12 @@ RiseVision.Spreadsheet.Table = function () {
     _dataTableOptions.columnDefs = [];
 
     // Apply widths to customized columns
-    $.each(_columnsData, function(index, column) {
+    $.each(_columnsData, function (index, column) {
+      var $colEl = $("." + column.id + ":first");
+
       _dataTableOptions.columnDefs.push({
         "width": column.width,
-        "targets": [$("." + column.id + ":first").parent().children().index($("." + column.id + ":first"))]
+        "targets": [$colEl.parent().children().index($colEl)]
       });
     });
 
@@ -351,26 +368,11 @@ RiseVision.Spreadsheet.Table = function () {
     $("." + CLASS_DT_SCROLL_BODY + " table tbody tr").addClass(CLASS_TR_ITEM);
     $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td").addClass(CLASS_FONT_DATA);
 
-    for (col = 0; col < numCols; col++) {
+    for (col = 0; col < numCols; col += 1) {
       $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td:nth-child(" + (col + 1) + ")").addClass(_tableColumnIds[col]);
     }
 
     _formatColumns($("." + CLASS_PAGE + " th"));
-  }
-
-  function _hasHeadings() {
-    var hasHeading = false;
-
-    for (var col = 0; col < _vizData.getNumberOfColumns(); col++) {
-      var label = _vizData.getColumnLabel(col);
-
-      if (label && label !== "") {
-        hasHeading = true;
-        break;
-      }
-    }
-
-    return hasHeading;
   }
 
   function _updateHeadings() {
@@ -388,22 +390,35 @@ RiseVision.Spreadsheet.Table = function () {
   function _setFontSizes() {
     var $headingFont = $("." + CLASS_FONT_HEADING),
       $dataFont = $("." + CLASS_FONT_DATA),
-      headingFontSize = parseInt($headingFont.css("font-size")) / DEFAULT_BODY_SIZE,
-      dataFontSize = parseInt($dataFont.css("font-size")) / DEFAULT_BODY_SIZE;
+      headingFontSize = parseInt($headingFont.css("font-size"), 10) / DEFAULT_BODY_SIZE,
+      dataFontSize = parseInt($dataFont.css("font-size"), 10) / DEFAULT_BODY_SIZE;
 
     $headingFont.css("font-size", headingFontSize + "em");
     $dataFont.css("font-size", dataFontSize + "em");
     $(".tableMenuButton").css("font-size", dataFontSize + "em");
   }
 
+  function _configureColumnIds() {
+    var totalCols = _vizData.getNumberOfColumns(),
+      col;
+
+    _tableColumnIds = [];
+
+    for (col = 0; col < totalCols; col += 1) {
+      _tableColumnIds.push(_vizData.getColumnId(col));
+    }
+  }
+
   function _setScrolling() {
+    var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
+
     // Set the height on the data table scroll body
-    $("." + CLASS_DT_SCROLL_BODY).height($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
+    $scrollBody.height($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
 
     if (!_getScrollEl()) {
       // Intitiate auto scrolling on the data table scroll body
-      $("." + CLASS_DT_SCROLL_BODY).autoScroll(_scrollData)
-        .on("done", function() {
+      $scrollBody.autoScroll(_scrollData)
+        .on("done", function () {
           if (_updateWaiting) {
             _update();
             _updateWaiting = false;
@@ -426,10 +441,10 @@ RiseVision.Spreadsheet.Table = function () {
       _conditions = {};
     }
 
-    $.each(_columnsData, function(index, column) {
+    $.each(_columnsData, function (index, column) {
       if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
         if (_conditions.hasOwnProperty("columns")) {
-          $.each(_conditions.columns, function(conditionIndex, condition) {
+          $.each(_conditions.columns, function (conditionIndex, condition) {
             if (condition.columnId === column.id) {
               colIndex = conditionIndex;
 
@@ -439,20 +454,18 @@ RiseVision.Spreadsheet.Table = function () {
 
           _checkConditions(_conditions.columns[colIndex], column.colorCondition);
         }
-      }
-      else if (column.colorCondition === CONDITION_VALUE_POSITIVE || column.colorCondition === CONDITION_VALUE_NEGATIVE) {
+      } else if (column.colorCondition === CONDITION_VALUE_POSITIVE || column.colorCondition === CONDITION_VALUE_NEGATIVE) {
         _checkSigns(column.id, column.colorCondition);
       }
     });
 
-    _saveConditions();	//TODO: Maybe need to save from _checkSigns?
+    _saveConditions(); //TODO: Maybe need to save from _checkSigns?
   }
 
   function _setPadding() {
     $("." + CLASS_DT_SCROLL_HEAD + " table tr th, td").css({
       "padding-top": _rowData.padding,
       "padding-bottom": _rowData.padding
-      // TODO: maybe right and left padding should be added (column padding used to be in Table Setting component)
     });
 
     //First cell shouldn't have any padding in front of it.
@@ -466,12 +479,24 @@ RiseVision.Spreadsheet.Table = function () {
     });
   }
 
-  function _configureColumnIds() {
-    _tableColumnIds = [];
+  function _update() {
+    _dataTable.api().clear();
 
-    for (var col = 0, totalCols = _vizData.getNumberOfColumns(); col < totalCols; col += 1) {
-      _tableColumnIds.push(_vizData.getColumnId(col));
+    _configureColumnIds();
+
+    if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
+      _dataTable.api().destroy(true);
+      _dataTable = null;
+      _createDataTable();
+    } else {
+      _updateHeadings();
+      _updateRows();
     }
+
+    _setPadding();
+    _setFontSizes();
+    _setConditions();
+    _setScrolling();
   }
 
   function _scrollPlay() {
@@ -492,27 +517,6 @@ RiseVision.Spreadsheet.Table = function () {
     }
   }
 
-  function _update() {
-    _dataTable.api().clear();
-
-    _configureColumnIds();
-
-    if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
-      _dataTable.api().destroy(true);
-      _dataTable = null;
-      _createDataTable();
-    }
-    else {
-      _updateHeadings();
-      _updateRows();
-    }
-
-    _setPadding();
-    _setFontSizes();
-    _setConditions();
-    _setScrolling();
-  }
-
   function _build(vizData, scrollDoneFn) {
     var $scroll = _getScrollEl();
 
@@ -530,8 +534,7 @@ RiseVision.Spreadsheet.Table = function () {
       _setConditions();
       _setScrolling();
       _initialBuild = false;
-    }
-    else {
+    } else {
       if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
         _update();
       } else {
@@ -549,15 +552,15 @@ RiseVision.Spreadsheet.Table = function () {
     _rowData = {};
     _rowData.rowColor = tableData.rowColor;
     _rowData.altRowColor = tableData.altRowColor;
-    _rowData.padding = parseInt(tableData.rowPadding / 2) + "px";
+    _rowData.padding = parseInt(tableData.rowPadding / 2, 10) + "px";
 
     //Inject CSS into the DOM
     utils.addCSSRules([
       utils.getFontCssStyle(CLASS_FONT_HEADING, tableData.colHeaderFont),
       utils.getFontCssStyle(CLASS_FONT_DATA, tableData.dataFont),
-        "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, tableData.dataFont),
-        ".even {background-color: " + _rowData.rowColor + "}",
-        ".odd {background-color: " + _rowData.altRowColor + "}"
+      "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, tableData.dataFont),
+      ".even {background-color: " + _rowData.rowColor + "}",
+      ".odd {background-color: " + _rowData.altRowColor + "}"
     ]);
   }
 
