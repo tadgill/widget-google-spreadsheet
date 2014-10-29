@@ -138,7 +138,7 @@ RiseVision.Spreadsheet.Table = function () {
   function _getScrollEl() {
     var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
 
-    if ($scrollBody.length > 0 && $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
+    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
       return $scrollBody.data(PLUGIN_SCROLL);
     }
 
@@ -154,7 +154,7 @@ RiseVision.Spreadsheet.Table = function () {
         $colEl = $("." + column.id + ":first"),
         colIndex, row;
 
-      if (column.colorCondition !== "undefined") {
+      if (typeof column.colorCondition !== "undefined") {
         if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
 
           colIndex = $colEl.parent().children().index($colEl);
