@@ -32,7 +32,7 @@
         <div class="wrapper container modal-content" ng-controller="spreadsheetSettingsController" ng-cloak>
           <div class="modal-header">
             <h2 id="settings-title"> {{"settings" | translate }}
-              <button id="settings-close" type="button" class="close">
+              <button id="settings-close" type="button" class="close" ng-click="closeSettings()">
                 <span>&times;</span>
                 <span class="sr-only">Close</span>
               </button>
