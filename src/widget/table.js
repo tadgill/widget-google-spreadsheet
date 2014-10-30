@@ -346,6 +346,8 @@ RiseVision.Spreadsheet.Table = function () {
 
     // Instantiate the data table
     _dataTable = $el.page.dataTable(_dataTableOptions);
+
+    $("." + CLASS_DT_SCROLL_BODY).css("overflow", "hidden");
   }
 
   function _updateRows() {
