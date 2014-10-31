@@ -447,7 +447,7 @@ RiseVision.Spreadsheet.Table = function () {
       if (column.colorCondition === CONDITION_CHANGE_UP || column.colorCondition === CONDITION_CHANGE_DOWN) {
         if (_conditions.hasOwnProperty("columns")) {
           $.each(_conditions.columns, function (conditionIndex, condition) {
-            if (condition.columnId === column.id) {
+            if (condition.id === column.id) {
               colIndex = conditionIndex;
 
               return false;
