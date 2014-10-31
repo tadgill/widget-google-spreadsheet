@@ -556,10 +556,22 @@ RiseVision.Spreadsheet.Table = function () {
     _rowData.altRowColor = tableData.altRowColor;
     _rowData.padding = parseInt(tableData.rowPadding / 2, 10) + "px";
 
+    // Load Fonts
+    var fontSettings = [
+      {
+        "class": CLASS_FONT_HEADING,
+        "fontSetting": tableData.colHeaderFont
+      },
+      {
+        "class": CLASS_FONT_DATA,
+        "fontSetting": tableData.dataFont
+      }
+    ];
+
+    utils.loadFonts(fontSettings);
+
     //Inject CSS into the DOM
     utils.addCSSRules([
-      utils.getFontCssStyle(CLASS_FONT_HEADING, tableData.colHeaderFont),
-      utils.getFontCssStyle(CLASS_FONT_DATA, tableData.dataFont),
       "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, tableData.dataFont),
       ".even {background-color: " + _rowData.rowColor + "}",
       ".odd {background-color: " + _rowData.altRowColor + "}"
