@@ -88,6 +88,11 @@
       .pipe(gulp.dest("dist/fonts"));
   });
 
+  gulp.task("images", function() {
+    return gulp.src("src/components/rv-bootstrap-formhelpers/img/bootstrap-formhelpers-googlefonts.png")
+      .pipe(gulp.dest("dist/img"));
+  });
+
   gulp.task("json-move", function() {
     // in case some files have the same name
     var index = 0;
@@ -130,7 +135,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config", "widget-styles"], ["source", "fonts", "i18n"], cb);
+    runSequence(["clean", "config", "widget-styles"], ["source", "fonts", "images", "i18n"], cb);
   });
 
   gulp.task("html:e2e",
