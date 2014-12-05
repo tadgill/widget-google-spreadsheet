@@ -39,6 +39,10 @@
       expect(element(by.id("row-padding")).isPresent()).
         to.eventually.be.true;
 
+      // layout setting UI
+      expect(element(by.css("input[name=layoutDefault]")).isPresent()).
+        to.eventually.be.true;
+
     });
 
     it("Should correctly load default settings", function () {
@@ -54,14 +58,26 @@
       expect(element(by.id("scroll-by")).getAttribute("value")).
         to.eventually.equal("none");
 
+      // ensure default layout checkbox is checked
+      expect(element(by.css("input[name=layoutDefault]")).getAttribute("checked")).
+        to.eventually.not.be.null;
+
+      // default layout selected, url field hidden
+      expect(element(by.id("url-entry")).isPresent()).
+        to.eventually.be.false;
+
     });
 
-    it("Should show invalid form", function () {
+    it("Should show invalid form from no spreadsheet chosen", function () {
       expect(element(by.css("form[name=settingsForm].ng-invalid")).isPresent()).
         to.eventually.be.true;
 
       expect(element(by.css("form[name=settingsForm].ng-valid")).isPresent()).
         to.eventually.be.false;
+
+      // spreadsheet-controls directive is the reason for invalid form
+      expect(element(by.tagName("spreadsheet-controls")).getAttribute("class")).
+        to.eventually.contain("ng-invalid-required");
 
       // the only validation error is associated with spreadsheet controls and is a "required" validation
       // should initially show
@@ -104,7 +120,7 @@
 
     });
 
-    it("Should show valid form", function () {
+    it("Should show valid form from spreadsheet chosen", function () {
       // open dialog
       element(by.css(".btn-google-drive")).click();
 
@@ -123,6 +139,10 @@
       expect(element(by.css("form[name=settingsForm].ng-valid")).isPresent()).
         to.eventually.be.true;
 
+      // spreadsheet-controls directive should be valid
+      expect(element(by.tagName("spreadsheet-controls")).getAttribute("class")).
+        to.eventually.contain("ng-valid-required");
+
       // the only validation error is associated with spreadsheet controls and is a "required" validation
       // should initially show
       expect(element(by.css(".text-danger.text-validation")).isDisplayed()).
@@ -133,9 +153,45 @@
         to.eventually.be.false;
     });
 
+    it("Should show invalid form from invalid layout url", function () {
+      // open dialog
+      element(by.css(".btn-google-drive")).click();
+
+      // simulate picking a file
+      browser.executeScript(function () {
+        window.pickFiles([{
+          id: "published",
+          name: "Rise Training Spreadsheet Example",
+          url: "https://test-published/"
+        }]);
+      });
+
+      element(by.css("input[name=layoutDefault]")).click();
+
+      element(by.css("div#url-entry input[name=url]")).sendKeys("htp:invalidurl//");
+
+      expect(element(by.css("form[name=settingsForm].ng-invalid")).isPresent()).
+        to.eventually.be.true;
+
+      expect(element(by.css("form[name=settingsForm].ng-valid")).isPresent()).
+        to.eventually.be.false;
+
+      // url-field directive is the reason for invalid form
+      expect(element(by.tagName("url-field")).getAttribute("class")).
+        to.eventually.contain("ng-invalid-valid");
+
+      // save button should be disabled
+      expect(element(by.css("button#save[disabled=disabled")).isPresent()).
+        to.eventually.be.true;
+
+    });
+
     it("Should correctly save settings", function (done) {
+      var customURL = "http://www.test.com";
       var settings = {
-        params: {},
+        params: {
+          layoutURL: ""
+        },
         additionalParams: {
           "spreadsheet": {
             "fileId":"published",
@@ -183,6 +239,10 @@
           },
           "background": {
             "color": "transparent"
+          },
+          "layout": {
+            "default": false,
+            "customURL": customURL
           }
         }
       };
@@ -199,12 +259,16 @@
         }]);
       });
 
+      element(by.css("input[name=layoutDefault]")).click();
+
+      element(by.css("div#url-entry input[name=url]")).sendKeys(customURL);
+
       element(by.id("save")).click();
 
       expect(browser.executeScript("return window.result")).to.eventually.deep.equal(
         {
           'additionalParams': JSON.stringify(settings.additionalParams),
-          'params': ''
+          'params': customURL + "?"
         });
     });
 
