@@ -65,7 +65,7 @@
 
       // the only validation error is associated with spreadsheet controls and is a "required" validation
       // should initially show
-      expect(element(by.css(".text-danger")).isDisplayed()).
+      expect(element(by.css(".text-danger.text-validation")).isDisplayed()).
         to.eventually.be.true;
 
       // save button should be disabled
@@ -125,7 +125,7 @@
 
       // the only validation error is associated with spreadsheet controls and is a "required" validation
       // should initially show
-      expect(element(by.css(".text-danger")).isDisplayed()).
+      expect(element(by.css(".text-danger.text-validation")).isDisplayed()).
         to.eventually.be.false;
 
       // save button should be enabled
