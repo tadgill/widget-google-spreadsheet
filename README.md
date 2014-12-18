@@ -1,4 +1,4 @@
-# Google Spreadsheet Widget [![Build Status](http://devtools1.risevision.com:8080/job/Widget-Google-Spreadsheet-Master-Build/badge/icon)](http://devtools1.risevision.com:8080/job/Widget-Google-Spreadsheet-Master-Build/)
+# Google Spreadsheet Widget [![Circle CI](https://circleci.com/gh/Rise-Vision/widget-google-spreadsheet/tree/master.svg?style=svg)](https://circleci.com/gh/Rise-Vision/widget-google-spreadsheet/tree/master)
 
 ## Introduction
 
