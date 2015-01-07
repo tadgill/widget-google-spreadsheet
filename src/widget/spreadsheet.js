@@ -9,8 +9,8 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
 
   // private variables
   var _prefs = null,
-    _spreadsheetData = {},
-    _spreadsheetTable = null,
+    _additionalParams = null,
+    _spreadsheetContent = null,
     _initialLoad = true,
     _viz = null;
 
@@ -51,11 +51,11 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
   }
 
   function _pause() {
-    _spreadsheetTable.scrollPause();
+    _spreadsheetContent.scrollPause();
   }
 
   function _play() {
-    _spreadsheetTable.scrollPlay();
+    _spreadsheetContent.scrollPlay();
   }
 
   function _onVizDataLoaded(data) {
@@ -69,7 +69,7 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
     } else {
       vizData = _configureVizData(data);
 
-      _spreadsheetTable.build(vizData, _done);
+      _spreadsheetContent.build(vizData);
 
       if (_initialLoad) {
         _initialLoad = false;
@@ -82,60 +82,71 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
 
   function _getData(url) {
     if (url) {
-      _spreadsheetData.url = url;
+      _additionalParams.spreadsheet.url = url;
     }
 
     _viz.getData({
-      url: _spreadsheetData.url,
-      refreshInterval: _spreadsheetData.refresh * 60,
+      url: _additionalParams.spreadsheet.url,
+      refreshInterval: _additionalParams.spreadsheet.refresh * 60,
       callback: _onVizDataLoaded
     });
   }
 
   function _setParams(names, values) {
-    var columnsData = {},
-      scrollData = {},
-      tableData = {},
-      value;
+    var fontSettings;
+
+    // create spreadsheet content instance
+    if (!_spreadsheetContent) {
+      _spreadsheetContent = new RiseVision.Spreadsheet.Content();
+    }
 
     // create visualization instance
     if (!_viz) {
       _viz = new Visualization();
     }
 
-    // create spreadsheet table instance
-    if (!_spreadsheetTable) {
-      _spreadsheetTable = new RiseVision.Spreadsheet.Table();
-    }
-
     _prefs = new gadgets.Prefs();
 
     if (Array.isArray(names) && names.length > 0 && names[0] === "additionalParams") {
       if (Array.isArray(values) && values.length > 0) {
-        value = JSON.parse(values[0]);
-
-        // store the spreadsheet data that was saved in settings
-        _spreadsheetData = $.extend({}, value.spreadsheet);
-
-        scrollData = $.extend({}, value.scroll);
-        tableData = $.extend({}, value.table);
-        columnsData = $.extend([], value.columns);
+        _additionalParams = $.extend({}, JSON.parse(values[0]));
 
         // return the column ids to the actual id values in the spreadsheet
-        $.each(columnsData, function (index, column) {
+        $.each(_additionalParams.columns, function (index, column) {
           column.id = column.id.slice(0, (column.id.indexOf("_")));
         });
 
         // set the document background with value saved in settings
-        document.body.style.background = value.background.color;
+        document.body.style.background = _additionalParams.background.color;
 
-        // initialize the spreadsheet table with settings data
-        _spreadsheetTable.init(utils, _prefs, columnsData, tableData, scrollData);
+        // Load Fonts
+        fontSettings = [
+          {
+            "class": "heading_font-style",
+            "fontSetting": _additionalParams.table.colHeaderFont
+          },
+          {
+            "class": "data_font-style",
+            "fontSetting": _additionalParams.table.dataFont
+          }
+        ];
 
+        utils.loadFonts(fontSettings);
+
+        //Inject CSS into the DOM
+        utils.addCSSRules([
+          "a:active" + utils.getFontCssStyle("data_font-style", _additionalParams.table.dataFont),
+          ".even {background-color: " + _additionalParams.table.rowColor + "}",
+          ".odd {background-color: " + _additionalParams.table.altRowColor + "}"
+        ]);
+
+        // initialize the spreadsheet content with settings data and pass the _done handler function
+        _spreadsheetContent.initialize(_prefs, _additionalParams, _done);
+
+        // Load the arrow images
         RiseVision.Spreadsheet.Arrows.load(function () {
           _getData();
         });
-
       }
     }
   }

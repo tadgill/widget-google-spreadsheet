@@ -6,6 +6,7 @@
 
   window.gadget.settings = {
     "params": {
+      layoutURL: ""
     },
     "additionalParams": {
       "spreadsheet": {
@@ -54,6 +55,10 @@
       "columns": [],
       "background": {
         "color": "transparent"
+      },
+      "layout": {
+        "default": true,
+        "customURL": ""
       }
     }
   };

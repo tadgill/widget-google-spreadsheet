@@ -5,3 +5,12 @@ if (typeof CONFIG === "undefined") {
     ARROW_LOGOS_URL: "https://s3.amazonaws.com/risecontentlogos/financial/"
   };
 }
+
+if (typeof angular !== "undefined") {
+  angular.module("risevision.widget.googleSpreadsheet.config", [])
+    .value("defaultLayout", "widget.html");
+
+  angular.module("risevision.common.i18n.config", [])
+    .constant("LOCALES_PREFIX", "components/rv-common-i18n/dist/locales/translation_")
+    .constant("LOCALES_SUFIX", ".json");
+}

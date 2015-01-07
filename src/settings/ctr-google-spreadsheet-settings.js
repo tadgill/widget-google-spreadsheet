@@ -1,6 +1,6 @@
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "$log", "columnsService",
-    function ($scope, $log, columnsService) {
+  .controller("spreadsheetSettingsController", ["$scope", "$log", "columnsService", "defaultLayout",
+    function ($scope, $log, columnsService, defaultLayout) {
 
       $scope.sheetColumns = [];
       $scope.currentSheetColumn = null;
@@ -34,14 +34,42 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         }
       });
 
+      $scope.$watch("settings.additionalParams.layout.customURL", function (url) {
+        if (url !== "undefined") {
+          if (!$scope.settings.additionalParams.layout.default) {
+            $scope.settings.params.layoutURL = url;
+          }
+        }
+      });
+
+      // need to watch this once to set the initial value of params.layoutURL
+      $scope.$watch("settings.additionalParams.layout.default", function(defaultVal) {
+        if (typeof defaultVal !== "undefined") {
+          if (defaultVal) {
+            $scope.settings.params.layoutURL = defaultLayout;
+
+            // text for custom url may have been entered in a previous save, remove it
+            $scope.settings.additionalParams.layout.customURL = "";
+          } else {
+            $scope.settings.params.layoutURL = $scope.settings.additionalParams.layout.customURL;
+          }
+        }
+      });
+
     }])
   .value("defaultSettings", {
-    params: {},
+    params: {
+      layoutURL: ""
+    },
     additionalParams: {
       spreadsheet: {},
       columns: [],
       scroll: {},
       table: {},
-      background: {}
+      background: {},
+      layout: {
+        default: true,
+        customURL: ""
+      }
     }
   });

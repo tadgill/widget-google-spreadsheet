@@ -3,14 +3,14 @@
 var RiseVision = RiseVision || {};
 RiseVision.Spreadsheet = RiseVision.Spreadsheet || {};
 
-RiseVision.Spreadsheet.Table = function () {
+RiseVision.Spreadsheet.Content = function () {
 
   "use strict";
 
   // CSS classes
-  var CLASS_FONT_HEADING = "heading_font-style",
+  var CLASS_PAGE = "page",
     CLASS_FONT_DATA = "data_font-style",
-    CLASS_PAGE = "page",
+    CLASS_FONT_HEADING = "heading_font-style",
     CLASS_TR_ITEM = "item",
     CLASS_DT_SCROLL_BODY = "dataTables_scrollBody",
     CLASS_DT_SCROLL_HEAD = "dataTables_scrollHead";
@@ -28,10 +28,16 @@ RiseVision.Spreadsheet.Table = function () {
   var DEFAULT_BODY_SIZE = 16;
 
   var _prefs = null,
+    _useCustomLayout = false,
     _columnsData = [],
     _rowData = {},
     _scrollData = {},
+    _scrollDoneFn = null,
+    _initialBuild = true,
+    _columnIds = [],
+    _conditions = null,
     _dataTable = null,
+    _imagesToLoad = [],
     _dataTableOptions = {
       destroy: true,
       searching: false,
@@ -42,17 +48,13 @@ RiseVision.Spreadsheet.Table = function () {
       scrollY: "500px",
       scrollCollapse: true
     },
-    _tableColumnIds = [],
-    _conditions = null,
-    _initialBuild = true,
     _isScrolling = false,
-    _scrollDoneFn = null,
     _updateWaiting = false,
     _vizData, $el;
 
   function _cache() {
     $el = {
-      container:            $("#container"),
+      scrollContainer:      $("#scrollContainer"),
       page:                 $("." + CLASS_PAGE)
     };
   }
@@ -116,7 +118,7 @@ RiseVision.Spreadsheet.Table = function () {
       }
 
       if (current !== "" && !isNaN(current)) {
-        $cell = $("." + _tableColumnIds[colIndex]).eq(row);
+        $cell = $("." + _columnIds[colIndex]).eq(row);
 
         if (condition === CONDITION_VALUE_POSITIVE) {
           if (current >= 0) {
@@ -138,8 +140,14 @@ RiseVision.Spreadsheet.Table = function () {
   function _getScrollEl() {
     var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
 
-    if ($scrollBody.length > 0 && typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
-      return $scrollBody.data(PLUGIN_SCROLL);
+    if ($scrollBody.length > 0) {
+      if (typeof $scrollBody.data(PLUGIN_SCROLL) !== "undefined") {
+        return $scrollBody.data(PLUGIN_SCROLL);
+      }
+    } else {
+      if (typeof $el.scrollContainer.data(PLUGIN_SCROLL) !== "undefined") {
+        return $el.scrollContainer.data(PLUGIN_SCROLL);
+      }
     }
 
     return null;
@@ -208,37 +216,37 @@ RiseVision.Spreadsheet.Table = function () {
             val = $element.text();
 
             switch (column.sign) {
-            case "none":
-              $element.html(Math.abs(val).toFixed(column.decimals));
-              break;
-            case "pos-neg":
-              if (parseFloat(val) > 0) {
-                $element.html("+" + val);
-              }
-              break;
-            case "bracket":
-              if (parseFloat(val) < 0) {
-                $element.html("(" + Math.abs(val).toFixed(column.decimals) + ")");
-              }
-              break;
-            case "arrow":
-              $img = $("<img class='arrow'>");
+              case "none":
+                $element.html(Math.abs(val).toFixed(column.decimals));
+                break;
+              case "pos-neg":
+                if (parseFloat(val) > 0) {
+                  $element.html("+" + val);
+                }
+                break;
+              case "bracket":
+                if (parseFloat(val) < 0) {
+                  $element.html("(" + Math.abs(val).toFixed(column.decimals) + ")");
+                }
+                break;
+              case "arrow":
+                $img = $("<img class='arrow'>");
 
-              $img.height($element.height());
+                $img.height($element.height());
 
-              $element.html(Math.abs(val).toFixed(column.decimals));
+                $element.html(Math.abs(val).toFixed(column.decimals));
 
-              if (parseFloat(val) < 0) {
-                $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-red-arrow.gif");
-              } else if (parseFloat(val) >= 0) {
-                $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-green-arrow.gif");
-              }
+                if (parseFloat(val) < 0) {
+                  $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-red-arrow.gif");
+                } else if (parseFloat(val) >= 0) {
+                  $img.attr("src", CONFIG.ARROW_LOGOS_URL + "animated-green-arrow.gif");
+                }
 
-              $element.prepend($img);
-              break;
-            default:
-              // includes sign type "neg", do nothing, default behaviour
-              break;
+                $element.prepend($img);
+                break;
+              default:
+                // includes sign type "neg", do nothing, default behaviour
+                break;
             }
           }
         });
@@ -306,18 +314,20 @@ RiseVision.Spreadsheet.Table = function () {
         style = style.substring(0, style.indexOf("font-family:"));
       }
 
-      _addCell($tr, value, style, _tableColumnIds[col]);
+      _addCell($tr, value, style, _columnIds[col]);
     }
 
     $el.page.append($tr);
   }
 
+  function _setScrollContainerSize() {
+    $el.scrollContainer.width(_prefs.getInt("rsW"));
+    $el.scrollContainer.height(_prefs.getInt("rsH"));
+  }
+
   function _createDataTable() {
     var numRows = _vizData.getNumberOfRows(),
       row;
-
-    $el.container.width(_prefs.getInt("rsW"));
-    $el.container.height(_prefs.getInt("rsH"));
 
     $el.page.empty();
 
@@ -371,7 +381,7 @@ RiseVision.Spreadsheet.Table = function () {
     $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td").addClass(CLASS_FONT_DATA);
 
     for (col = 0; col < numCols; col += 1) {
-      $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td:nth-child(" + (col + 1) + ")").addClass(_tableColumnIds[col]);
+      $("." + CLASS_DT_SCROLL_BODY + " table tbody tr td:nth-child(" + (col + 1) + ")").addClass(_columnIds[col]);
     }
 
     _formatColumns($("." + CLASS_PAGE + " th"));
@@ -404,36 +414,50 @@ RiseVision.Spreadsheet.Table = function () {
     var totalCols = _vizData.getNumberOfColumns(),
       col;
 
-    _tableColumnIds = [];
+    _columnIds = [];
 
     for (col = 0; col < totalCols; col += 1) {
-      _tableColumnIds.push(_vizData.getColumnId(col));
+      _columnIds.push(_vizData.getColumnId(col));
     }
   }
 
   function _setScrolling() {
     var $scrollBody = $("." + CLASS_DT_SCROLL_BODY);
 
-    // Set the height on the data table scroll body
-    $scrollBody.height($el.container.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
+    if ($scrollBody.length > 0) {
+      // Set the height on the data table scroll body
+      $scrollBody.height($el.scrollContainer.outerHeight(true) - $("." + CLASS_DT_SCROLL_HEAD).outerHeight() + "px");
 
-    if (!_getScrollEl()) {
-      // Intitiate auto scrolling on the data table scroll body
-      $scrollBody.autoScroll(_scrollData)
-        .on("done", function () {
-          if (_updateWaiting) {
-            _update();
-            _updateWaiting = false;
-          }
+      if (!_getScrollEl()) {
+        // Intitiate auto scrolling on the data table scroll body
+        $scrollBody.autoScroll(_scrollData)
+          .on("done", function () {
+            if (!_useCustomLayout && _updateWaiting) {
+              _updateTable();
+              _updateWaiting = false;
+            }
 
-          _isScrolling = false;
+            _isScrolling = false;
 
-          if (_scrollDoneFn) {
-            _scrollDoneFn();
-          }
-        });
+            if (_scrollDoneFn) {
+              _scrollDoneFn();
+            }
+          });
+      }
     }
+    else {
+      if (!_getScrollEl()) {
+        // Intitiate auto scrolling on the scroll container
+        $el.scrollContainer.autoScroll(_scrollData)
+          .on("done", function () {
+            _isScrolling = false;
 
+            if (_scrollDoneFn) {
+              _scrollDoneFn();
+            }
+          });
+      }
+    }
   }
 
   function _setConditions() {
@@ -481,7 +505,7 @@ RiseVision.Spreadsheet.Table = function () {
     });
   }
 
-  function _update() {
+  function _updateTable() {
     _dataTable.api().clear();
 
     _configureColumnIds();
@@ -499,6 +523,48 @@ RiseVision.Spreadsheet.Table = function () {
     _setFontSizes();
     _setConditions();
     _setScrolling();
+  }
+
+  function _configureImages() {
+    var numRows = _vizData.getNumberOfRows(),
+      numCols = _columnIds.length,
+      $repeat = $(".repeat"),
+      row, col;
+
+    _imagesToLoad = [];
+
+    for (row = 0; row < numRows; row += 1) {
+      if (row > 0) {
+        $repeat.parent().append($repeat.clone());
+      }
+
+      for (col = 0; col < numCols; col += 1) {
+        var $cell = $("." + _columnIds[col] + ":last");
+
+        if ($cell) {
+          //Show an image.
+          if ($cell.hasClass("image")) {
+            _imagesToLoad.push({
+              url: _vizData.getValue(row, col),
+              $cell: $cell
+            });
+          }
+          //Generate QR code.
+          else if ($cell.hasClass("qrCode")) {
+            if (_vizData.getValue(row, col)) {
+              _imagesToLoad.push({
+                url: "https://chart.googleapis.com/chart?cht=qr&chs=100x100&chld=H|0&chl=" +
+                encodeURIComponent(_vizData.getValue(row, col)),
+                $cell: $cell
+              });
+            }
+          }
+          else {
+            $cell.html(_vizData.getFormattedValue(row, col));
+          }
+        }
+      }
+    }
   }
 
   function _scrollPlay() {
@@ -519,69 +585,78 @@ RiseVision.Spreadsheet.Table = function () {
     }
   }
 
-  function _build(vizData, scrollDoneFn) {
+  function _build(vizData) {
     var $scroll = _getScrollEl();
 
     _vizData = vizData;
+
+    if (_useCustomLayout) {
+      _configureColumnIds();
+      _setScrollContainerSize();
+      _configureImages();
+
+      // Load the images
+      RiseVision.Spreadsheet.Images.load(_imagesToLoad, function () {
+
+        //Only execute the following code if the layout is a table.
+        if ($("table").length > 0) {
+          _formatColumns($("." + CLASS_PAGE + " th"));
+          _dataTable = $el.page.dataTable(_dataTableOptions);
+          $("." + CLASS_DT_SCROLL_BODY).css("overflow", "hidden");
+          _setPadding();
+        }
+
+        _setFontSizes();
+        _setConditions();
+        _setScrolling();
+        _initialBuild = false;
+      });
+
+    } else {
+      if (_initialBuild) {
+        _configureColumnIds();
+        _setScrollContainerSize();
+        _createDataTable();
+        _setPadding();
+        _setFontSizes();
+        _setConditions();
+        _setScrolling();
+        _initialBuild = false;
+      } else {
+        if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+          _updateTable();
+        } else {
+          _updateWaiting = true;
+        }
+      }
+    }
+  }
+
+  function _initialize(prefs, additionalParams, scrollDoneFn) {
+    _prefs = prefs;
+    _columnsData = additionalParams.columns;
+    _scrollData = additionalParams.scroll;
+
+    _rowData = {};
+    _rowData.rowColor = additionalParams.table.rowColor;
+    _rowData.altRowColor = additionalParams.table.altRowColor;
+    _rowData.padding = parseInt(additionalParams.table.rowPadding / 2, 10) + "px";
 
     if (scrollDoneFn && typeof scrollDoneFn === "function") {
       _scrollDoneFn = scrollDoneFn;
     }
 
-    if (_initialBuild) {
-      _configureColumnIds();
-      _createDataTable();
-      _setPadding();
-      _setFontSizes();
-      _setConditions();
-      _setScrolling();
-      _initialBuild = false;
-    } else {
-      if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
-        _update();
-      } else {
-        _updateWaiting = true;
+    if (additionalParams.hasOwnProperty("layout")) {
+      if (!additionalParams.layout.default && additionalParams.layout.customURL && additionalParams.layout.customURL !== "") {
+        _useCustomLayout = true;
       }
     }
-
-  }
-
-  function _init(utils, prefs, columnsData, tableData, scrollData) {
-    _prefs = prefs;
-    _columnsData = columnsData;
-    _scrollData = scrollData;
-
-    _rowData = {};
-    _rowData.rowColor = tableData.rowColor;
-    _rowData.altRowColor = tableData.altRowColor;
-    _rowData.padding = parseInt(tableData.rowPadding / 2, 10) + "px";
-
-    // Load Fonts
-    var fontSettings = [
-      {
-        "class": CLASS_FONT_HEADING,
-        "fontSetting": tableData.colHeaderFont
-      },
-      {
-        "class": CLASS_FONT_DATA,
-        "fontSetting": tableData.dataFont
-      }
-    ];
-
-    utils.loadFonts(fontSettings);
-
-    //Inject CSS into the DOM
-    utils.addCSSRules([
-      "a:active" + utils.getFontCssStyle(CLASS_FONT_DATA, tableData.dataFont),
-      ".even {background-color: " + _rowData.rowColor + "}",
-      ".odd {background-color: " + _rowData.altRowColor + "}"
-    ]);
   }
 
   _cache();
 
   return {
-    init: _init,
+    initialize: _initialize,
     build: _build,
     scrollPlay: _scrollPlay,
     scrollPause: _scrollPause

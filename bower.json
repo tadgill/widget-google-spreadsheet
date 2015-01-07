@@ -34,6 +34,7 @@
     "angular": "1.2.18",
     "angular-route": "1.2.18",
     "auto-scroll": "https://github.com/Rise-Vision/auto-scroll.git",
+    "component-storage-selector": "https://github.com/Rise-Vision/component-storage-selector.git",
     "google-drive-picker": "https://github.com/Rise-Vision/component-google-drive-picker.git",
     "google-spreadsheet-controls": "https://github.com/Rise-Vision/component-google-spreadsheet-controls.git",
     "jquery": "1.11.0",
@@ -44,6 +45,9 @@
     "widget-settings-ui-components": "https://github.com/Rise-Vision/widget-settings-ui-components.git"
   },
   "resolutions": {
+    "angular-translate": "~2.4.2",
+    "angular-translate-loader-static-files": "~2.4.2",
+    "common-style": "~1.1.4",
     "jquery": "1.11.0"
   }
 }

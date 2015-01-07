@@ -31,7 +31,7 @@
       <div class="settings-center">
         <div class="wrapper container modal-content" ng-controller="spreadsheetSettingsController" ng-cloak>
           <div class="modal-header">
-            <h2 id="settings-title"> {{"settings" | translate }}
+            <h2 id="settings-title"> {{"google-spreadsheet.settings" | translate }}
               <button id="settings-close" type="button" class="close" ng-click="closeSettings()">
                 <i class="fa fa-times"></i>
               </button>
@@ -39,7 +39,7 @@
             <div class="sticky-wrapper">
               <widget-button-toolbar
                 save="saveSettings()" cancel="closeSettings()" disable-save="settingsForm.$invalid"
-                help="http://www.risevision.com/help/users/what-are-gadgets/free-gadgets/rise-vision-google-spreadsheet/"
+                help="http://help.risevision.com/#/user/content/spreadsheet-widget"
                 contribute="https://github.com/Rise-Vision/widget-google-spreadsheet"></widget-button-toolbar>
             </div>
           </div>
@@ -48,13 +48,30 @@
               <spreadsheet-controls name="spreadsheet" spreadsheet="settings.additionalParams.spreadsheet"
                                     ng-model="spreadsheetselector" required></spreadsheet-controls>
               <p class="text-danger text-validation" ng-show="settingsForm.spreadsheet.$error.required">
-                {{"validation.spreadsheet.required" | translate}}
+                {{"google-spreadsheet.validation.spreadsheet.required" | translate}}
               </p>
             </div>
             <column-selector columns="settings.additionalParams.columns" column-names="sheetColumns"></column-selector>
             <scroll-setting scroll="settings.additionalParams.scroll"></scroll-setting>
             <table-setting table="settings.additionalParams.table"></table-setting>
             <background-setting background="settings.additionalParams.background"></background-setting>
+
+            <!-- Layout Setting -->
+            <div class="section">
+              <h5>{{"widgets.layout.heading" | translate}}</h5>
+              <div class="checkbox">
+                <label>
+                  <input name="layoutDefault" type="checkbox"
+                         ng-model="settings.additionalParams.layout.default"> {{"google-spreadsheet.layout.default.label" | translate}}
+                </label>
+              </div>
+              <div id="url-entry" ng-if="!settings.additionalParams.layout.default">
+                <url-field name="layoutUrl" url="settings.additionalParams.layout.customURL"
+                           company-id="{{settings.params.companyId}}"
+                           ng-model="urlentry" valid></url-field>
+              </div>
+            </div>
+
           </form>
         </div>
       </div>
@@ -66,6 +83,7 @@
   <!-- build:js js/settings.min.js -->
   <script src="components/angular-translate/angular-translate.js"></script>
   <script src="components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
+  <script src="components/rv-common-i18n/dist/i18n.js"></script>
   <script src="components/bootstrap-sass-official/assets/javascripts/bootstrap.js"></script>
   <script src="components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
   <script src="components/bootstrap-select/bootstrap-select.js"></script>
@@ -100,6 +118,8 @@
   <script src="components/widget-settings-ui-components/dist/js/angular/scroll-setting.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/table-setting.js"></script>
   <script src="components/widget-settings-ui-components/dist/js/angular/background-setting.js"></script>
+  <script src="components/component-storage-selector/dist/storage-selector.js"></script>
+  <script src="components/widget-settings-ui-components/dist/js/angular/url-field.js"></script>
   <!-- endbuild -->
 
   <!-- build:e2eTestApp -->

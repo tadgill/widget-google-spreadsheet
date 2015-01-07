@@ -1,4 +1,4 @@
-casper.test.begin("Google Spreadsheet Widget - e2e Testing", function (test) {
+casper.test.begin("Google Spreadsheet Widget - Widget e2e Testing", function (test) {
   var system = require('system');
   var e2ePort = system.env.E2E_PORT || 8099;
 
