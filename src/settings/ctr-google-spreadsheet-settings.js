@@ -35,7 +35,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       });
 
       $scope.$watch("settings.additionalParams.layout.customURL", function (url) {
-        if (url !== "undefined") {
+        if (typeof url !== "undefined") {
           if (!$scope.settings.additionalParams.layout.default) {
             $scope.settings.params.layoutURL = url;
           }
