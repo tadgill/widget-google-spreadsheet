@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Google Spreadsheet Settings</title>
+
+  <link rel="stylesheet" href="css/settings.min.css"/>
+
+  <style type="text/css">
+    body, html {
+      background: transparent;
+    }
+
+    .text-validation {
+      margin-top: -15px;
+    }
+  </style>
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.18/angular.min.js"></script>
+
+</head>
+<body ng-app="risevision.widget.googleSpreadsheet.settings" ng-controller="settingsController">
+  <div class="widget">
+    <div class="overlay"></div>
+    <div class="settings">
+      <div class="settings-center">
+        <div class="wrapper container modal-content" ng-controller="spreadsheetSettingsController" ng-cloak>
+          <div class="modal-header">
+            <h2 id="settings-title"> {{"google-spreadsheet.settings" | translate }}
+              <button id="settings-close" type="button" class="close" ng-click="closeSettings()">
+                <i class="fa fa-times"></i>
+              </button>
+            </h2>
+            <div class="sticky-wrapper">
+              <widget-button-toolbar
+                save="saveSettings()" cancel="closeSettings()" disable-save="settingsForm.$invalid"
+                help="http://help.risevision.com/#/user/content/spreadsheet-widget"
+                contribute="https://github.com/Rise-Vision/widget-google-spreadsheet"></widget-button-toolbar>
+            </div>
+          </div>
+          <form role="form" name="settingsForm">
+            <div ng-class="{'form-group':true, 'has-error':settingsForm.spreadsheet.$invalid}">
+              <spreadsheet-controls name="spreadsheet" spreadsheet="settings.additionalParams.spreadsheet"
+                                    ng-model="spreadsheetselector" required></spreadsheet-controls>
+              <p class="text-danger text-validation" ng-show="settingsForm.spreadsheet.$error.required">
+                {{"google-spreadsheet.validation.spreadsheet.required" | translate}}
+              </p>
+            </div>
+            <column-selector columns="settings.additionalParams.columns" column-names="sheetColumns"></column-selector>
+            <scroll-setting scroll="settings.additionalParams.scroll"></scroll-setting>
+            <table-setting table="settings.additionalParams.table"></table-setting>
+            <background-setting background="settings.additionalParams.background"></background-setting>
+
+            <!-- Layout Setting -->
+            <div class="section">
+              <h5>{{"widgets.layout.heading" | translate}}</h5>
+              <div class="checkbox">
+                <label>
+                  <input name="layoutDefault" type="checkbox"
+                         ng-model="settings.additionalParams.layout.default"> {{"google-spreadsheet.layout.default.label" | translate}}
+                </label>
+              </div>
+              <div id="url-entry" ng-if="!settings.additionalParams.layout.default">
+                <url-field name="layoutUrl" url="settings.additionalParams.layout.customURL"
+                           company-id="{{settings.params.companyId}}"
+                           ng-model="urlentry" valid></url-field>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+  <script src="js/settings.min.js"></script>
+
+  <!-- build:e2eTestApp -->
+  
+
+  <!-- build:e2eAngularMocks -->
+  
+
+  <!-- build:e2egadgets -->
+  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
+  
+
+  <script src="//s3.amazonaws.com/rise-common/scripts/i18next/i18next.min.js"></script>
+
+  <!-- build:e2eSpreadsheetHTTP -->
+  
+
+  <!-- build:e2ePicker -->
+  <script src="//apis.google.com/js/client.js?onload=handleClientJSLoad"></script>
+  
+
+  <!-- build:e2eVisualization -->
+  <script src="//www.google.com/jsapi"></script>
+  <script>
+    google.load("visualization", "1");
+  </script>
+  
+
+  <!-- build:e2eAppReplace -->
+  
+
+</body>
+</html>
