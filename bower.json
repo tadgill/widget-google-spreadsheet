@@ -27,8 +27,7 @@
   ],
   "devDependencies": {
     "angular-mocks": "1.2.18",
-    "q": "1.0.1",
-    "sinon": "~1.10.2"
+    "q": "1.0.1"
   },
   "dependencies": {
     "angular": "1.2.18",
@@ -37,17 +36,17 @@
     "component-storage-selector": "https://github.com/Rise-Vision/component-storage-selector.git",
     "google-drive-picker": "https://github.com/Rise-Vision/component-google-drive-picker.git",
     "google-spreadsheet-controls": "https://github.com/Rise-Vision/component-google-spreadsheet-controls.git",
-    "jquery": "1.11.0",
-    "rv-data-tables": "https://github.com/Rise-Vision/DataTables.git",
+    "rv-data-tables": "https://github.com/Rise-Vision/DataTables.git#0.1.0",
     "underscore": "1.6.0",
-    "widget-common": "https://github.com/Rise-Vision/widget-common.git",
-    "widget-settings-ui-core": "https://github.com/Rise-Vision/widget-settings-ui-core.git",
-    "widget-settings-ui-components": "https://github.com/Rise-Vision/widget-settings-ui-components.git"
+    "widget-common": "https://github.com/Rise-Vision/widget-common.git#0.1.1",
+    "widget-settings-ui-core": "https://github.com/Rise-Vision/widget-settings-ui-core.git#0.1.8",
+    "widget-settings-ui-components": "https://github.com/Rise-Vision/widget-settings-ui-components.git#0.1.0"
   },
   "resolutions": {
-    "angular-translate": "~2.4.2",
-    "angular-translate-loader-static-files": "~2.4.2",
+    "angular-translate": "~2.5.2",
+    "angular-translate-loader-static-files": "~2.5.2",
     "common-style": "~1.1.4",
-    "jquery": "1.11.0"
+    "jquery": "1.11.0",
+    "underscore": "~1.7.0"
   }
 }
