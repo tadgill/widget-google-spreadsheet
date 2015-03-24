@@ -86,95 +86,6 @@ var RiseVision = RiseVision || {};
 
 RiseVision.Common = RiseVision.Common || {};
 
-RiseVision.Common.Validation = (function() {
-  "use strict";
-
-  /*
-  Defining the regular expressions being used
-   */
-  var urlRegExp = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i,
-      numericRegex = /^(\-|\+)?([0-9]+|Infinity)$/,
-      decimalRegex = /^\-?[0-9]*\.?[0-9]+$/;
-
-  function greaterThan(element, param) {
-    var value = element.value.trim();
-
-    if (!decimalRegex.test(value)) {
-      return false;
-    }
-
-    return (parseFloat(value) > parseFloat(param));
-  }
-
-  function lessThan(element, param) {
-    var value = element.value.trim();
-
-    if (!decimalRegex.test(value)) {
-      return false;
-    }
-
-    return (parseFloat(value) < parseFloat(param));
-  }
-
-  function numeric(element){
-    var value = element.value.trim();
-
-    /*
-     Regexp being used is stricter than parseInt. Using regular expression as
-     mentioned on mozilla
-     https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/
-     Global_Objects/parseInt
-     */
-    return numericRegex.test(value);
-  }
-
-  function required(element){
-    var value = element.value.trim(),
-        valid = false;
-
-    if (element.type === "checkbox" || element.type === "radio") {
-      if(element.checked === true) {
-        valid = true;
-      }
-    } else {
-      if (value !== null && value !== '') {
-        valid = true;
-      }
-    }
-
-    return valid;
-  }
-
-  function url(element){
-    var value = element.value.trim();
-
-    // Add http:// if no protocol parameter exists
-    if (value.indexOf("://") === -1) {
-      value = "http://" + value;
-    }
-    /*
-     Discussion
-     http://stackoverflow.com/questions/37684/how-to-replace-plain-urls-
-     with-links#21925491
-
-     Using
-     https://gist.github.com/dperini/729294
-     Reasoning
-     http://mathiasbynens.be/demo/url-regex
-
-     */
-    return urlRegExp.test(value);
-  }
-
-  return {
-    isGreaterThan: greaterThan,
-    isLessThan: lessThan,
-    isValidRequired: required,
-    isValidURL: url,
-    isValidNumber: numeric
-  };
-})();
-
 RiseVision.Common.Utilities = (function() {
 
   function getFontCssStyle(className, fontObj) {
@@ -3846,7 +3757,8 @@ RiseVision.Common.Utilities = (function() {
 			.append(
 				$(_div, { 'class': classes.sScrollHead } )
 					.css( {
-						overflow: 'hidden',
+						// Donna
+						//overflow: 'hidden',
 						position: 'relative',
 						border: 0,
 						width: scrollX ? size(scrollX) : '100%'
@@ -3871,7 +3783,9 @@ RiseVision.Common.Utilities = (function() {
 			.append(
 				$(_div, { 'class': classes.sScrollBody } )
 					.css( {
-						overflow: 'auto',
+						// Donna
+						// overflow: 'auto',
+						overflow: 'hidden',
 						height: size( scrollY ),
 						width: size( scrollX )
 					} )
@@ -4092,7 +4006,9 @@ RiseVision.Common.Utilities = (function() {
 		// Read all widths in next pass
 		_fnApplyToChildren( function(nSizer) {
 			headerContent.push( nSizer.innerHTML );
-			headerWidths.push( _fnStringToCss( $(nSizer).css('width') ) );
+			// Donna
+			// headerWidths.push( _fnStringToCss( $(nSizer).css('width') ) );
+			headerWidths.push( _fnStringToCss( $(nSizer).outerWidth() ) );
 		}, headerSrcEls );
 	
 		// Apply all widths in final pass
@@ -4189,22 +4105,29 @@ RiseVision.Common.Utilities = (function() {
 			}
 		}
 	
-		if ( scrollY && scroll.bCollapse ) {
-			divBodyStyle.height = _fnStringToCss( scrollY );
-	
-			var iExtra = (scrollX && tableEl.offsetWidth > divBodyEl.offsetWidth) ?
-				barWidth :
-				0;
-	
-			if ( tableEl.offsetHeight < divBodyEl.offsetHeight ) {
-				divBodyStyle.height = _fnStringToCss( tableEl.offsetHeight+iExtra );
-			}
-		}
+		//Donna - Removed this.
+		// if ( scrollY && scroll.bCollapse ) {
+		// 	divBodyStyle.height = _fnStringToCss( scrollY );
+		// 
+		// 	var iExtra = (scrollX && tableEl.offsetWidth > divBodyEl.offsetWidth) ?
+		// 		barWidth :
+		// 		0;
+		// 
+		// 	if ( tableEl.offsetHeight < divBodyEl.offsetHeight ) {
+		// 		divBodyStyle.height = _fnStringToCss( tableEl.offsetHeight+iExtra );
+		// 	}
+		// }
 	
 		/* Finally set the width's of the header and footer tables */
 		var iOuterWidth = table.outerWidth();
-		divHeaderTable[0].style.width = _fnStringToCss( iOuterWidth );
-		divHeaderInnerStyle.width = _fnStringToCss( iOuterWidth );
+		
+		//Donna Start - Responsive design.
+		// divHeaderTable[0].style.width = _fnStringToCss( iOuterWidth );
+		// divHeaderInnerStyle.width = _fnStringToCss( iOuterWidth );
+		
+		divHeaderTable[0].style.width = "100%";
+		divHeaderInnerStyle.width = "100%";
+		//Donna End
 	
 		// Figure out if there are scrollbar present - if so then we need a the header and footer to
 		// provide a bit more space to allow "overflow" scrolling (i.e. past the scrollbar)
@@ -4384,7 +4307,7 @@ RiseVision.Common.Utilities = (function() {
 			}
 	
 			// Take into account the y scrollbar
-			_fnScrollingWidthAdjust( oSettings, tmpTable[0] );
+			// _fnScrollingWidthAdjust( oSettings, tmpTable[0] );		//Donna - No scrollbar is shown in Gadgets that use this plugin.
 	
 			// Browsers need a bit of a hand when a width is assigned to any columns
 			// when x-scrolling as they tend to collapse the table to the min-width,
@@ -4411,7 +4334,8 @@ RiseVision.Common.Utilities = (function() {
 			// Get the width of each column in the constructed table
 			for ( i=0 ; i<visibleColumns.length ; i++ ) {
 				column = columns[ visibleColumns[i] ];
-				width = $(headerCells[i]).width();
+				// width = $(headerCells[i]).width();
+				width = $(headerCells[i]).outerWidth();		//Donna - Responsive design
 	
 				if ( width ) {
 					column.sWidth = _fnStringToCss( width );
@@ -15128,10 +15052,10 @@ if (typeof CONFIG === "undefined") {
 
 if (typeof angular !== "undefined") {
   angular.module("risevision.widget.googleSpreadsheet.config", [])
-    .value("defaultLayout", "widget.html");
+    .value("defaultLayout", "http://s3.amazonaws.com/widget-google-spreadsheet/0.1.0/dist/widget.html");
 
   angular.module("risevision.common.i18n.config", [])
-    .constant("LOCALES_PREFIX", "components/rv-common-i18n/dist/locales/translation_")
+    .constant("LOCALES_PREFIX", "locales/translation_")
     .constant("LOCALES_SUFIX", ".json");
 }
 
@@ -16142,7 +16066,7 @@ RiseVision.Spreadsheet.Content = function () {
 /* jshint ignore:start */
 var _gaq = _gaq || [];
 
-_gaq.push(['_setAccount', 'UA-41395348-9']);
+_gaq.push(['_setAccount', 'UA-57092159-11']);
 _gaq.push(['_trackPageview']);
 
 (function() {
