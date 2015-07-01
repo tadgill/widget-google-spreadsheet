@@ -97,7 +97,8 @@
       e2eSpreadsheetHTTP: "../node_modules/widget-tester/mocks/spreadsheet-controls-http-mock.js",
       e2eTestApp: "../test/e2e/settings-app.js",
       e2eAppReplace: "../test/e2e/settings-app-replace.js",
-      e2eMockData: "../test/mock-data.js"
+      e2eMockData: ["../node_modules/sinon/pkg/sinon.js", "../node_modules/sinon/pkg/sinon-server-1.14.1.js",
+        "../test/mock-data.js"]
     }));
 
   gulp.task("test:unit:settings", factory.testUnitAngular(
