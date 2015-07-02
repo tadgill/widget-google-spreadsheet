@@ -11,11 +11,11 @@
     "additionalParams": {
       "spreadsheet": {
         "fileId": "dummyFileId",
-        "url": "https://spreadsheets.google.com/tq?key=dummyFileId&sheet=od6&headers=-1",
+        "url": "https://spreadsheets.google.com/tq?key=dummyFileId&sheet=od6&headers=1",
         "sheetIndex": 0,
         "cells": "sheet",
         "range": "",
-        "headerRow": "-1",
+        "headerRow": "1",
         "refresh": 5,
         "docName": "Rise Training Spreadsheet Example",
         "docURL": "https://docs.google.com/spreadsheet/ccc?key=dummyFileId&usp=drive_web"
