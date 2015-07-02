@@ -54,8 +54,7 @@ RiseVision.Spreadsheet.Content = function () {
 
   function _cache() {
     $el = {
-      scrollContainer:      $("#scrollContainer"),
-      page:                 $("." + CLASS_PAGE)
+      scrollContainer: $("#scrollContainer")
     };
   }
 
@@ -286,7 +285,7 @@ RiseVision.Spreadsheet.Content = function () {
     }
 
     $thead.append($tr);
-    $el.page.append($thead);
+    $("." + CLASS_PAGE).append($thead);
   }
 
   function _addCell($tr, value, style, className) {
@@ -317,7 +316,7 @@ RiseVision.Spreadsheet.Content = function () {
       _addCell($tr, value, style, _columnIds[col]);
     }
 
-    $el.page.append($tr);
+    $("." + CLASS_PAGE).append($tr);
   }
 
   function _setScrollContainerSize() {
@@ -329,7 +328,7 @@ RiseVision.Spreadsheet.Content = function () {
     var numRows = _vizData.getNumberOfRows(),
       row;
 
-    $el.page.empty();
+    $("." + CLASS_PAGE).empty();
 
     //Add column headings.
     if (_vizData.getNumberOfColumns() > 0) {
@@ -355,7 +354,7 @@ RiseVision.Spreadsheet.Content = function () {
     });
 
     // Instantiate the data table
-    _dataTable = $el.page.dataTable(_dataTableOptions);
+    _dataTable = $("." + CLASS_PAGE).dataTable(_dataTableOptions);
 
     $("." + CLASS_DT_SCROLL_BODY).css("overflow", "hidden");
   }
@@ -513,6 +512,7 @@ RiseVision.Spreadsheet.Content = function () {
     if ($(".dataTables_scrollHeadInner ." + CLASS_PAGE + " th").length !== _vizData.getNumberOfColumns()) {
       _dataTable.api().destroy(true);
       _dataTable = null;
+      $el.scrollContainer.append("<table class='page'></table>");
       _createDataTable();
     } else {
       _updateHeadings();
@@ -601,7 +601,7 @@ RiseVision.Spreadsheet.Content = function () {
         //Only execute the following code if the layout is a table.
         if ($("table").length > 0) {
           _formatColumns($("." + CLASS_PAGE + " th"));
-          _dataTable = $el.page.dataTable(_dataTableOptions);
+          _dataTable = $("." + CLASS_PAGE).dataTable(_dataTableOptions);
           $("." + CLASS_DT_SCROLL_BODY).css("overflow", "hidden");
           _setPadding();
         }

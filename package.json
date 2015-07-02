@@ -36,6 +36,7 @@
     "phantomjs": "1.9.15",
     "protractor": "~1.0.0",
     "run-sequence": "^0.3.2",
+    "sinon": "^1.14.1",
     "widget-tester": "git://github.com/Rise-Vision/widget-tester.git"
   }
 }
