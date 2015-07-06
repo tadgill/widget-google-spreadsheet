@@ -16,6 +16,8 @@
   var sourcemaps = require("gulp-sourcemaps");
   var uglify = require("gulp-uglify");
   var usemin = require("gulp-usemin");
+  var bower = require("gulp-bower");
+  var colors = require("colors");
 
   var appJSFiles = [
     "src/**/*.js",
@@ -26,8 +28,12 @@
     del(["./dist/**"], cb);
   });
 
+  gulp.task("clean-bower", function(cb){
+    del(["./src/components/**"], cb);
+  });
+
   gulp.task("config", function() {
-    var env = process.env.NODE_ENV || "dev";
+    var env = process.env.NODE_ENV || "prod";
     gutil.log("Environment is", env);
 
     return gulp.src(["./src/config/" + env + ".js"])
@@ -82,10 +88,6 @@
   gulp.task("i18n", function(cb) {
     return gulp.src(["src/components/rv-common-i18n/dist/locales/**/*"])
       .pipe(gulp.dest("dist/locales"));
-  });
-
-  gulp.task("build", function (cb) {
-    runSequence(["clean", "config"], ["source", "fonts", "images", "i18n"], ["unminify"], cb);
   });
 
   gulp.task("html:e2e",
@@ -166,16 +168,29 @@
     runSequence("test:unit:widget", "test:unit:settings", cb);
   });
 
+  // ***** Primary Tasks ***** //
+  gulp.task("bower-clean-install", ["clean-bower"], function(cb){
+    return bower().on("error", function(err) {
+      console.log(err);
+      cb();
+    });
+  });
+
+  gulp.task("build", function (cb) {
+    runSequence(["clean", "config"], ["source", "fonts", "images", "i18n"], ["unminify"], cb);
+  });
+
   gulp.task("test", function(cb) {
     runSequence("build", "test:unit", "test:e2e", cb);
   });
 
-  gulp.task("dev",function(){
-    console.log("watching ./src/**/* for changes");
-    gulp.watch("./src/**/*", ["build"]);
+  gulp.task("default", [], function() {
+    console.log("********************************************************************".yellow);
+    console.log("  gulp bower-clean-install: delete and re-install bower components".yellow);
+    console.log("  gulp build: build a distribution version".yellow);
+    console.log("  gulp test: run e2e and unit tests".yellow);
+    console.log("********************************************************************".yellow);
+    return true;
   });
 
-  gulp.task("default", function(cb) {
-    runSequence("test", "build", cb);
-  });
 })();

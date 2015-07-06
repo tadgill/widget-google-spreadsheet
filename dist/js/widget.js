@@ -15052,10 +15052,10 @@ if (typeof CONFIG === "undefined") {
 
 if (typeof angular !== "undefined") {
   angular.module("risevision.widget.googleSpreadsheet.config", [])
-    .value("defaultLayout", "widget.html");
+    .value("defaultLayout", "http://s3.amazonaws.com/widget-google-spreadsheet/0.1.0/dist/widget.html");
 
   angular.module("risevision.common.i18n.config", [])
-    .constant("LOCALES_PREFIX", "components/rv-common-i18n/dist/locales/translation_")
+    .constant("LOCALES_PREFIX", "locales/translation_")
     .constant("LOCALES_SUFIX", ".json");
 }
 

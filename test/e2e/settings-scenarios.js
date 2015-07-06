@@ -195,11 +195,11 @@
         additionalParams: {
           "spreadsheet": {
             "fileId":"published",
-            "url":"https://test=published&sheet=test1&headers=-1",
+            "url":"https://test=published&sheet=test1&headers=1",
             "sheetIndex":0,
             "cells":"sheet",
             "range":"",
-            "headerRow":"-1",
+            "headerRow":"1",
             "refresh": 5,
             "docName":"Test File",
             "docURL":"https://test-published"
