@@ -90,17 +90,16 @@
       .pipe(gulp.dest("dist/locales"));
   });
 
-  gulp.task("html:e2e",
+  gulp.task("html:integration",
     factory.htmlE2E({
       files: ["./src/settings.html", "./src/widget.html"],
       e2eAngularMocks: "components/angular-mocks/angular-mocks.js",
       e2eVisualization: "../node_modules/widget-tester/mocks/visualization-api-mock.js",
       e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
       e2eSpreadsheetHTTP: "../node_modules/widget-tester/mocks/spreadsheet-controls-http-mock.js",
-      e2eTestApp: "../test/e2e/settings-app.js",
-      e2eAppReplace: "../test/e2e/settings-app-replace.js",
-      e2eMockData: ["../node_modules/sinon/pkg/sinon.js", "../node_modules/sinon/pkg/sinon-server-1.14.1.js",
-        "../test/mock-data.js"]
+      e2eTestApp: "../test/integration/settings-app.js",
+      e2eAppReplace: "../test/integration/settings-app-replace.js",
+      e2eMockData: "../test/data/main.js"
     }));
 
   gulp.task("test:unit:settings", factory.testUnitAngular(
@@ -125,14 +124,14 @@
       "src/settings/settings-app.js",
       "src/settings/**/*.js",
       "node_modules/widget-tester/mocks/visualization-api-mock.js",
-      "test/mock-data.js",
+      "test/data/main.js",
       "test/unit/settings/**/*spec.js"]}
   ));
 
   gulp.task("test:unit:widget", factory.testUnitAngular(
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
-      "test/mock-data.js",
+      "test/data/main.js",
       "node_modules/widget-tester/mocks/gadget-mocks.js",
       "node_modules/widget-tester/mocks/visualization-api-mock.js",
       "src/config/test.js",
@@ -148,20 +147,20 @@
   ));
 
   gulp.task("webdriver_update", factory.webdriveUpdate());
-  gulp.task("e2e:server-close", factory.testServerClose());
+  gulp.task("integration:server-close", factory.testServerClose());
 
-  gulp.task("e2e:server", ["config", "html:e2e"], factory.testServer());
+  gulp.task("integration:server", ["config", "html:integration"], factory.testServer());
 
-  gulp.task("test:e2e:widget", factory.testE2E({
-      testFiles: "test/e2e/widget-scenarios.js"}
+  gulp.task("test:integration:widget", factory.testE2E({
+      testFiles: "test/integration/widget-*.js"}
   ));
 
-  gulp.task("test:e2e:settings", ["webdriver_update"], factory.testE2EAngular({
-      testFiles: "test/e2e/settings-scenarios.js"}
+  gulp.task("test:integration:settings", ["webdriver_update"], factory.testE2EAngular({
+      testFiles: "test/integration/settings-scenarios.js"}
   ));
 
-  gulp.task("test:e2e", function(cb) {
-    runSequence(["html:e2e", "e2e:server"], "test:e2e:widget", "test:e2e:settings", "e2e:server-close", cb);
+  gulp.task("test:integration", function(cb) {
+    runSequence(["html:integration", "integration:server"], "test:integration:settings", "test:integration:widget", "integration:server-close", cb);
   });
 
   gulp.task("test:unit", function(cb) {
@@ -181,14 +180,14 @@
   });
 
   gulp.task("test", function(cb) {
-    runSequence("build", "test:unit", "test:e2e", cb);
+    runSequence("test:unit", "test:integration", cb);
   });
 
   gulp.task("default", [], function() {
     console.log("********************************************************************".yellow);
     console.log("  gulp bower-clean-install: delete and re-install bower components".yellow);
     console.log("  gulp build: build a distribution version".yellow);
-    console.log("  gulp test: run e2e and unit tests".yellow);
+    console.log("  gulp test: run integration and unit tests".yellow);
     console.log("********************************************************************".yellow);
     return true;
   });

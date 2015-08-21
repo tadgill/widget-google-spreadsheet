@@ -29864,551 +29864,6 @@ var BFHTimezonesList = {
 
 })(window, jQuery);
 
-/* global CONFIG: true */
-/* exported CONFIG */
-if (typeof CONFIG === "undefined") {
-  var CONFIG = {
-    ARROW_LOGOS_URL: "https://s3.amazonaws.com/risecontentlogos/financial/"
-  };
-}
-
-if (typeof angular !== "undefined") {
-  angular.module("risevision.widget.googleSpreadsheet.config", [])
-    .value("defaultLayout", "http://s3.amazonaws.com/widget-google-spreadsheet/0.1.0/dist/widget.html");
-
-  angular.module("risevision.common.i18n.config", [])
-    .constant("LOCALES_PREFIX", "locales/translation_")
-    .constant("LOCALES_SUFIX", ".json");
-}
-
-angular.module("risevision.widget.googleSpreadsheet.settings",
-  ["risevision.widget.googleSpreadsheet.config",
-    "risevision.common.i18n",
-    "risevision.widget.common",
-    "risevision.widget.common.visualization",
-    "risevision.widget.common.tooltip",
-    "risevision.widget.common.google-spreadsheet-controls",
-    "risevision.widget.common.column-selector",
-    "risevision.widget.common.scroll-setting",
-    "risevision.widget.common.table-setting",
-    "risevision.widget.common.background-setting",
-    "risevision.widget.common.widget-button-toolbar",
-    "risevision.widget.common.url-field"]);
-
-
-angular.module("risevision.widget.common", []);
-
-angular.module("risevision.widget.common")
-  .controller("settingsController", ["$scope", "settingsSaver", "settingsGetter", "settingsCloser",
-    function ($scope, settingsSaver, settingsGetter, settingsCloser) {
-
-    $scope.settings = { params: {}, additionalParams: {}};
-    $scope.alerts = [];
-
-    $scope.getAdditionalParam = function (name, defaultVal) {
-      var val = $scope.settings.additionalParams[name];
-      if(angular.isUndefined(val)) {
-        return defaultVal;
-      }
-      else {
-        return val;
-      }
-    };
-
-    $scope.setAdditionalParam = function (name, val) {
-      $scope.settings.additionalParams[name] = val;
-    };
-
-    $scope.loadAdditionalParams = function () {
-      settingsGetter.getAdditionalParams().then(function (additionalParams) {
-        $scope.settings.additionalParams = additionalParams;
-        $scope.$broadcast("loadAdditionalParams", additionalParams);
-      },
-      function (err) {alert (err); });
-    };
-
-    $scope.setAdditionalParams = function (name, val) {
-      $scope.settings.additionalParams[name] = val;
-    };
-
-    $scope.saveSettings = function () {
-      //clear out previous alerts, if any
-      $scope.alerts = [];
-
-      $scope.$broadcast("collectAdditionalParams");
-
-      settingsSaver.saveSettings($scope.settings).then(function () {
-        //TODO: perhaps show some indicator in UI?
-      }, function (err) {
-        $scope.alerts = err.alerts;
-      });
-
-    };
-
-    $scope.closeSettings = function() {
-      settingsCloser.closeSettings().then(function () {
-        //TODO:
-      }, function (err) {
-        $scope.alerts = err.alerts;
-      });
-
-    };
-
-    $scope.settings.params = settingsGetter.getParams();
-    $scope.loadAdditionalParams();
-  }])
-
-  .directive("scrollOnAlerts", function() {
-    return {
-      restrict: "A", //restricts to attributes
-      scope: false,
-      link: function($scope, $elm) {
-        $scope.$watchCollection("alerts", function (newAlerts, oldAlerts) {
-          if(newAlerts.length > 0 && oldAlerts.length === 0) {
-            $("body").animate({scrollTop: $elm.offset().top}, "fast");
-          }
-        });
-      }
-    };
-});
-
-angular.module("risevision.widget.common")
-  .constant("STORAGE_URL_BASE", "storage.googleapis.com/risemedialibrary-")
-  .factory("commonSettings", ["$log", "STORAGE_URL_BASE", function ($log, STORAGE_URL_BASE) {
-
-    var factory = {
-      getStorageUrlData: function (url) {
-        var storage = {},
-          str, arr, params, pair;
-
-        if (url.indexOf(STORAGE_URL_BASE) !== -1) {
-          str = url.split(STORAGE_URL_BASE)[1];
-          str = decodeURIComponent(str.slice(str.indexOf("/") + 1));
-          arr = str.split("/");
-
-          storage.folder = (typeof arr[arr.length - 2] !== "undefined" && arr[arr.length - 2] !== null) ?
-            arr[arr.length - 2] : "";
-          storage.fileName = arr[arr.length - 1];
-        }
-        // Check if a folder was selected.
-        else {
-          params = url.split("?");
-
-          for (var i = 0; i < params.length; i++) {
-            pair = params[i].split("=");
-
-            if (pair[0] === "prefix") {
-              storage.folder = decodeURIComponent(pair[1]);
-              storage.fileName = "";
-              break;
-            }
-          }
-        }
-
-        return storage;
-      }
-    };
-
-    return factory;
-  }]);
-
-angular.module("risevision.widget.common")
-  .factory("gadgetsApi", ["$window", function ($window) {
-    return $window.gadgets;
-  }]);
-
-angular.module("risevision.widget.common")
-  .service("i18nLoader", ["$window", "$q", function ($window, $q) {
-    var deferred = $q.defer();
-
-    $window.i18n.init({ 
-      fallbackLng: "en",
-      resGetPath: "locales/__ns_____lng__.json"
-    }, function () {
-      deferred.resolve($window.i18n);
-    });
-
-    this.get = function () {
-      return deferred.promise;
-    };
-  }]);
-
-angular.module("risevision.widget.common")
-  .factory("imageValidator", ["$q", function ($q) {
-    var factory = {
-      // Verify that URL is a valid image file.
-      isImage: function(src) {
-        var deferred = $q.defer(),
-          image = new Image();
-
-        image.onload = function() {
-          deferred.resolve(true);
-        };
-
-        image.onerror = function() {
-          deferred.resolve(false);
-        };
-
-        image.src = src;
-
-        return deferred.promise;
-      }
-    };
-
-    return factory;
-  }]);
-
-angular.module("risevision.widget.common")
-  .service("settingsSaver", ["$q", "$log", "gadgetsApi", "settingsParser",
-  function ($q, $log, gadgetsApi, settingsParser) {
-
-    this.saveSettings = function (settings, validator) {
-      var deferred = $q.defer();
-      var alerts = [], str = "";
-
-      settings = processSettings(settings);
-
-      if (validator) {
-        alerts = validator(settings);
-      }
-
-      if(alerts.length > 0) {
-        $log.debug("Validation failed.", alerts);
-        deferred.reject({alerts: alerts});
-      }
-
-      if (settings.params.hasOwnProperty("layoutURL")) {
-        // ensure the url is the start of the string
-        str += settings.params.layoutURL + "?";
-        // delete this property so its not included below in encodeParams call
-        delete settings.params.layoutURL;
-      }
-
-      str += settingsParser.encodeParams(settings.params);
-
-      var additionalParamsStr =
-        settingsParser.encodeAdditionalParams(settings.additionalParams);
-
-      gadgetsApi.rpc.call("", "rscmd_saveSettings", function (result) {
-        $log.debug("encoded settings", JSON.stringify(result));
-        $log.debug("Settings saved. ", settings);
-
-        deferred.resolve(result);
-      }, {
-        params: str,
-        additionalParams: additionalParamsStr
-      });
-
-      return deferred.promise;
-    };
-
-    function processSettings(settings) {
-      var newSettings = angular.copy(settings);
-
-      delete newSettings.params.id;
-      delete newSettings.params.companyId;
-      delete newSettings.params.rsW;
-      delete newSettings.params.rsH;
-
-      return newSettings;
-    }
-
-  }])
-
-  .service("settingsGetter", ["$q", "gadgetsApi", "$log", "settingsParser", "$window", "defaultSettings",
-    function ($q, gadgetsApi, $log, settingsParser, $window, defaultSettings) {
-
-      this.getAdditionalParams = function () {
-        var deferred = $q.defer();
-        var defaultAdditionalParams = defaultSettings.additionalParams || {};
-        gadgetsApi.rpc.call("", "rscmd_getAdditionalParams", function (result) {
-          if(result) {
-            result = settingsParser.parseAdditionalParams(result);
-          }
-          else {
-            result = {};
-          }
-          $log.debug("getAdditionalParams returns ", result);
-          deferred.resolve(angular.extend(defaultAdditionalParams, result));
-        });
-
-        return deferred.promise;
-      };
-
-      this.getParams = function () {
-        var defaultParams = defaultSettings.params || {};
-        return angular.extend(defaultParams,
-          settingsParser.parseParams($window.location.search));
-      };
-  }])
-
-  .service("settingsParser", [function () {
-    this.parseAdditionalParams = function (additionalParamsStr) {
-      if(additionalParamsStr) {
-        return JSON.parse(additionalParamsStr);
-      }
-      else {
-        return {};
-      }
-    };
-
-    this.encodeAdditionalParams = function (additionalParams) {
-      return JSON.stringify(additionalParams);
-    };
-
-    this.encodeParams = function (params) {
-      var str = [];
-      for(var p in params) {
-        if (params.hasOwnProperty(p)) {
-          var value;
-          if (typeof params[p] === "object") {
-            value = JSON.stringify(params[p]);
-          }
-          else {
-            value = params[p];
-          }
-          str.push("up_" + encodeURIComponent(p) + "=" + encodeURIComponent(value));
-        }
-      }
-
-      return str.join("&");
-    };
-
-    function stripPrefix(name) {
-      if(name.indexOf("up_") === 0) {
-        return name.slice(3);
-      }
-      else {
-        return null;
-      }
-    }
-
-    this.parseParams = function (paramsStr) {
-      //get rid of preceeding "?"
-      if(paramsStr[0] === "?") {
-        paramsStr = paramsStr.slice(1);
-      }
-      var result = {};
-      var vars = paramsStr.split("&");
-      for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        var name = stripPrefix(decodeURIComponent(pair[0]));
-        //save settings only if it has up_ prefix. Ignore otherwise
-        if (name) {
-          try {
-            result[name] = JSON.parse(decodeURIComponent(pair[1]));
-          }
-          catch (e) {
-            result[name] = decodeURIComponent(pair[1]);
-          }
-        }
-      }
-      return result;
-    };
-
-  }])
-
-  .service("settingsCloser", ["$q", "$log", "gadgetsApi",
-  function ($q, $log, gadgetsApi) {
-
-    this.closeSettings = function () {
-      var deferred = $q.defer();
-
-      gadgetsApi.rpc.call("", "rscmd_closeSettings", function () {
-        deferred.resolve(true);
-      });
-
-      return deferred.promise;
-    };
-
-  }])
-
-  .value("defaultSettings", {});
-
-(function (angular) {
-  "use strict";
-
-  angular.module("risevision.widget.common.visualization", [])
-    .factory("visualizationApi", ["$q", "$window", function ($q, $window) {
-      var deferred = $q.defer();
-      var promise;
-
-      var factory = {
-        get: function () {
-          if (!promise) {
-            promise = deferred.promise;
-            if (!$window.google.visualization) {
-              $window.google.setOnLoadCallback(function () {
-                deferred.resolve($window.google.visualization);
-              });
-            }
-            else {
-              deferred.resolve($window.google.visualization);
-            }
-          }
-          return promise;
-        }
-      };
-      return factory;
-
-    }]);
-
-})(angular);
-
-angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "$log", "columnsService", "defaultLayout",
-    function ($scope, $log, columnsService, defaultLayout) {
-
-      $scope.sheetColumns = [];
-      $scope.currentSheetColumn = null;
-
-      $scope.getColumns = function (url) {
-        columnsService.getColumns(url)
-          .then(function (columns) {
-            if (columns.length > 0) {
-              $scope.sheetColumns = columns;
-            }
-          })
-          .then(null, $log.error);
-      };
-
-      $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
-        if (typeof newUrl !== "undefined") {
-          if (newUrl !== oldUrl) {
-
-            // reset the column selector
-            $scope.sheetColumns = [];
-
-            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
-              // widget settings have already gone through initialization, safe to reset columns array
-              $scope.settings.additionalParams.columns = [];
-            }
-
-            if (newUrl !== "") {
-              $scope.getColumns(newUrl);
-            }
-          }
-        }
-      });
-
-      $scope.$watch("settings.additionalParams.layout.customURL", function (url) {
-        if (typeof url !== "undefined") {
-          if (!$scope.settings.additionalParams.layout.default) {
-            $scope.settings.params.layoutURL = url;
-          }
-        }
-      });
-
-      // need to watch this once to set the initial value of params.layoutURL
-      $scope.$watch("settings.additionalParams.layout.default", function(defaultVal) {
-        if (typeof defaultVal !== "undefined") {
-          if (defaultVal) {
-            $scope.settings.params.layoutURL = defaultLayout;
-
-            // text for custom url may have been entered in a previous save, remove it
-            $scope.settings.additionalParams.layout.customURL = "";
-          } else {
-            $scope.settings.params.layoutURL = $scope.settings.additionalParams.layout.customURL;
-          }
-        }
-      });
-
-    }])
-  .value("defaultSettings", {
-    params: {
-      layoutURL: ""
-    },
-    additionalParams: {
-      spreadsheet: {},
-      columns: [],
-      scroll: {},
-      table: {},
-      background: {},
-      layout: {
-        default: true,
-        customURL: ""
-      }
-    }
-  });
-
-(function() {
-
-  "use strict";
-
-  angular.module("risevision.widget.googleSpreadsheet.settings")
-    .factory("columnsService", ["visualizationApi", "$q", function (visualizationApi, $q) {
-
-      var factory = {};
-
-      function configureColumns(response) {
-        var dataTable = response.getDataTable(),
-          columnNames = [],
-          columnIndexes = [], cellValue, columnLabel, columnId, i, j;
-
-        // narrow down actual columns being used
-        for (i = 0; i < dataTable.getNumberOfColumns(); i += 1) {
-          for (j = 0; j < dataTable.getNumberOfRows(); j += 1) {
-            cellValue = dataTable.getValue(j, i);
-            if (cellValue && cellValue !== "") {
-              columnIndexes.push(i);
-              break;
-            }
-          }
-        }
-
-        // configure the column objects and populate columnNames array
-        for (i = 0; i < columnIndexes.length; i += 1) {
-          columnLabel = dataTable.getColumnLabel(columnIndexes[i]);
-          if (columnLabel === "") {
-            // there's no header row or the column is just untitled, use the column id instead (eg. A)
-            columnLabel = dataTable.getColumnId(columnIndexes[i]);
-          }
-
-          // create an id that can be referenced again when restoring saved widget settings
-          columnId = dataTable.getColumnId(columnIndexes[i]) + "_" + dataTable.getColumnType(columnIndexes[i]) +
-            "_" + columnLabel;
-
-          columnNames.push({
-            id: columnId,
-            name: columnLabel,
-            type: dataTable.getColumnType(columnIndexes[i])
-          });
-        }
-
-        return columnNames;
-      }
-
-      factory.getColumns = function (url) {
-        var deferred = $q.defer();
-
-        visualizationApi.get().then(function (viz) {
-          var query = new viz.Query(url);
-
-          // only need the first row
-          query.setQuery("select * limit 1");
-          query.setTimeout(30);
-
-          query.send(function (response) {
-            if (!response) {
-              deferred.reject("No response");
-            } else if (response.isError()) {
-              deferred.reject(response.getMessage());
-            } else {
-              deferred.resolve(configureColumns(response));
-            }
-          });
-
-        });
-
-        return deferred.promise;
-      };
-
-      return factory;
-
-    }]);
-
-})();
-
 (function () {
   "use strict";
 
@@ -30442,9 +29897,9 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.widget-button-toolbar"); }
-catch(err) { app = angular.module("risevision.widget.common.widget-button-toolbar", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.widget-button-toolbar"); }
+catch(err) { module = angular.module("risevision.widget.common.widget-button-toolbar", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/widget-button-toolbar/widget-button-toolbar.html",
     "<div class=\"btn-toolbar sticky-buttons\">\n" +
@@ -31921,21 +31376,24 @@ if (typeof WIDGET_SETTINGS_UI_CONFIG === "undefined") {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.font-setting"); }
-catch(err) { app = angular.module("risevision.widget.common.font-setting", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.font-setting"); }
+catch(err) { module = angular.module("risevision.widget.common.font-setting", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/font-setting/font-setting.html",
-    "<div class=\"row\" class=\"font-settings\">\n" +
+    "<div class=\"row\">\n" +
     "  <div class=\"col-md-12\">\n" +
-    "    <ul class=\"list-inline\">\n" +
+    "    <ul class=\"list-inline font-setting\">\n" +
     "      <li class=\"pull-left\">\n" +
     "        <font-picker font=\"fontData.font\"></font-picker>\n" +
     "      </li>\n" +
     "      <li class=\"pull-left\">\n" +
     "        <font-size-picker ng-model=\"fontData.size\"></font-size-picker>\n" +
     "      </li>\n" +
-    "      <li class=\"pull-left font-setting-button\">\n" +
+    "      <li class=\"pull-left\" ng-if=\"!hideAlignment\">\n" +
+    "        <alignment align=\"fontData.align\" class=\"font-setting-button\"></alignment>\n" +
+    "      </li>\n" +
+    "      <li class=\"font-setting-button\">\n" +
     "        <font-style bold=\"fontData.bold\" italic=\"fontData.italic\" underline=\"fontData.underline\"></font-style>\n" +
     "      </li>\n" +
     "      <li class=\"pull-left font-setting-button\">\n" +
@@ -31943,9 +31401,6 @@ app.run(["$templateCache", function($templateCache) {
     "      </li>\n" +
     "      <li class=\"pull-left font-setting-button\">\n" +
     "        <input color-picker type=\"highlight\" color=\"fontData.highlightColor\" />\n" +
-    "      </li>\n" +
-    "      <li class=\"pull-left\" ng-if=\"!hideAlignment\">\n" +
-    "        <alignment align=\"fontData.align\" class=\"font-setting-button\"></alignment>\n" +
     "      </li>\n" +
     "    </ul>\n" +
     "  </div>\n" +
@@ -32623,9 +32078,9 @@ module.run(["$templateCache", function($templateCache) {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.column-selector"); }
-catch(err) { app = angular.module("risevision.widget.common.column-selector", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.column-selector"); }
+catch(err) { module = angular.module("risevision.widget.common.column-selector", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/column-selector/column-selector.html",
     "<div class=\"section\">\n" +
@@ -32737,9 +32192,9 @@ app.run(["$templateCache", function($templateCache) {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.column-setting"); }
-catch(err) { app = angular.module("risevision.widget.common.column-setting", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.column-setting"); }
+catch(err) { module = angular.module("risevision.widget.common.column-setting", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/column-setting/column-setting.html",
     "<div class=\"panel panel-default\">\n" +
@@ -32879,7 +32334,8 @@ app.run(["$templateCache", function($templateCache) {
           $scope.defaultSetting = {
             by: "none",
             speed: "medium",
-            pause: 5
+            pause: 5,
+            pud: 10
           };
 
           $scope.defaults = function(obj) {
@@ -32906,53 +32362,51 @@ app.run(["$templateCache", function($templateCache) {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.scroll-setting"); }
-catch(err) { app = angular.module("risevision.widget.common.scroll-setting", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.scroll-setting"); }
+catch(err) { module = angular.module("risevision.widget.common.scroll-setting", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/scroll-setting/scroll-setting.html",
-    "<div class=\"section\">\n" +
-    "  <h5>{{'scroll.heading' | translate}}</h5>\n" +
-    "  <div class=\"form-group\">\n" +
-    "    <div class=\"row\">\n" +
-    "      <div class=\"col-md-3\">\n" +
-    "        <label>{{'scroll.by.label' | translate}}</label>\n" +
-    "        <select id=\"scroll-by\" ng-model=\"scroll.by\" class=\"form-control\">\n" +
-    "          <option value=\"none\">{{'scroll.by.none' | translate}}</option>\n" +
-    "          <option value=\"continuous\">{{'scroll.by.continuous' | translate}}</option>\n" +
-    "          <option value=\"page\">{{'scroll.by.page' | translate}}</option>\n" +
-    "        </select>\n" +
+    "<div class=\"row\">\n" +
+    "  <div class=\"col-md-3\">\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label class=\"control-label\">{{\"scroll.heading\" | translate}}</label>\n" +
+    "      <select id=\"scroll-by\" ng-model=\"scroll.by\" class=\"form-control\">\n" +
+    "        <option value=\"none\">{{'scroll.by.none' | translate}}</option>\n" +
+    "        <option value=\"continuous\">{{'scroll.by.continuous' | translate}}</option>\n" +
+    "        <option value=\"page\">{{'scroll.by.page' | translate}}</option>\n" +
+    "      </select>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-3\" ng-show=\"scroll.by != 'none'\">\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label class=\"control-label\">{{'scroll.speed.label' | translate}}</label>\n" +
+    "      <select id=\"scroll-speed\" ng-model=\"scroll.speed\" class=\"form-control\">\n" +
+    "        <option value=\"slowest\">{{'scroll.speed.slowest' | translate}}</option>\n" +
+    "        <option value=\"slow\">{{'scroll.speed.slow' | translate}}</option>\n" +
+    "        <option value=\"medium\">{{'scroll.speed.medium' | translate}}</option>\n" +
+    "        <option value=\"fast\">{{'scroll.speed.fast' | translate}}</option>\n" +
+    "        <option value=\"fastest\">{{'scroll.speed.fastest' | translate}}</option>\n" +
+    "      </select>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "  <div class=\"col-md-3\" ng-show=\"scroll.by != 'none'\">\n" +
+    "    <div class=\"form-group\">\n" +
+    "      <label class=\"control-label\">{{'scroll.pause.label' | translate}}</label>\n" +
+    "      <div class=\"input-group\">\n" +
+    "        <input id=\"scroll-pause\" type=\"number\" ng-model=\"scroll.pause\" class=\"form-control\" />\n" +
+    "        <span class=\"input-group-addon\">{{'common.units.seconds' | translate}}</span>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div ng-show=\"scroll.by != 'none'\" class=\"more-scroll-options\">\n" +
+    "  <div class=\"col-md-3\" ng-show=\"scroll.by != 'none'\">\n" +
     "    <div class=\"form-group\">\n" +
-    "      <label for=\"scroll-speed\">{{'scroll.speed.label' | translate}}</label>\n" +
-    "      <div class=\"row\">\n" +
-    "        <div class=\"col-md-3\">\n" +
-    "          <select id=\"scroll-speed\" ng-model=\"scroll.speed\" class=\"form-control\">\n" +
-    "            <option value=\"slowest\">{{'scroll.speed.slowest' | translate}}</option>\n" +
-    "            <option value=\"slow\">{{'scroll.speed.slow' | translate}}</option>\n" +
-    "            <option value=\"medium\">{{'scroll.speed.medium' | translate}}</option>\n" +
-    "            <option value=\"fast\">{{'scroll.speed.fast' | translate}}</option>\n" +
-    "            <option value=\"fastest\">{{'scroll.speed.fastest' | translate}}</option>\n" +
-    "          </select>\n" +
-    "        </div>\n" +
-    "      </div>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "      <label for=\"scroll-pause\">\n" +
-    "        {{'scroll.pause.label' | translate}}\n" +
-    "      </label>\n" +
-    "      <span popover=\"{{'scroll.pause.tooltip' | translate}}\"\n" +
-    "            popover-trigger=\"click\" popover-placement=\"right\" rv-tooltip></span>\n" +
-    "      <div class=\"row\">\n" +
-    "        <div class=\"col-md-3\">\n" +
-    "          <div class=\"input-group\">\n" +
-    "            <input id=\"scroll-pause\" type=\"number\" ng-model=\"scroll.pause\" class=\"form-control\" />\n" +
-    "            <span class=\"input-group-addon\">{{'common.units.seconds' | translate}}</span>\n" +
-    "          </div>\n" +
-    "        </div>\n" +
+    "      <label class=\"control-label\">{{'scroll.pud.label' | translate}}</label>\n" +
+    "      <span popover=\"{{'scroll.pud.tooltip' | translate}}\" popover-trigger=\"click\"\n" +
+    "        popover-placement=\"right\" rv-tooltip></span>\n" +
+    "      <div class=\"input-group\">\n" +
+    "        <input id=\"scroll-pud\" type=\"number\" ng-model=\"scroll.pud\" class=\"form-control\" />\n" +
+    "        <span class=\"input-group-addon\">{{'common.units.seconds' | translate}}</span>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -33021,9 +32475,9 @@ app.run(["$templateCache", function($templateCache) {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.table-setting"); }
-catch(err) { app = angular.module("risevision.widget.common.table-setting", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.table-setting"); }
+catch(err) { module = angular.module("risevision.widget.common.table-setting", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/table-setting/table-setting.html",
     "<div class=\"section\">\n" +
@@ -33118,9 +32572,9 @@ app.run(["$templateCache", function($templateCache) {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.background-setting"); }
-catch(err) { app = angular.module("risevision.widget.common.background-setting", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.background-setting"); }
+catch(err) { module = angular.module("risevision.widget.common.background-setting", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/background-setting/background-setting.html",
     "<div class=\"section\">\n" +
@@ -33269,11 +32723,11 @@ app.run(["$templateCache", function($templateCache) {
 (function () {
   "use strict";
 
-  angular.module("risevision.widget.common.url-field",
-    ["risevision.common.i18n",
+  angular.module("risevision.widget.common.url-field", [
+    "risevision.common.i18n",
     "risevision.widget.common.tooltip",
-    "risevision.widget.common.storage-selector"])
-
+    "risevision.widget.common.storage-selector"
+  ])
     .directive("urlField", ["$templateCache", "$log", function ($templateCache, $log) {
       return {
         restrict: "E",
@@ -33282,13 +32736,41 @@ app.run(["$templateCache", function($templateCache) {
           url: "=",
           hideLabel: "@",
           hideStorage: "@",
-          companyId: "@"
+          companyId: "@",
+          fileType: "@",
+          storageType: "@"
         },
         template: $templateCache.get("_angular/url-field/url-field.html"),
         link: function (scope, element, attrs, ctrl) {
 
+          function hasValidExtension(url, fileType) {
+            var testUrl = url.toLowerCase(),
+              extensions;
+
+            switch(fileType) {
+              case "image":
+                extensions = [".jpg", ".jpeg", ".png", ".bmp", ".svg", ".gif"];
+                break;
+              case "video":
+                extensions = [".webm", ".mp4", ".ogv", ".ogg"];
+                break;
+              default:
+                extensions = [];
+            }
+
+            for (var i = 0, len = extensions.length; i < len; i++) {
+              if (testUrl.indexOf(extensions[i]) !== -1) {
+                return true;
+              }
+            }
+
+            return false;
+          }
+
+
           function testUrl(value) {
-            var urlRegExp;
+            var urlRegExp,
+              isValid;
 
             /*
              Discussion
@@ -33299,16 +32781,25 @@ app.run(["$templateCache", function($templateCache) {
              Reasoning
              http://mathiasbynens.be/demo/url-regex */
 
-            /* jshint ignore:start */
-            urlRegExp = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
-            /* jshint ignore:end */
+            urlRegExp = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i; // jshint ignore:line
 
             // Add http:// if no protocol parameter exists
             if (value.indexOf("://") === -1) {
               value = "http://" + value;
             }
 
-            return urlRegExp.test(value);
+            isValid = urlRegExp.test(value);
+
+            if (isValid && typeof scope.fileType !== "undefined") {
+              isValid = hasValidExtension(value, scope.fileType);
+              if (!isValid) {
+                scope.invalidType = scope.fileType;
+              }
+            } else {
+              scope.invalidType = "url";
+            }
+
+            return isValid;
           }
 
           // By default enforce validation
@@ -33318,15 +32809,31 @@ app.run(["$templateCache", function($templateCache) {
           // Validation state
           scope.valid = true;
 
+          scope.invalidType = "url";
+
+          scope.allowInitEmpty = (typeof attrs.initEmpty !== "undefined");
+
           if (!scope.hideStorage) {
             scope.$on("picked", function (event, data) {
               scope.url = data[0];
             });
           }
 
+          scope.blur = function() {
+            scope.$emit("urlFieldBlur");
+          };
+
           scope.$watch("url", function (url) {
-            if (url && scope.doValidation) {
-              scope.valid = testUrl(scope.url);
+            if (typeof url !== "undefined" && url !== null) {
+
+              if (url !== "" && scope.allowInitEmpty) {
+                // ensure an empty "" value now gets validated
+                scope.allowInitEmpty = false;
+              }
+
+              if (scope.doValidation && !scope.allowInitEmpty) {
+                scope.valid = testUrl(scope.url);
+              }
             }
           });
 
@@ -33341,7 +32848,10 @@ app.run(["$templateCache", function($templateCache) {
             if(typeof scope.url !== "undefined") {
               if (doValidation) {
                 scope.forcedValid = false;
-                scope.valid = testUrl(scope.url);
+
+                if (!scope.allowInitEmpty) {
+                  scope.valid = testUrl(scope.url);
+                }
               } else {
                 scope.forcedValid = true;
                 scope.valid = true;
@@ -33355,27 +32865,597 @@ app.run(["$templateCache", function($templateCache) {
 }());
 
 (function(module) {
-try { app = angular.module("risevision.widget.common.url-field"); }
-catch(err) { app = angular.module("risevision.widget.common.url-field", []); }
-app.run(["$templateCache", function($templateCache) {
+try { module = angular.module("risevision.widget.common.url-field"); }
+catch(err) { module = angular.module("risevision.widget.common.url-field", []); }
+module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("_angular/url-field/url-field.html",
     "<div class=\"form-group\" >\n" +
-    "  <label for=\"url\" ng-if=\"!hideLabel\">{{ \"url.label\" | translate }}</label>\n" +
+    "  <label ng-if=\"!hideLabel\">{{ \"url.label\" | translate }}</label>\n" +
     "  <div ng-class=\"{'input-group':!hideStorage}\">\n" +
-    "    <input id=\"url\" name=\"url\" type=\"text\" ng-model=\"url\" class=\"form-control\" placeholder=\"http://\">\n" +
-    "    <span class=\"input-url-addon\" ng-if=\"!hideStorage\"><storage-selector company-id=\"{{companyId}}\"></storage-selector></span>\n" +
+    "    <input name=\"url\" type=\"text\" ng-model=\"url\" ng-blur=\"blur()\" class=\"form-control\" placeholder=\"http://\">\n" +
+    "    <span class=\"input-url-addon\" ng-if=\"!hideStorage\"><storage-selector company-id=\"{{companyId}}\" type=\"{{storageType}}\"></storage-selector></span>\n" +
     "  </div>\n" +
-    "  <p ng-if=\"!valid\" class=\"help-block\">{{ \"url.invalid\" | translate }}</p>\n" +
+    "  <p ng-if=\"!valid && invalidType === 'url'\" class=\"text-danger\">{{ \"url.errors.url\" | translate }}</p>\n" +
+    "  <p ng-if=\"!valid && invalidType === 'image'\" class=\"text-danger\">{{ \"url.errors.image\" | translate }}</p>\n" +
+    "  <p ng-if=\"!valid && invalidType === 'video'\" class=\"text-danger\">{{ \"url.errors.video\" | translate }}</p>\n" +
     "  <div class=\"checkbox\" ng-show=\"forcedValid || !valid\">\n" +
     "    <label>\n" +
     "      <input name=\"validate-url\" ng-click=\"doValidation = !doValidation\" type=\"checkbox\"\n" +
-    "             value=\"validate-url\" checked=\"checked\"> {{\"url.validate.label\" | translate}}\n" +
+    "             value=\"validate-url\"> {{\"url.validate.label\" | translate}}\n" +
     "    </label>\n" +
-    "    <span popover=\"{{'url.validate.tooltip' | translate}}\" popover-trigger=\"click\"\n" +
-    "          popover-placement=\"top\" rv-tooltip></span>\n" +
     "  </div>\n" +
     "</div>\n" +
     "");
 }]);
+})();
+
+/* global CONFIG: true */
+/* exported CONFIG */
+if (typeof CONFIG === "undefined") {
+  var CONFIG = {
+    ARROW_LOGOS_URL: "https://s3.amazonaws.com/risecontentlogos/financial/"
+  };
+}
+
+if (typeof angular !== "undefined") {
+  angular.module("risevision.widget.googleSpreadsheet.config", [])
+    .value("defaultLayout", "http://s3.amazonaws.com/widget-google-spreadsheet/0.1.0/dist/widget.html");
+
+  angular.module("risevision.common.i18n.config", [])
+    .constant("LOCALES_PREFIX", "locales/translation_")
+    .constant("LOCALES_SUFIX", ".json");
+}
+
+angular.module("risevision.widget.googleSpreadsheet.settings",
+  ["risevision.widget.googleSpreadsheet.config",
+    "risevision.common.i18n",
+    "risevision.widget.common",
+    "risevision.widget.common.visualization",
+    "risevision.widget.common.tooltip",
+    "risevision.widget.common.google-spreadsheet-controls",
+    "risevision.widget.common.column-selector",
+    "risevision.widget.common.scroll-setting",
+    "risevision.widget.common.table-setting",
+    "risevision.widget.common.background-setting",
+    "risevision.widget.common.widget-button-toolbar",
+    "risevision.widget.common.url-field"]);
+
+
+angular.module("risevision.widget.common", []);
+
+angular.module("risevision.widget.common")
+  .controller("settingsController", ["$scope", "settingsSaver", "settingsGetter", "settingsCloser",
+    function ($scope, settingsSaver, settingsGetter, settingsCloser) {
+
+    $scope.settings = { params: {}, additionalParams: {}};
+    $scope.alerts = [];
+
+    $scope.getAdditionalParam = function (name, defaultVal) {
+      var val = $scope.settings.additionalParams[name];
+      if(angular.isUndefined(val)) {
+        return defaultVal;
+      }
+      else {
+        return val;
+      }
+    };
+
+    $scope.setAdditionalParam = function (name, val) {
+      $scope.settings.additionalParams[name] = val;
+    };
+
+    $scope.loadAdditionalParams = function () {
+      settingsGetter.getAdditionalParams().then(function (additionalParams) {
+        $scope.settings.additionalParams = additionalParams;
+        $scope.$broadcast("loadAdditionalParams", additionalParams);
+      },
+      function (err) {alert (err); });
+    };
+
+    $scope.setAdditionalParams = function (name, val) {
+      $scope.settings.additionalParams[name] = val;
+    };
+
+    $scope.saveSettings = function () {
+      //clear out previous alerts, if any
+      $scope.alerts = [];
+
+      $scope.$broadcast("collectAdditionalParams");
+
+      settingsSaver.saveSettings($scope.settings).then(function () {
+        //TODO: perhaps show some indicator in UI?
+      }, function (err) {
+        $scope.alerts = err.alerts;
+      });
+
+    };
+
+    $scope.closeSettings = function() {
+      settingsCloser.closeSettings().then(function () {
+        //TODO:
+      }, function (err) {
+        $scope.alerts = err.alerts;
+      });
+
+    };
+
+    $scope.settings.params = settingsGetter.getParams();
+    $scope.loadAdditionalParams();
+  }])
+
+  .directive("scrollOnAlerts", function() {
+    return {
+      restrict: "A", //restricts to attributes
+      scope: false,
+      link: function($scope, $elm) {
+        $scope.$watchCollection("alerts", function (newAlerts, oldAlerts) {
+          if(newAlerts.length > 0 && oldAlerts.length === 0) {
+            $("body").animate({scrollTop: $elm.offset().top}, "fast");
+          }
+        });
+      }
+    };
+});
+
+angular.module("risevision.widget.common")
+  .constant("STORAGE_FILE_URL_BASE", "storage.googleapis.com/risemedialibrary-")
+  .constant("STORAGE_FOLDER_URL_BASE", "googleapis.com/storage/")
+  .factory("commonSettings", ["$log", "STORAGE_FILE_URL_BASE", "STORAGE_FOLDER_URL_BASE",
+    function ($log, STORAGE_FILE_URL_BASE, STORAGE_FOLDER_URL_BASE) {
+
+    var factory = {
+      getStorageUrlData: function (url) {
+        var storage = {},
+          str, arr, params, pair;
+
+        function getStorageType(storageUrl) {
+          if (storageUrl.indexOf(STORAGE_FILE_URL_BASE) !== -1) {
+            return "file";
+          }
+
+          if (storageUrl.indexOf(STORAGE_FOLDER_URL_BASE) !== -1) {
+            return "folder";
+          }
+
+          return null;
+        }
+
+        function getCompanyId(storageUrl) {
+          var p = storageUrl.split("risemedialibrary-");
+
+          return p[1].slice(0, p[1].indexOf("/"));
+        }
+
+        if (getStorageType(url) === "file") {
+          str = url.split(STORAGE_FILE_URL_BASE)[1];
+          str = decodeURIComponent(str.slice(str.indexOf("/") + 1));
+          arr = str.split("/");
+
+          storage.companyId = getCompanyId(url);
+          storage.fileName = arr.pop();
+          storage.folder = arr.length > 0 ? arr.join("/") : "";
+
+          if (storage.folder !== "") {
+            // add ending "/" to the folder path
+            storage.folder += "/";
+          }
+        }
+        else if (getStorageType(url) === "folder") {
+          params = url.split("?");
+
+          for (var i = 0; i < params.length; i++) {
+            pair = params[i].split("=");
+
+            if (pair[0] === "prefix" && typeof pair[1] !== "undefined" && pair[1] !== "") {
+              storage.companyId = getCompanyId(url);
+              storage.folder = decodeURIComponent(pair[1]);
+              storage.fileName = "";
+              break;
+            }
+          }
+        }
+
+        return storage;
+      }
+    };
+
+    return factory;
+  }]);
+
+angular.module("risevision.widget.common")
+  .factory("gadgetsApi", ["$window", function ($window) {
+    return $window.gadgets;
+  }]);
+
+angular.module("risevision.widget.common")
+  .service("i18nLoader", ["$window", "$q", function ($window, $q) {
+    var deferred = $q.defer();
+
+    $window.i18n.init({ 
+      fallbackLng: "en",
+      resGetPath: "locales/__ns_____lng__.json"
+    }, function () {
+      deferred.resolve($window.i18n);
+    });
+
+    this.get = function () {
+      return deferred.promise;
+    };
+  }]);
+
+angular.module("risevision.widget.common")
+  .factory("imageValidator", ["$q", function ($q) {
+    var factory = {
+      // Verify that URL is a valid image file.
+      isImage: function(src) {
+        var deferred = $q.defer(),
+          image = new Image();
+
+        image.onload = function() {
+          deferred.resolve(true);
+        };
+
+        image.onerror = function() {
+          deferred.resolve(false);
+        };
+
+        image.src = src;
+
+        return deferred.promise;
+      }
+    };
+
+    return factory;
+  }]);
+
+angular.module("risevision.widget.common")
+  .service("settingsSaver", ["$q", "$log", "gadgetsApi", "settingsParser",
+  function ($q, $log, gadgetsApi, settingsParser) {
+
+    this.saveSettings = function (settings, validator) {
+      var deferred = $q.defer();
+      var alerts = [], str = "";
+
+      settings = processSettings(settings);
+
+      if (validator) {
+        alerts = validator(settings);
+      }
+
+      if(alerts.length > 0) {
+        $log.debug("Validation failed.", alerts);
+        deferred.reject({alerts: alerts});
+      }
+
+      if (settings.params.hasOwnProperty("layoutURL")) {
+        // ensure the url is the start of the string
+        str += settings.params.layoutURL + "?";
+        // delete this property so its not included below in encodeParams call
+        delete settings.params.layoutURL;
+      }
+
+      str += settingsParser.encodeParams(settings.params);
+
+      var additionalParamsStr =
+        settingsParser.encodeAdditionalParams(settings.additionalParams);
+
+      gadgetsApi.rpc.call("", "rscmd_saveSettings", function (result) {
+        $log.debug("encoded settings", JSON.stringify(result));
+        $log.debug("Settings saved. ", settings);
+
+        deferred.resolve(result);
+      }, {
+        params: str,
+        additionalParams: additionalParamsStr
+      });
+
+      return deferred.promise;
+    };
+
+    function processSettings(settings) {
+      var newSettings = angular.copy(settings);
+
+      delete newSettings.params.id;
+      delete newSettings.params.companyId;
+      delete newSettings.params.rsW;
+      delete newSettings.params.rsH;
+
+      return newSettings;
+    }
+
+  }])
+
+  .service("settingsGetter", ["$q", "gadgetsApi", "$log", "settingsParser", "$window", "defaultSettings",
+    function ($q, gadgetsApi, $log, settingsParser, $window, defaultSettings) {
+
+      this.getAdditionalParams = function () {
+        var deferred = $q.defer();
+        var defaultAdditionalParams = defaultSettings.additionalParams || {};
+        gadgetsApi.rpc.call("", "rscmd_getAdditionalParams", function (result) {
+          if(result) {
+            result = settingsParser.parseAdditionalParams(result);
+          }
+          else {
+            result = {};
+          }
+          $log.debug("getAdditionalParams returns ", result);
+          deferred.resolve(angular.extend(defaultAdditionalParams, result));
+        });
+
+        return deferred.promise;
+      };
+
+      this.getParams = function () {
+        var defaultParams = defaultSettings.params || {};
+        return angular.extend(defaultParams,
+          settingsParser.parseParams($window.location.search));
+      };
+  }])
+
+  .service("settingsParser", [function () {
+    this.parseAdditionalParams = function (additionalParamsStr) {
+      if(additionalParamsStr) {
+        return JSON.parse(additionalParamsStr);
+      }
+      else {
+        return {};
+      }
+    };
+
+    this.encodeAdditionalParams = function (additionalParams) {
+      return JSON.stringify(additionalParams);
+    };
+
+    this.encodeParams = function (params) {
+      var str = [];
+      for(var p in params) {
+        if (params.hasOwnProperty(p)) {
+          var value;
+          if (typeof params[p] === "object") {
+            value = JSON.stringify(params[p]);
+          }
+          else {
+            value = params[p];
+          }
+          str.push("up_" + encodeURIComponent(p) + "=" + encodeURIComponent(value));
+        }
+      }
+
+      return str.join("&");
+    };
+
+    function stripPrefix(name) {
+      if(name.indexOf("up_") === 0) {
+        return name.slice(3);
+      }
+      else {
+        return null;
+      }
+    }
+
+    this.parseParams = function (paramsStr) {
+      //get rid of preceeding "?"
+      if(paramsStr[0] === "?") {
+        paramsStr = paramsStr.slice(1);
+      }
+      var result = {};
+      var vars = paramsStr.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        var name = stripPrefix(decodeURIComponent(pair[0]));
+        //save settings only if it has up_ prefix. Ignore otherwise
+        if (name) {
+          try {
+            result[name] = JSON.parse(decodeURIComponent(pair[1]));
+          }
+          catch (e) {
+            result[name] = decodeURIComponent(pair[1]);
+          }
+        }
+      }
+      return result;
+    };
+
+  }])
+
+  .service("settingsCloser", ["$q", "$log", "gadgetsApi",
+  function ($q, $log, gadgetsApi) {
+
+    this.closeSettings = function () {
+      var deferred = $q.defer();
+
+      gadgetsApi.rpc.call("", "rscmd_closeSettings", function () {
+        deferred.resolve(true);
+      });
+
+      return deferred.promise;
+    };
+
+  }])
+
+  .value("defaultSettings", {});
+
+(function (angular) {
+  "use strict";
+
+  angular.module("risevision.widget.common.visualization", [])
+    .factory("visualizationApi", ["$q", "$window", function ($q, $window) {
+      var deferred = $q.defer();
+      var promise;
+
+      var factory = {
+        get: function () {
+          if (!promise) {
+            promise = deferred.promise;
+            if (!$window.google.visualization) {
+              $window.google.setOnLoadCallback(function () {
+                deferred.resolve($window.google.visualization);
+              });
+            }
+            else {
+              deferred.resolve($window.google.visualization);
+            }
+          }
+          return promise;
+        }
+      };
+      return factory;
+
+    }]);
+
+})(angular);
+
+angular.module("risevision.widget.googleSpreadsheet.settings")
+  .controller("spreadsheetSettingsController", ["$scope", "$log", "columnsService", "defaultLayout",
+    function ($scope, $log, columnsService, defaultLayout) {
+
+      $scope.sheetColumns = [];
+      $scope.currentSheetColumn = null;
+
+      $scope.getColumns = function (url) {
+        columnsService.getColumns(url)
+          .then(function (columns) {
+            if (columns.length > 0) {
+              $scope.sheetColumns = columns;
+            }
+          })
+          .then(null, $log.error);
+      };
+
+      $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
+        if (typeof newUrl !== "undefined") {
+          if (newUrl !== oldUrl) {
+
+            // reset the column selector
+            $scope.sheetColumns = [];
+
+            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
+              // widget settings have already gone through initialization, safe to reset columns array
+              $scope.settings.additionalParams.columns = [];
+            }
+
+            if (newUrl !== "") {
+              $scope.getColumns(newUrl);
+            }
+          }
+        }
+      });
+
+      $scope.$watch("settings.additionalParams.layout.customURL", function (url) {
+        if (typeof url !== "undefined") {
+          if (!$scope.settings.additionalParams.layout.default) {
+            $scope.settings.params.layoutURL = url;
+          }
+        }
+      });
+
+      // need to watch this once to set the initial value of params.layoutURL
+      $scope.$watch("settings.additionalParams.layout.default", function(defaultVal) {
+        if (typeof defaultVal !== "undefined") {
+          if (defaultVal) {
+            $scope.settings.params.layoutURL = defaultLayout;
+
+            // text for custom url may have been entered in a previous save, remove it
+            $scope.settings.additionalParams.layout.customURL = "";
+          } else {
+            $scope.settings.params.layoutURL = $scope.settings.additionalParams.layout.customURL;
+          }
+        }
+      });
+
+    }])
+  .value("defaultSettings", {
+    params: {
+      layoutURL: ""
+    },
+    additionalParams: {
+      spreadsheet: {},
+      columns: [],
+      scroll: {},
+      table: {},
+      background: {},
+      layout: {
+        default: true,
+        customURL: ""
+      }
+    }
+  });
+
+(function() {
+
+  "use strict";
+
+  angular.module("risevision.widget.googleSpreadsheet.settings")
+    .factory("columnsService", ["visualizationApi", "$q", function (visualizationApi, $q) {
+
+      var factory = {};
+
+      function configureColumns(response) {
+        var dataTable = response.getDataTable(),
+          columnNames = [],
+          columnIndexes = [], cellValue, columnLabel, columnId, i, j;
+
+        // narrow down actual columns being used
+        for (i = 0; i < dataTable.getNumberOfColumns(); i += 1) {
+          for (j = 0; j < dataTable.getNumberOfRows(); j += 1) {
+            cellValue = dataTable.getValue(j, i);
+            if (cellValue && cellValue !== "") {
+              columnIndexes.push(i);
+              break;
+            }
+          }
+        }
+
+        // configure the column objects and populate columnNames array
+        for (i = 0; i < columnIndexes.length; i += 1) {
+          columnLabel = dataTable.getColumnLabel(columnIndexes[i]);
+          if (columnLabel === "") {
+            // there's no header row or the column is just untitled, use the column id instead (eg. A)
+            columnLabel = dataTable.getColumnId(columnIndexes[i]);
+          }
+
+          // create an id that can be referenced again when restoring saved widget settings
+          columnId = dataTable.getColumnId(columnIndexes[i]) + "_" + dataTable.getColumnType(columnIndexes[i]) +
+            "_" + columnLabel;
+
+          columnNames.push({
+            id: columnId,
+            name: columnLabel,
+            type: dataTable.getColumnType(columnIndexes[i])
+          });
+        }
+
+        return columnNames;
+      }
+
+      factory.getColumns = function (url) {
+        var deferred = $q.defer();
+
+        visualizationApi.get().then(function (viz) {
+          var query = new viz.Query(url);
+
+          // only need the first row
+          query.setQuery("select * limit 1");
+          query.setTimeout(30);
+
+          query.send(function (response) {
+            if (!response) {
+              deferred.reject("No response");
+            } else if (response.isError()) {
+              deferred.reject(response.getMessage());
+            } else {
+              deferred.resolve(configureColumns(response));
+            }
+          });
+
+        });
+
+        return deferred.promise;
+      };
+
+      return factory;
+
+    }]);
+
 })();

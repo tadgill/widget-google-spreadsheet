@@ -184,12 +184,40 @@ RiseVision.Common.Utilities = (function() {
     }
   }
 
+  function preloadImages(urls) {
+    var length = urls.length,
+      images = [];
+
+    for (var i = 0; i < length; i++) {
+      images[i] = new Image();
+      images[i].src = urls[i];
+    }
+  }
+
+  function getQueryParameter(param) {
+    var query = window.location.search.substring(1),
+      vars = query.split("&"),
+      pair;
+
+    for (var i = 0; i < vars.length; i++) {
+      pair = vars[i].split("=");
+
+      if (pair[0] == param) {
+        return decodeURIComponent(pair[1]);
+      }
+    }
+
+    return "";
+  }
+
   return {
+    getQueryParameter: getQueryParameter,
     getFontCssStyle:  getFontCssStyle,
     addCSSRules:      addCSSRules,
     loadFonts:        loadFonts,
     loadCustomFont:   loadCustomFont,
-    loadGoogleFont:   loadGoogleFont
+    loadGoogleFont:   loadGoogleFont,
+    preloadImages:    preloadImages
   };
 })();
 
@@ -15403,6 +15431,7 @@ RiseVision.Spreadsheet.Content = function () {
     },
     _isScrolling = false,
     _updateWaiting = false,
+    _pudTimerID = null,
     _vizData, $el;
 
   function _cache() {
@@ -15920,25 +15949,49 @@ RiseVision.Spreadsheet.Content = function () {
     }
   }
 
-  function _scrollPlay() {
+  function _startPUDTimer() {
+    // If there is not enough content to scroll, use the PUD Failover setting as the trigger
+    // for sending "done".
+    var delay = (typeof _scrollData.pud === "undefined" ? 10 : _scrollData.pud) * 1000;
+
+    if (!_pudTimerID) {
+      _pudTimerID = setTimeout(function() {
+        if (_scrollDoneFn) {
+          _pudTimerID = null;
+          _scrollDoneFn();
+        }
+      }, delay);
+    }
+  }
+
+
+  function scrollPlay() {
     var $scroll = _getScrollEl();
 
     if ($scroll && $scroll.canScroll() && !_isScrolling) {
       $scroll.play();
       _isScrolling = true;
+    } else {
+      _startPUDTimer();
     }
   }
 
-  function _scrollPause() {
+  function scrollPause() {
     var $scroll = _getScrollEl();
 
     if ($scroll && $scroll.canScroll()) {
       $scroll.pause();
       _isScrolling = false;
     }
+
+    // Clear the PUD timer if the playlist item is not set to PUD.
+    if (_pudTimerID) {
+      clearTimeout(_pudTimerID);
+      _pudTimerID = null;
+    }
   }
 
-  function _build(vizData) {
+  function build(vizData) {
     var $scroll = _getScrollEl();
 
     _vizData = vizData;
@@ -15985,7 +16038,7 @@ RiseVision.Spreadsheet.Content = function () {
     }
   }
 
-  function _initialize(prefs, additionalParams, scrollDoneFn) {
+  function initialize(prefs, additionalParams, scrollDoneFn) {
     _prefs = prefs;
     _columnsData = additionalParams.columns;
     _scrollData = additionalParams.scroll;
@@ -16009,10 +16062,10 @@ RiseVision.Spreadsheet.Content = function () {
   _cache();
 
   return {
-    initialize: _initialize,
-    build: _build,
-    scrollPlay: _scrollPlay,
-    scrollPause: _scrollPause
+    initialize: initialize,
+    build: build,
+    scrollPlay: scrollPlay,
+    scrollPause: scrollPause
   };
 
 };
