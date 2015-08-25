@@ -18,7 +18,7 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 ## Development
 
 ### Dependencies
-* [Git](http://git-scm.com/) - Git is a free and open source distributed version control system that is used to manage our source code on Github.
+* [Git](http://git-scm.com/) - Git is a free and open source distributed version control system that is used to manage our source code on Github. 
 * [npm](https://www.npmjs.org/) & [Node.js](http://nodejs.org/) - npm is the default package manager for Node.js. npm runs through the command line and manages dependencies for an application. These dependencies are listed in the _package.json_ file.
 * [Bower](http://bower.io/) - Bower is a package manager for Javascript libraries and frameworks. All third-party Javascript dependencies are listed in the _bower.json_ file.
 * [Gulp](http://gulpjs.com/) - Gulp is a Javascript task runner. It lints, runs unit and E2E (end-to-end) tests, minimizes files, etc. Gulp tasks are defined in _gulpfile.js_.
