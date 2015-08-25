@@ -15592,7 +15592,11 @@ RiseVision.Spreadsheet.Content = function () {
 
           if ($element.text() && $.trim($element.text()) !== "" && !isNaN($element.text())) {
 
-            $element.text(parseFloat($element.text()).toFixed(column.decimals));
+            if (typeof column.decimals !== "undefined") {
+              $element.text(parseFloat($element.text()).toFixed(column.decimals));
+            } else {
+              $element.text(parseFloat($element.text()));
+            }
 
             val = $element.text();
 

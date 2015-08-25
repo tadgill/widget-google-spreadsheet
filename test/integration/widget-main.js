@@ -37,6 +37,8 @@ casper.test.begin("Integration Testing", {
           "Check number of rows");
         test.assertElementCount(".dataTables_scrollBody tr.item td", 12,
           "Check number of cells");
+
+        test.assertSelectorHasText(".dataTables_scrollBody tr.item td", "9.95");
       });
     });
 
