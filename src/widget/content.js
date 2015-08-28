@@ -213,8 +213,6 @@ RiseVision.Spreadsheet.Content = function () {
 
             if (typeof column.decimals !== "undefined") {
               $element.text(parseFloat($element.text()).toFixed(column.decimals));
-            } else {
-              $element.text(parseFloat($element.text()));
             }
 
             val = $element.text();
