@@ -15818,6 +15818,9 @@ RiseVision.Spreadsheet.Content = function () {
             if (!_useCustomLayout && _updateWaiting) {
               _updateTable();
               _updateWaiting = false;
+            } else if ($("table").length > 0 && _useCustomLayout && _updateWaiting) {
+              _updateCustomTable();
+              _updateWaiting = false;
             }
 
             _isScrolling = false;
@@ -15903,6 +15906,17 @@ RiseVision.Spreadsheet.Content = function () {
       _updateRows();
     }
 
+    _setPadding();
+    _setFontSizes();
+    _setConditions();
+    _setScrolling();
+  }
+
+  function _updateCustomTable() {
+    _dataTable.api().clear();
+
+    _updateHeadings();
+    _updateRows();
     _setPadding();
     _setFontSizes();
     _setConditions();
@@ -16008,16 +16022,28 @@ RiseVision.Spreadsheet.Content = function () {
 
         //Only execute the following code if the layout is a table.
         if ($("table").length > 0) {
-          _formatColumns($("." + CLASS_PAGE + " th"));
-          _dataTable = $("." + CLASS_PAGE).dataTable(_dataTableOptions);
-          $("." + CLASS_DT_SCROLL_BODY).css("overflow", "hidden");
-          _setPadding();
+          if (_initialBuild) {
+            _formatColumns($("." + CLASS_PAGE + " th"));
+            _dataTable = $("." + CLASS_PAGE).dataTable(_dataTableOptions);
+            $("." + CLASS_DT_SCROLL_BODY).css("overflow", "hidden");
+            _setPadding();
+            _setFontSizes();
+            _setConditions();
+            _setScrolling();
+            _initialBuild = false;
+          } else {
+            if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+              _updateCustomTable();
+            } else {
+              _updateWaiting = true;
+            }
+          }
+        } else {
+          _setFontSizes();
+          _setConditions();
+          _setScrolling();
+          _initialBuild = false;
         }
-
-        _setFontSizes();
-        _setConditions();
-        _setScrolling();
-        _initialBuild = false;
       });
 
     } else {
