@@ -603,9 +603,11 @@ RiseVision.Spreadsheet.Content = function () {
   function scrollPlay() {
     var $scroll = _getScrollEl();
 
-    if ($scroll && $scroll.canScroll() && !_isScrolling) {
-      $scroll.play();
-      _isScrolling = true;
+    if ($scroll && $scroll.canScroll()) {
+      if (!_isScrolling) {
+        $scroll.play();
+        _isScrolling = true;
+      }
     } else {
       _startPUDTimer();
     }

@@ -17,7 +17,7 @@ casper.test.begin("Integration Testing - PUD Failover", {
   },
 
   test: function(test) {
-    var clock, spreadsheet;
+    var clock, spreadsheet, scroll;
 
     casper.start();
 
@@ -35,6 +35,7 @@ casper.test.begin("Integration Testing - PUD Failover", {
           this.evaluate(function() {
             clock = sinon.useFakeTimers();
             spreadsheet = RiseVision.Spreadsheet;
+            scroll = $(".dataTables_scrollBody").data("plugin_autoScroll");
 
             // Ensure the PUD timer is cleared.
             spreadsheet.pause();
@@ -44,7 +45,8 @@ casper.test.begin("Integration Testing - PUD Failover", {
 
     casper.then(function() {
       var spyCalledTwice = this.evaluate(function() {
-        var playSpy = sinon.spy(spreadsheet, "play");
+        var playSpy = sinon.spy(spreadsheet, "play"),
+          scrollPlay = sinon.spy(scroll, "play");
 
         spreadsheet.play();
 
@@ -53,7 +55,7 @@ casper.test.begin("Integration Testing - PUD Failover", {
 
         // When PUD timer fires, it should trigger the "done" event, which in turn will tell the
         // Widget to play.
-        return playSpy.calledTwice;
+        return playSpy.calledTwice && scrollPlay.callCount === 0;
       });
 
       test.assert(spyCalledTwice, "PUD timer fired");
@@ -63,75 +65,5 @@ casper.test.begin("Integration Testing - PUD Failover", {
       test.done();
     });
 
-  /*test: function(test) {
-    casper.start();
-
-    casper.thenOpen(url, function() {
-      test.assertTitle("Google Spreadsheet Widget");
-
-      casper.evaluate(function() {
-        window.clock = sinon.useFakeTimers();
-      });
-    });
-
-    casper.then(function() {
-      casper.waitFor(function waitForUI() {
-          return this.evaluate(function loadData() {
-            return document.querySelectorAll(".dataTables_scroll").length > 0;
-          });
-        },
-        function then() {
-          test.comment("Table header is present");
-          test.assertExists(".dataTables_scrollHead th.heading_font-style");
-          test.assertElementCount(".dataTables_scrollHead th.heading_font-style", 3,
-            "Check number of columns");
-
-          test.comment("Table is showing data");
-          test.assertElementCount(".dataTables_scrollBody tr.item", 4,
-            "Check number of rows");
-          test.assertElementCount(".dataTables_scrollBody tr.item td", 12,
-            "Check number of cells");
-
-          test.comment("Table refreshes data when column is removed");
-
-          casper.evaluate(function() {
-            // Change the data to only have 2 columns.
-            window.gadget.data = {
-              cols: [
-                {"id":"A","label":"Column 1","type":"string"},
-                {"id":"B","label":"Column 2","type":"number"}
-              ],
-              rows: [
-                ["test 1", 345453],
-                ["test 2", 6565.67]
-              ]
-            };
-
-            // Trigger a refresh.
-            window.clock.tick(300000);
-          });
-
-          casper.waitFor(function waitForTimer() {
-              return this.evaluate(function expireTimer() {
-                // TODO: Figure out what condition to wait for.
-                return document.querySelectorAll(".dataTables_scroll").length > 0;
-              });
-            },
-            function then() {
-              this.evaluate(function() {
-                window.clock.restore();
-              });
-
-              // test.assertElementCount(".dataTables_scrollHead th.heading_font-style", 2,
-              //   "Check number of columns");
-              // test.assertElementCount(".dataTables_scrollBody tr.item td", 4,
-              //   "Check number of cells");
-            });
-        });
-    });
-
-    casper.run(function() {
-      test.done();
-    });*/
   }
 });

@@ -15,7 +15,7 @@ casper.test.begin("Integration Testing - PUD No Failover", {
 
   },
   test: function(test) {
-    var clock, spreadsheet;
+    var clock, spreadsheet, scroll;
 
     casper.start();
 
@@ -33,6 +33,7 @@ casper.test.begin("Integration Testing - PUD No Failover", {
           this.evaluate(function() {
             clock = sinon.useFakeTimers();
             spreadsheet = RiseVision.Spreadsheet;
+            scroll = $(".dataTables_scrollBody").data("plugin_autoScroll");
 
             // Ensure the PUD timer is cleared.
             spreadsheet.pause();
@@ -42,14 +43,14 @@ casper.test.begin("Integration Testing - PUD No Failover", {
 
     casper.then(function() {
       var spyCalledOnce = this.evaluate(function() {
-        var playSpy = sinon.spy(spreadsheet, "play");
+        var playSpy = sinon.spy(spreadsheet, "play"),
+          scrollPlay = sinon.spy(scroll, "play");
 
         spreadsheet.play();
         clock.tick(10000);
 
-        // PUD timer should not fire, thereby not triggering the "done" event and telling the
-        // Widget to play.
-        return playSpy.calledOnce;
+        // PUD timer should not fire AND scroll content "play" was called
+        return playSpy.calledOnce && scrollPlay.calledOnce;
       });
 
       test.assert(spyCalledOnce, "PUD timer not fired");
