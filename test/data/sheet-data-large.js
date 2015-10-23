@@ -1,13 +1,12 @@
 (function(window) {
   "use strict";
 
-  window.gadget.settings.additionalParams.scroll.by = 'page';
-
   window.gadget.data = {
     cols: [
       {"id":"A","label":"Column 1","type":"string"},
       {"id":"B","label":"Column 2","type":"number"},
-      {"id":"C","label":"Column 3","type":"date"}
+      {"id":"C","label":"Column 3","type":"date"},
+      {"id":"D","label":"Column 4","type":"string"}
     ],
     // lots of rows to require needing to scroll
     rows: [

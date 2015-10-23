@@ -16079,7 +16079,7 @@ RiseVision.Spreadsheet.Content = function () {
             _setScrolling();
             _initialBuild = false;
           } else {
-            if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+            if (!$scroll || !$scroll.canScroll() || _scrollData.by === "none" || !_isScrolling) {
               _updateCustomTable();
             } else {
               _updateWaiting = true;
@@ -16104,7 +16104,7 @@ RiseVision.Spreadsheet.Content = function () {
         _setScrolling();
         _initialBuild = false;
       } else {
-        if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+        if (!$scroll || !$scroll.canScroll() || _scrollData.by === "none" || !_isScrolling) {
           _updateTable();
         } else {
           _updateWaiting = true;

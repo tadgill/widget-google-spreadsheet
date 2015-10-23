@@ -33,9 +33,9 @@ casper.test.begin("Integration Testing", {
           "Check number of columns");
 
         test.comment("Table is showing data");
-        test.assertElementCount(".dataTables_scrollBody tr.item", 4,
+        test.assertElementCount(".dataTables_scrollBody tr.item", 2,
           "Check number of rows");
-        test.assertElementCount(".dataTables_scrollBody tr.item td", 12,
+        test.assertElementCount(".dataTables_scrollBody tr.item td", 6,
           "Check number of cells");
 
         test.assertSelectorHasText(".dataTables_scrollBody tr.item td", "9.95");
