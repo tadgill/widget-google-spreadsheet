@@ -6,17 +6,15 @@ casper.on("remote.message", function(message) {
   this.echo(message);
 });
 
-casper.test.begin("Integration Testing - PUD No Failover", {
+casper.test.begin("Integration Testing - Refresh (can scroll)", {
   setUp: function(test) {
     casper.options.clientScripts = [
-      "test/data/auto-scroll-page.js",
-      "test/data/sheet-data-large.js",
-      "node_modules/sinon/pkg/sinon.js"
+      "test/data/sheet-data-large.js"
     ];
 
   },
   test: function(test) {
-    var clock, spreadsheet, scroll;
+    var spreadsheet;
 
     casper.start();
 
@@ -32,29 +30,28 @@ casper.test.begin("Integration Testing - PUD No Failover", {
         },
         function then() {
           this.evaluate(function() {
-            clock = sinon.useFakeTimers();
             spreadsheet = RiseVision.Spreadsheet;
-            scroll = $(".dataTables_scrollBody").data("plugin_autoScroll");
 
-            // Ensure the PUD timer is cleared.
-            spreadsheet.pause();
+            // Force refreshing the data
+            window.gadget.data.rows.push(["refresh", 123, new Date(2015, 10, 22), ""]);
+
+            spreadsheet.getData();
           });
         });
+
     });
 
     casper.then(function() {
-      var spyCalledOnce = this.evaluate(function() {
-        var playSpy = sinon.spy(spreadsheet, "play"),
-          scrollPlay = sinon.spy(scroll, "play");
-
-        spreadsheet.play();
-        clock.tick(10000);
-
-        // PUD timer should not fire AND scroll content "play" was called
-        return playSpy.calledOnce && scrollPlay.calledOnce;
-      });
-
-      test.assert(spyCalledOnce, "PUD timer not fired");
+      casper.waitFor(function waitForUI() {
+          return this.evaluate(function loadData() {
+            return document.querySelectorAll(".dataTables_scroll").length > 0 &&
+              document.querySelectorAll(".dataTables_scrollBody tr.item").length > 14;
+          });
+        },
+        function then() {
+          test.comment("Table is showing refresh data");
+          test.assertSelectorHasText(".dataTables_scrollBody tr.item td", "refresh");
+        });
     });
 
     casper.run(function runTest() {

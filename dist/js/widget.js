@@ -14872,7 +14872,8 @@ RiseVision.Common.Utilities = (function() {
 			by: "continuous",
 			speed: "medium",
 			pause: 5,
-			click: false
+			click: false,
+			minimumMovement: 3 // Draggable default value - http://greensock.com/docs/#/HTML5/Drag/Draggable/
 		};
 
 
@@ -14964,6 +14965,7 @@ RiseVision.Common.Utilities = (function() {
 					type: "scrollTop",
 					throwProps: true,
 					edgeResistance: 0.75,
+					minimumMovement: self.options.minimumMovement,
 					onPress: function() {
 						pauseTween();
 					},
@@ -15035,6 +15037,7 @@ RiseVision.Common.Utilities = (function() {
 						type: "scrollTop",
 						throwProps: true,
 						edgeResistance: 0.95,
+						minimumMovement: this.options.minimumMovement,
 						onClick: function() {
 							$(self.element).trigger("scrollClick", [this.pointerEvent]);
 						}
@@ -16076,7 +16079,7 @@ RiseVision.Spreadsheet.Content = function () {
             _setScrolling();
             _initialBuild = false;
           } else {
-            if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+            if (!$scroll || !$scroll.canScroll() || _scrollData.by === "none" || !_isScrolling) {
               _updateCustomTable();
             } else {
               _updateWaiting = true;
@@ -16101,7 +16104,7 @@ RiseVision.Spreadsheet.Content = function () {
         _setScrolling();
         _initialBuild = false;
       } else {
-        if (!$scroll || !$scroll.canScroll() || !_isScrolling) {
+        if (!$scroll || !$scroll.canScroll() || _scrollData.by === "none" || !_isScrolling) {
           _updateTable();
         } else {
           _updateWaiting = true;

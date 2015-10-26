@@ -186,7 +186,7 @@
 
     });
 
-    it("Should correctly save settings", function (done) {
+    it("Should correctly save settings", function () {
       var customURL = "http://www.test.com";
       var settings = {
         params: {
