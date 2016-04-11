@@ -1,5 +1,4 @@
-/* global CONFIG: true */
-/* exported CONFIG */
+//jshint latedef:false
 if (typeof CONFIG === "undefined") {
   var CONFIG = {
     ARROW_LOGOS_URL: "https://s3.amazonaws.com/risecontentlogos/financial/"
