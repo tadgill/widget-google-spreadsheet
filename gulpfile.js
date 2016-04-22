@@ -29,6 +29,13 @@
     htmlFiles = [
       "./src/settings.html",
       "./src/widget.html"
+    ],
+    vendorFiles = [
+      "./src/components/jquery/dist/**/*",
+      "./src/components/angular/angular*.js",
+      "./src/components/angular/*.gzip",
+      "./src/components/angular/*.map",
+      "./src/components/angular/*.css"
     ];
 
   gulp.task("clean", function (cb) {
@@ -97,6 +104,11 @@
   gulp.task("i18n", function(cb) {
     return gulp.src(["src/components/rv-common-i18n/dist/locales/**/*"])
       .pipe(gulp.dest("dist/locales"));
+  });
+
+  gulp.task("vendor", function() {
+    return gulp.src(vendorFiles, {base: "./src/components"})
+      .pipe(gulp.dest("dist/js/vendor"));
   });
 
   gulp.task("webdriver_update", factory.webdriveUpdate());
@@ -202,7 +214,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config", "bower-update"], ["source", "fonts", "images", "i18n"], ["unminify"], cb);
+    runSequence(["clean", "config", "bower-update"], ["source", "fonts", "images", "i18n", "vendor"], ["unminify"], cb);
   });
 
   gulp.task("bump", function(){

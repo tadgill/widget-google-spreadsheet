@@ -1,6 +1,6 @@
-/* global RiseVision, gadgets, google */
+/* global RiseVision, gadgets */
 
-(function (window, document, google, gadgets) {
+(function (window, document, gadgets) {
   "use strict";
 
   var id = new gadgets.Prefs().getString("id");
@@ -38,7 +38,7 @@
       if (names[2] === "additionalParams") {
         additionalParams = JSON.parse(values[2]);
 
-        RiseVision.Spreadsheet.setParams(additionalParams);
+        RiseVision.Spreadsheet.setAdditionalParams(additionalParams);
       }
     }
   }
@@ -52,24 +52,15 @@
   }
 
   function stop() {
-    RiseVision.Spreadsheet.pause();
+    RiseVision.Spreadsheet.stop();
   }
 
   if (id && id !== "") {
     gadgets.rpc.register("rscmd_play_" + id, play);
     gadgets.rpc.register("rscmd_pause_" + id, pause);
     gadgets.rpc.register("rscmd_stop_" + id, stop);
+    gadgets.rpc.register("rsparam_set_" + id, configure);
+    gadgets.rpc.call("", "rsparam_get", null, id, ["companyId", "displayId", "additionalParams"]);
   }
 
-  // ensuring a transparent background immediately
-  document.body.style.background = "transparent";
-
-  google.setOnLoadCallback(function () {
-    gadgets.rpc.register("rsparam_set_" + id, configure);
-    gadgets.rpc.register("rscmd_getSpreadsheetData", function (url) {
-      RiseVision.Spreadsheet.getData(url);
-    });
-    gadgets.rpc.call("", "rsparam_get", null, id, ["companyId", "displayId", "additionalParams"]);
-  });
-
-})(window, document, google, gadgets);
+})(window, document, gadgets);
