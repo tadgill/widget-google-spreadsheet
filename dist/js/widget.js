@@ -82,6 +82,14 @@ RiseVision.Common.Visualization.prototype.onQueryExecuted = function(response) {
   }
 };
 
+var WIDGET_COMMON_CONFIG = {
+  AUTH_PATH_URL: "v1/widget/auth",
+  LOGGER_CLIENT_ID: "1088527147109-6q1o2vtihn34292pjt4ckhmhck0rk0o7.apps.googleusercontent.com",
+  LOGGER_CLIENT_SECRET: "nlZyrcPLg6oEwO9f9Wfn29Wh",
+  LOGGER_REFRESH_TOKEN: "1/xzt4kwzE1H7W9VnKB8cAaCx6zb4Es4nKEoqaYHdTD15IgOrJDtdun6zK6XiATCKT",
+  STORAGE_ENV: "prod",
+  STORE_URL: "https://store-dot-rvaserver2.appspot.com/"
+};
 var RiseVision = RiseVision || {};
 
 RiseVision.Common = RiseVision.Common || {};
@@ -90,12 +98,12 @@ RiseVision.Common.Utilities = (function() {
 
   function getFontCssStyle(className, fontObj) {
     var family = "font-family:" + fontObj.font.family + "; ";
-    var color = "color: " + fontObj.color + "; ";
-    var size = "font-size: " + fontObj.size + "px; ";
+    var color = "color: " + (fontObj.color ? fontObj.color : fontObj.forecolor) + "; ";
+    var size = "font-size: " + (fontObj.size.indexOf("px") === -1 ? fontObj.size + "px; " : fontObj.size + "; ");
     var weight = "font-weight: " + (fontObj.bold ? "bold" : "normal") + "; ";
     var italic = "font-style: " + (fontObj.italic ? "italic" : "normal") + "; ";
     var underline = "text-decoration: " + (fontObj.underline ? "underline" : "none") + "; ";
-    var highlight = "background-color: " + fontObj.highlightColor + "; ";
+    var highlight = "background-color: " + (fontObj.highlightColor ? fontObj.highlightColor : fontObj.backcolor) + "; ";
 
     return "." + className + " {" + family + color + size + weight + italic + underline + highlight + "}";
   }
@@ -170,14 +178,21 @@ RiseVision.Common.Utilities = (function() {
   }
 
   function loadGoogleFont(family, contentDoc) {
-    var stylesheet = document.createElement("link");
+    var stylesheet = document.createElement("link"),
+      familyVal;
 
     contentDoc = contentDoc || document;
 
     stylesheet.setAttribute("rel", "stylesheet");
     stylesheet.setAttribute("type", "text/css");
-    stylesheet.setAttribute("href", "https://fonts.googleapis.com/css?family=" +
-      family);
+
+    // split to account for family value containing a fallback (eg. Aladin,sans-serif)
+    familyVal = family.split(",")[0];
+
+    // strip possible single quotes
+    familyVal = familyVal.replace(/'/g, "");
+
+    stylesheet.setAttribute("href", "https://fonts.googleapis.com/css?family=" + familyVal);
 
     if (stylesheet !== null) {
       contentDoc.getElementsByTagName("head")[0].appendChild(stylesheet);
@@ -210,6 +225,22 @@ RiseVision.Common.Utilities = (function() {
     return "";
   }
 
+  function getRiseCacheErrorMessage(statusCode) {
+    var errorMessage = "";
+    switch (statusCode) {
+      case 404:
+        errorMessage = "The file does not exist or cannot be accessed.";
+        break;
+      case 507:
+        errorMessage = "There is not enough disk space to save the file on Rise Cache.";
+        break;
+      default:
+        errorMessage = "There was a problem retrieving the file from Rise Cache.";
+    }
+
+    return errorMessage;
+  }
+
   return {
     getQueryParameter: getQueryParameter,
     getFontCssStyle:  getFontCssStyle,
@@ -217,10 +248,217 @@ RiseVision.Common.Utilities = (function() {
     loadFonts:        loadFonts,
     loadCustomFont:   loadCustomFont,
     loadGoogleFont:   loadGoogleFont,
-    preloadImages:    preloadImages
+    preloadImages:    preloadImages,
+    getRiseCacheErrorMessage: getRiseCacheErrorMessage
   };
 })();
 
+/* global gadgets */
+
+var RiseVision = RiseVision || {};
+RiseVision.Common = RiseVision.Common || {};
+
+RiseVision.Common.LoggerUtils = (function() {
+  "use strict";
+
+   var displayId = "",
+    companyId = "";
+
+  /*
+   *  Private Methods
+   */
+
+  /* Retrieve parameters to pass to the event logger. */
+  function getEventParams(params, cb) {
+    var json = null;
+
+    // event is required.
+    if (params.event) {
+      json = params;
+
+      if (json.file_url) {
+        json.file_format = getFileFormat(json.file_url);
+      }
+
+      json.company_id = companyId;
+      json.display_id = displayId;
+
+      cb(json);
+    }
+    else {
+      cb(json);
+    }
+  }
+
+  // Get suffix for BQ table name.
+  function getSuffix() {
+    var date = new Date(),
+      year = date.getUTCFullYear(),
+      month = date.getUTCMonth() + 1,
+      day = date.getUTCDate();
+
+    if (month < 10) {
+      month = "0" + month;
+    }
+
+    if (day < 10) {
+      day = "0" + day;
+    }
+
+    return year + month + day;
+  }
+
+  /*
+   *  Public Methods
+   */
+  function getFileFormat(url) {
+    var hasParams = /[?#&]/,
+      str;
+
+    if (!url || typeof url !== "string") {
+      return null;
+    }
+
+    str = url.substr(url.lastIndexOf(".") + 1);
+
+    // don't include any params after the filename
+    if (hasParams.test(str)) {
+      str = str.substr(0 ,(str.indexOf("?") !== -1) ? str.indexOf("?") : str.length);
+
+      str = str.substr(0, (str.indexOf("#") !== -1) ? str.indexOf("#") : str.length);
+
+      str = str.substr(0, (str.indexOf("&") !== -1) ? str.indexOf("&") : str.length);
+    }
+
+    return str.toLowerCase();
+  }
+
+  function getInsertData(params) {
+    var BASE_INSERT_SCHEMA = {
+      "kind": "bigquery#tableDataInsertAllRequest",
+      "skipInvalidRows": false,
+      "ignoreUnknownValues": false,
+      "templateSuffix": getSuffix(),
+      "rows": [{
+        "insertId": ""
+      }]
+    },
+    data = JSON.parse(JSON.stringify(BASE_INSERT_SCHEMA));
+
+    data.rows[0].insertId = Math.random().toString(36).substr(2).toUpperCase();
+    data.rows[0].json = JSON.parse(JSON.stringify(params));
+    data.rows[0].json.ts = new Date().toISOString();
+
+    return data;
+  }
+
+  function logEvent(table, params) {
+    getEventParams(params, function(json) {
+      if (json !== null) {
+        RiseVision.Common.Logger.log(table, json);
+      }
+    });
+  }
+
+  /* Set the Company and Display IDs. */
+  function setIds(company, display) {
+    companyId = company;
+    displayId = display;
+  }
+
+  return {
+    "getInsertData": getInsertData,
+    "getFileFormat": getFileFormat,
+    "logEvent": logEvent,
+    "setIds": setIds
+  };
+})();
+
+RiseVision.Common.Logger = (function(utils) {
+  "use strict";
+
+  var REFRESH_URL = "https://www.googleapis.com/oauth2/v3/token?client_id=" + WIDGET_COMMON_CONFIG.LOGGER_CLIENT_ID +
+      "&client_secret=" + WIDGET_COMMON_CONFIG.LOGGER_CLIENT_SECRET +
+      "&refresh_token=" + WIDGET_COMMON_CONFIG.LOGGER_REFRESH_TOKEN +
+      "&grant_type=refresh_token";
+
+  var serviceUrl = "https://www.googleapis.com/bigquery/v2/projects/client-side-events/datasets/Widget_Events/tables/TABLE_ID/insertAll",
+    throttle = false,
+    throttleDelay = 1000,
+    lastEvent = "",
+    refreshDate = 0,
+    token = "";
+
+  /*
+   *  Private Methods
+   */
+  function refreshToken(cb) {
+    var xhr = new XMLHttpRequest();
+
+    if (new Date() - refreshDate < 3580000) {
+      return cb({});
+    }
+
+    xhr.open("POST", REFRESH_URL, true);
+    xhr.onloadend = function() {
+      var resp = JSON.parse(xhr.response);
+
+      cb({ token: resp.access_token, refreshedAt: new Date() });
+    };
+
+    xhr.send();
+  }
+
+  function isThrottled(event) {
+    return throttle && (lastEvent === event);
+  }
+
+  /*
+   *  Public Methods
+   */
+  function log(tableName, params) {
+    if (!tableName || !params || (params.hasOwnProperty("event") && !params.event) ||
+      (params.hasOwnProperty("event") && isThrottled(params.event))) {
+      return;
+    }
+
+    throttle = true;
+    lastEvent = params.event;
+
+    setTimeout(function () {
+      throttle = false;
+    }, throttleDelay);
+
+    function insertWithToken(refreshData) {
+      var xhr = new XMLHttpRequest(),
+        insertData, url;
+
+      url = serviceUrl.replace("TABLE_ID", tableName);
+      refreshDate = refreshData.refreshedAt || refreshDate;
+      token = refreshData.token || token;
+      insertData = utils.getInsertData(params);
+
+      // Insert the data.
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader("Authorization", "Bearer " + token);
+
+      if (params.cb && typeof params.cb === "function") {
+        xhr.onloadend = function() {
+          params.cb(xhr.response);
+        };
+      }
+
+      xhr.send(JSON.stringify(insertData));
+    }
+
+    return refreshToken(insertWithToken);
+  }
+
+  return {
+    "log": log
+  };
+})(RiseVision.Common.LoggerUtils);
 /*! DataTables 1.10.2
  * ©2008-2014 SpryMedia Ltd - datatables.net/license
  */
@@ -15213,6 +15451,35 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
     }
   }
 
+  function _logConfiguration() {
+    var params = {
+      "event": "configuration"
+    },
+      arrowUsed = false;
+
+    // custom layout
+    if (_additionalParams.hasOwnProperty("layout")) {
+      params.layout = _additionalParams.layout.default ? "default" : "custom";
+      params.layout_url = (!_additionalParams.layout.default) ? _additionalParams.layout.customURL : "";
+    } else {
+      params.layout = "default";
+    }
+
+    // arrows
+    $.each(_additionalParams.columns, function (index, column) {
+      if (typeof column.sign !== "undefined") {
+        if (column.sign === "arrow") {
+          arrowUsed = true;
+          return false;
+        }
+      }
+    });
+
+    params.arrow_used = arrowUsed;
+
+    logEvent(params);
+  }
+
   function _getData(url) {
     if (url) {
       _additionalParams.spreadsheet.url = url;
@@ -15225,7 +15492,7 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
     });
   }
 
-  function _setParams(names, values) {
+  function _setParams(additionalParams) {
     var fontSettings;
 
     // create spreadsheet content instance
@@ -15240,55 +15507,62 @@ RiseVision.Spreadsheet = (function (document, gadgets, utils, Visualization) {
 
     _prefs = new gadgets.Prefs();
 
-    if (Array.isArray(names) && names.length > 0 && names[0] === "additionalParams") {
-      if (Array.isArray(values) && values.length > 0) {
-        _additionalParams = $.extend({}, JSON.parse(values[0]));
+    _additionalParams = JSON.parse(JSON.stringify(additionalParams));
 
-        // return the column ids to the actual id values in the spreadsheet
-        $.each(_additionalParams.columns, function (index, column) {
-          column.id = column.id.slice(0, (column.id.indexOf("_")));
-        });
+    _logConfiguration();
 
-        // set the document background with value saved in settings
-        document.body.style.background = _additionalParams.background.color;
+    // return the column ids to the actual id values in the spreadsheet
+    $.each(_additionalParams.columns, function (index, column) {
+      column.id = column.id.slice(0, (column.id.indexOf("_")));
+    });
 
-        // Load Fonts
-        fontSettings = [
-          {
-            "class": "heading_font-style",
-            "fontSetting": _additionalParams.table.colHeaderFont
-          },
-          {
-            "class": "data_font-style",
-            "fontSetting": _additionalParams.table.dataFont
-          }
-        ];
+    // set the document background with value saved in settings
+    document.body.style.background = _additionalParams.background.color;
 
-        utils.loadFonts(fontSettings);
-
-        //Inject CSS into the DOM
-        utils.addCSSRules([
-          "a:active" + utils.getFontCssStyle("data_font-style", _additionalParams.table.dataFont),
-          ".even {background-color: " + _additionalParams.table.rowColor + "}",
-          ".odd {background-color: " + _additionalParams.table.altRowColor + "}"
-        ]);
-
-        // initialize the spreadsheet content with settings data and pass the _done handler function
-        _spreadsheetContent.initialize(_prefs, _additionalParams, _done);
-
-        // Load the arrow images
-        RiseVision.Spreadsheet.Arrows.load(function () {
-          _getData();
-        });
+    // Load Fonts
+    fontSettings = [
+      {
+        "class": "heading_font-style",
+        "fontSetting": _additionalParams.table.colHeaderFont
+      },
+      {
+        "class": "data_font-style",
+        "fontSetting": _additionalParams.table.dataFont
       }
-    }
+    ];
+
+    utils.loadFonts(fontSettings);
+
+    //Inject CSS into the DOM
+    utils.addCSSRules([
+      "a:active" + utils.getFontCssStyle("data_font-style", _additionalParams.table.dataFont),
+      ".even {background-color: " + _additionalParams.table.rowColor + "}",
+      ".odd {background-color: " + _additionalParams.table.altRowColor + "}"
+    ]);
+
+    // initialize the spreadsheet content with settings data and pass the _done handler function
+    _spreadsheetContent.initialize(_prefs, _additionalParams, _done);
+
+    // Load the arrow images
+    RiseVision.Spreadsheet.Arrows.load(function () {
+      _getData();
+    });
+  }
+
+  function getTableName() {
+    return "spreadsheet_current_events";
+  }
+
+  function logEvent(params) {
+    RiseVision.Common.LoggerUtils.logEvent(getTableName(), params);
   }
 
   return {
     setParams: _setParams,
     getData: _getData,
     pause: _pause,
-    play: _play
+    play: _play,
+    logEvent: logEvent
   };
 
 })(document, gadgets, RiseVision.Common.Utilities, RiseVision.Common.Visualization);
@@ -16149,13 +16423,45 @@ RiseVision.Spreadsheet.Content = function () {
 (function (window, document, google, gadgets) {
   "use strict";
 
-  var prefs = new gadgets.Prefs(),
-    id = prefs.getString("id");
+  var id = new gadgets.Prefs().getString("id");
 
   // Disable context menu (right click menu)
   window.oncontextmenu = function () {
     return false;
   };
+
+  function configure(names, values) {
+    var additionalParams,
+      companyId = "",
+      displayId = "";
+
+    if (Array.isArray(names) && names.length > 0 && Array.isArray(values) && values.length > 0) {
+      // company id
+      if (names[0] === "companyId") {
+        companyId = values[0];
+      }
+
+      // display id
+      if (names[1] === "displayId") {
+        if (values[1]) {
+          displayId = values[1];
+        }
+        else {
+          displayId = "preview";
+        }
+      }
+
+      // provide LoggerUtils the ids to use
+      RiseVision.Common.LoggerUtils.setIds(companyId, displayId);
+
+      // additional params
+      if (names[2] === "additionalParams") {
+        additionalParams = JSON.parse(values[2]);
+
+        RiseVision.Spreadsheet.setParams(additionalParams);
+      }
+    }
+  }
 
   function play() {
     RiseVision.Spreadsheet.play();
@@ -16179,16 +16485,14 @@ RiseVision.Spreadsheet.Content = function () {
   document.body.style.background = "transparent";
 
   google.setOnLoadCallback(function () {
-    gadgets.rpc.register("rsparam_set_" + id, RiseVision.Spreadsheet.setParams);
+    gadgets.rpc.register("rsparam_set_" + id, configure);
     gadgets.rpc.register("rscmd_getSpreadsheetData", function (url) {
       RiseVision.Spreadsheet.getData(url);
     });
-    gadgets.rpc.call("", "rsparam_get", null, id, ["additionalParams"]);
+    gadgets.rpc.call("", "rsparam_get", null, id, ["companyId", "displayId", "additionalParams"]);
   });
 
 })(window, document, google, gadgets);
-
-
 
 /* jshint ignore:start */
 var _gaq = _gaq || [];

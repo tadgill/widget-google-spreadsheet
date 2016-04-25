@@ -161,6 +161,8 @@
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
       "test/data/main.js",
+      "src/components/widget-common/dist/config.js",
+      "node_modules/widget-tester/mocks/logger-mock.js",
       "node_modules/widget-tester/mocks/gadget-mocks.js",
       "node_modules/widget-tester/mocks/visualization-api-mock.js",
       "src/config/test.js",
