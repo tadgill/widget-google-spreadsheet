@@ -116,17 +116,7 @@
   // ***** e2e Testing ***** //
   gulp.task("e2e:server-close", factory.testServerClose());
 
-  gulp.task("html:e2e:settings",
-    factory.htmlE2E({
-      files: ["./src/settings.html"],
-      e2eAngularMocks: "components/angular-mocks/angular-mocks.js",
-      e2eVisualization: "../node_modules/widget-tester/mocks/visualization-api-mock.js",
-      e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
-      e2eSpreadsheetHTTP: "../node_modules/widget-tester/mocks/spreadsheet-controls-http-mock.js",
-      e2eTestApp: "../test/e2e/settings-app.js",
-      e2eAppReplace: "../test/e2e/settings-app-replace.js",
-      e2eMockData: "../test/data/main.js"
-    }));
+  gulp.task("html:e2e:settings", factory.htmlE2E());
 
   gulp.task("e2e:server:settings", ["config", "html:e2e:settings"], factory.testServer());
 
@@ -146,51 +136,24 @@
   gulp.task("test:unit:settings", factory.testUnitAngular(
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
-      "src/components/q/q.js",
       "src/components/angular/angular.js",
       "src/components/angular-translate/angular-translate.js",
       "src/components/angular-translate-loader-static-files/angular-translate-loader-static-files.js",
-      "src/components/angular-route/angular-route.js",
       "src/components/angular-mocks/angular-mocks.js",
       "node_modules/widget-tester/mocks/common-mock.js",
       "src/components/bootstrap-sass-official/assets/javascripts/bootstrap.js",
       "src/components/angular-bootstrap/ui-bootstrap-tpls.js",
-      "src/components/component-storage-selector/dist/storage-selector.js",
       "src/components/widget-settings-ui-components/dist/js/**/*.js",
       "src/components/widget-settings-ui-core/dist/*.js",
       "src/components/bootstrap-form-components/dist/js/**/*.js",
-      "src/components/google-drive-picker/dist/js/**/*.js",
-      "src/components/google-spreadsheet-controls/dist/js/**/*.js",
       "src/config/test.js",
       "src/settings/settings-app.js",
       "src/settings/**/*.js",
-      "node_modules/widget-tester/mocks/visualization-api-mock.js",
-      "test/data/main.js",
       "test/unit/settings/**/*spec.js"]}
   ));
 
-  gulp.task("test:unit:widget", factory.testUnitAngular(
-    {testFiles: [
-      "src/components/jquery/dist/jquery.js",
-      "test/data/main.js",
-      "src/components/widget-common/dist/config.js",
-      "node_modules/widget-tester/mocks/logger-mock.js",
-      "node_modules/widget-tester/mocks/gadget-mocks.js",
-      "node_modules/widget-tester/mocks/visualization-api-mock.js",
-      "src/config/test.js",
-      "src/components/widget-common/dist/visualization.js",
-      "src/components/widget-common/dist/common.js",
-      "src/config/test.js",
-      "src/widget/spreadsheet.js",
-      "src/widget/arrows.js",
-      "src/widget/images.js",
-      "src/widget/content.js",
-      "src/widget/main.js",
-      "test/unit/widget/**/*spec.js"]}
-  ));
-
   gulp.task("test:unit", function(cb) {
-    runSequence("test:unit:widget", "test:unit:settings", cb);
+    runSequence("test:unit:settings", cb);
   });
 
   // ***** Integration Testing ***** //
