@@ -5,106 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Google Spreadsheet Widget</title>
 
-  <style>
-    html {
-      font-family: sans-serif;
-    }
+  <!-- build:css css/spreadsheet.min.css -->
+  <link rel="stylesheet" href="widget/css/spreadsheet.css">
+  <!-- endbuild -->
 
-    body {
-      margin: 0;
-    }
-
-    a:active, a:hover {
-      outline: 0;
-    }
-
-    b, strong {
-      font-weight: bold;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border-spacing: 0;
-    }
-
-    td, th {
-      padding: 0;
-      text-align: left;
-      font-weight: normal;
-      -webkit-box-sizing: border-box;
-      -moz-box-sizing: border-box;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: transparent;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    #container {
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .arrow {
-      vertical-align: top;
-    }
-
-    .changeUpIncrease, .changeDownDecrease, .valuePositivePositive, .valueNegativeNegative {
-      color: rgb(0,255,0) !important;
-    }
-
-    .changeUpDecrease, .changeDownIncrease, .valuePositiveNegative, .valueNegativePositive {
-      color: rgb(255,0,0) !important;
-    }
-
-  </style>
 </head>
 <body>
 
-  <div id="scrollContainer">
-    <table class="page"></table>
-  </div>
+  <div id="container"></div>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
-  <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.11.7/TweenLite.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.11.7/plugins/CSSPlugin.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.11.7/utils/Draggable.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.11.7/plugins/ScrollToPlugin.min.js"></script>
-
-  <!-- Club GreenSock Members Only Plugin, subject to its own license: http://greensock.com/club/ -->
-  <script src="//s3.amazonaws.com/rise-common/scripts/greensock/ThrowPropsPlugin.min.js"></script>
-
-  <!-- build:e2eVisualization -->
-  <script src="http://www.google.com/jsapi"></script>
-  <!-- endbuild -->
-
-  <!-- build:e2eMockData -->
-  <!-- endbuild -->
+  <div id="messageContainer"></div>
 
   <!-- build:e2egadgets -->
   <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
   <!-- endbuild -->
 
   <!-- build:js js/widget.min.js -->
-  <script src="components/widget-common/dist/visualization.js"></script>
   <script src="components/widget-common/dist/config.js"></script>
-  <script src="components/widget-common/dist/common.js"></script>
   <script src="components/widget-common/dist/logger.js"></script>
-  <script src="components/rv-data-tables/media/js/jquery.dataTables.js"></script>
-  <script src="components/auto-scroll/jquery.auto-scroll.js"></script>
+  <script src="components/widget-common/dist/common.js"></script>
   <script src="config/config.js"></script>
   <script src="widget/spreadsheet.js"></script>
-  <script src="widget/arrows.js"></script>
-  <script src="widget/images.js"></script>
-  <script src="widget/content.js"></script>
+  <script src="components/widget-common/dist/message.js"></script>
   <script src="widget/main.js"></script>
   <script src="widget/analytics.js"></script>
   <!-- endbuild -->
