@@ -41,6 +41,56 @@
       <!-- Modal Body-->
       <form role="form" name="settingsForm">
         <div class="modal-body">
+          <h4>Spreadsheet</h4>
+          <!-- FILE SELECTOR -->
+          <div class="form-group file-selector">
+            <div class="row half-top half-bottom">
+              <div class="col-md-12">
+                <!-- Storage Single File - Button -->
+                <google-drive-picker view-id="spreadsheets"></google-drive-picker>
+
+                <!--span class="add-left add-right text-muted">or</span-->
+                <!-- URL -->
+                <!--button name="customBtn" type="button" class="btn btn-default" ng-click="showFile=false">Enter
+                  Spreadsheet Key
+                </button-->
+              </div>
+            </div>
+
+            <!--  FILE SELECTOR -->
+            <div class="form-group" ng-if="settings.additionalParams.spreadsheet.docName">
+              <div class="input-group custom-addon">
+                <div class="clear-selection">
+                  <input name="storage-file-name" type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.docName"
+                         readonly="">
+                  <span ng-click="clearSelection()"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                </div>
+                <span class="input-group-addon">
+                <button name="previewBtn" class="btn btn-default" ng-click="previewFile()">{{"widget-google-spreadsheet.spreadsheet.preview" | translate }}
+                  <img src="https://s3.amazonaws.com/Rise-Images/Icons/newtab-icon.png"
+                       class="storage-selector-icon icon-right">
+                </button>
+              </span>
+              </div>
+            </div>
+
+            <!--  URL SELECTOR -->
+            <!--div class="form-group" ng-show="showFile === false">
+              <div class="input-group custom-addon">
+                <div style="position: relative">
+                  <input name="storage-file-name" type="text" class="form-control" placeholder="Enter your Key">
+                  <span class="clear-selection"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
+                </div>
+                <span class="input-group-addon">
+                  <button name="previewBtn" class="btn btn-default" ng-click="">Preview File
+                    <img src="http://s3.amazonaws.com/Rise-Images/Icons/newtab-icon.png"
+                         class="storage-selector-icon icon-right">
+                  </button>
+                </span>
+              </div>
+            </div-->
+          </div>
+          <!-- END FILE SELECTOR -->
 
           <!-- Entire Sheet or Range -->
           <div class="radio">
@@ -104,6 +154,10 @@
 
 <!-- Get from Bower if needed. -->
 <script src="//s3.amazonaws.com/rise-common/scripts/i18next/i18next.min.js"></script>
+
+<!-- build:e2ePicker -->
+<script src="//apis.google.com/js/client.js?onload=handleClientJSLoad"></script>
+
 
 </body>
 </html>
