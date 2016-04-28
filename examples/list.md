@@ -132,7 +132,7 @@ The following is an example HTML file for a custom layout. This layout does not 
  <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
 
  <!-- Source code for google spreadsheet widget -->
- <script src="//s3.amazonaws.com/widget-google-spreadsheet-test/0.1.0/dist/js/widget.min.js"></script>
+ <script src="//s3.amazonaws.com/widget-google-spreadsheet/0.1.0/dist/js/widget.min.js"></script>
 
 </body>
 </html>
