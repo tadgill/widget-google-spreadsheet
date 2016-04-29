@@ -6,7 +6,15 @@
 
   window.gadget.settings = {
     "params": {},
-    "additionalParams": {}
+    "additionalParams": {
+      spreadsheet: {
+        cells: "sheet",
+        range: {
+          startCell: "",
+          endCell: ""
+        }
+      }
+    }
   };
 
 })(window);
