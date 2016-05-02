@@ -31,6 +31,9 @@
 
     describe("Defaults", function () {
 
+      it("Should load drive picker button", function () {
+        expect(element(by.css(".google-drive-picker")).isPresent()).to.eventually.be.true;
+      });
       it("Should select 'Show Entire Sheet'", function () {
         expect(element(by.css("input[type='radio'][value='sheet']")).isSelected()).to.eventually.be.true;
       });

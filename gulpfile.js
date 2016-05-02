@@ -146,6 +146,7 @@
       "src/components/widget-settings-ui-components/dist/js/**/*.js",
       "src/components/widget-settings-ui-core/dist/*.js",
       "src/components/bootstrap-form-components/dist/js/**/*.js",
+      "src/components/google-drive-picker/dist/js/angular/google-drive-picker.js",
       "src/config/test.js",
       "src/settings/settings-app.js",
       "src/settings/**/*.js",
