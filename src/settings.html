@@ -43,7 +43,40 @@
       <!-- Modal Body-->
       <form role="form" name="settingsForm">
         <div class="modal-body">
-          <!-- TODO: content coming soon -->
+
+          <!-- Entire Sheet or Range -->
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="settings.additionalParams.spreadsheet.cells" value="sheet">
+              <strong>{{ "widget-google-spreadsheet.spreadsheet.cells.sheet" | translate }}</strong>
+            </label>
+          </div>
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="settings.additionalParams.spreadsheet.cells" value="range">
+              <strong>{{ "widget-google-spreadsheet.spreadsheet.cells.range" | translate }}</strong>
+            </label>
+          </div>
+
+          <div class="add-top">
+            <div class="form-group" ng-if="settings.additionalParams.spreadsheet.cells === 'range'">
+              <div class="row">
+                <div class="col-sm-3">
+                  <label class="control-label-secondary">
+                    {{ "widget-google-spreadsheet.spreadsheet.range.start" | translate }}
+                  </label>
+                  <input name="startCell" type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.range.startCell" />
+                </div>
+                <div class="col-sm-3">
+                  <label class="control-label-secondary">
+                    {{ "widget-google-spreadsheet.spreadsheet.range.end" | translate }}
+                  </label>
+                  <input name="endCell" type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.range.endCell" />
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Modal Footer-->

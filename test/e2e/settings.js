@@ -31,7 +31,25 @@
 
     describe("Defaults", function () {
 
-      // TODO: tests to come
+      it("Should select 'Show Entire Sheet'", function () {
+        expect(element(by.css("input[type='radio'][value='sheet']")).isSelected()).to.eventually.be.true;
+      });
+
+    });
+
+    describe("Visibility", function() {
+
+      it("Should not show starting or ending range cell inputs if 'Show Entire Sheet' is selected", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.range.startCell")).isPresent()).to.eventually.be.false;
+        expect(element(by.model("settings.additionalParams.spreadsheet.range.endCell")).isPresent()).to.eventually.be.false;
+      });
+
+      it("Should show range input settings if 'Show Range' is selected", function() {
+        element(by.css("input[type='radio'][value='range']")).click();
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.range.startCell")).isDisplayed()).to.eventually.be.true;
+        expect(element(by.model("settings.additionalParams.spreadsheet.range.endCell")).isDisplayed()).to.eventually.be.true;
+      });
 
     });
 
@@ -40,7 +58,15 @@
       it("Should correctly save settings", function () {
         var settings = {
           params: {},
-          additionalParams: {}
+          additionalParams: {
+            spreadsheet: {
+              cells: "sheet",
+              range: {
+                startCell: "",
+                endCell: ""
+              }
+            }
+          }
         };
 
         element(by.id("save")).click();

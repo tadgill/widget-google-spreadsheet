@@ -10863,5 +10863,13 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
     }])
   .value("defaultSettings", {
     params: {},
-    additionalParams: {}
+    additionalParams: {
+      spreadsheet: {
+        cells: "sheet",
+        range: {
+          startCell: "",
+          endCell: ""
+        }
+      }
+    }
   });
