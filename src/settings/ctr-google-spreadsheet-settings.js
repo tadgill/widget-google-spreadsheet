@@ -72,7 +72,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         range: {
           startCell: "",
           endCell: ""
-        }
+        },
+        refresh: 5
       }
     }
   });
