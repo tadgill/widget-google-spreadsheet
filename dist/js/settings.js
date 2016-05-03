@@ -11126,8 +11126,44 @@ angular.module("risevision.widget.common")
 })(angular);
 
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log",
-    function ($scope,$window /*,$log*/) {
+  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet",
+    function ($scope, $window, $log, googleSheet) {
+
+      function getWorkSheets(fileId) {
+        googleSheet.getWorkSheets(fileId)
+          .then(function (sheets) {
+            $log.debug("Worksheets", sheets);
+            $scope.published = true;
+          })
+          .then(null, function () {
+            $scope.published = false;
+          });
+      }
+
+      $scope.published = true;
+
+      $scope.$watch("settings.additionalParams.spreadsheet.fileId", function (fileId) {
+        if (fileId && fileId !== "") {
+          getWorkSheets(fileId);
+        }
+      });
+
+      $scope.$watch("settings.additionalParams.spreadsheet.docName", function (docURL) {
+        if (typeof docURL === "undefined" || !docURL) {
+          $scope.settingsForm.$setValidity("docName", false);
+        }
+        else {
+          $scope.settingsForm.$setValidity("docName", true);
+        }
+      });
+
+      $scope.$watch("published", function (value) {
+        if (typeof value !== "undefined" &&
+          $scope.settings.additionalParams.spreadsheet.docName &&
+          $scope.settings.additionalParams.spreadsheet.docName !== "") {
+          $scope.settingsForm.$setValidity("docName", value);
+        }
+      });
 
       $scope.$on("picked", function (event, data) {
         $scope.settings.additionalParams.spreadsheet.docName = data[0].name;
@@ -11139,7 +11175,17 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         $window.open($scope.settings.additionalParams.spreadsheet.docURL, "_blank");
       };
 
+      $scope.retryFile = function () {
+        if ($scope.settings.additionalParams.spreadsheet.fileId &&
+          $scope.settings.additionalParams.spreadsheet.fileId !== "") {
+          $scope.published = true;
+          getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
+        }
+      };
+
       $scope.clearSelection = function () {
+        $scope.published = true;
+
         delete $scope.settings.additionalParams.spreadsheet.docName;
         delete $scope.settings.additionalParams.spreadsheet.docURL;
         delete $scope.settings.additionalParams.spreadsheet.fileId;
@@ -11157,3 +11203,45 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       }
     }
   });
+
+angular.module("risevision.widget.googleSpreadsheet.settings")
+  .constant("SPREADSHEET_API_WORKSHEETS", "https://spreadsheets.google.com/feeds/worksheets/")
+  .constant("SPREADSHEET_API_SUFFIX", "/public/basic")
+
+  .factory("googleSheet", ["$http", "$log", "SPREADSHEET_API_WORKSHEETS", "SPREADSHEET_API_SUFFIX",
+    function ($http, $log, SPREADSHEET_API_WORKSHEETS, SPREADSHEET_API_SUFFIX) {
+
+      var factory = {},
+        filterSheets = function (data) {
+          var option, sheets;
+
+          sheets = data.feed.entry.map(function (value, index) {
+            option = {};
+
+            // Worksheet tab name
+            option.label = value.title.$t;
+
+            // Worksheet tab number
+            option.value = (index + 1);
+
+            return option;
+          });
+
+          return sheets;
+        };
+
+      factory.getWorkSheets = function(fileId) {
+        var api = SPREADSHEET_API_WORKSHEETS + fileId + SPREADSHEET_API_SUFFIX;
+
+        return $http.get(encodeURI(api + "?alt=json"))
+          .then(function (response) {
+            return response.data;
+          })
+          .then(function (data) {
+            return filterSheets(data);
+          });
+      };
+
+      return factory;
+
+    }]);
