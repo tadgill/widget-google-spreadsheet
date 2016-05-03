@@ -38,6 +38,10 @@
         expect(element(by.css("input[type='radio'][value='sheet']")).isSelected()).to.eventually.be.true;
       });
 
+      it("Should show refresh interval input default to 5 minutes", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).getAttribute('value')).to.eventually.equal("5");
+      });
+
       it("Should apply form as invalid due to no spreadsheet doc name", function () {
         expect(element(by.css("form[name='settingsForm'].ng-invalid")).isPresent()).to.eventually.be.true;
       });
@@ -145,6 +149,7 @@
                 startCell: "",
                 endCell: ""
               },
+              refresh: 5,
               docName: "Test File",
               docURL: "https://test-published",
               fileId: "published"

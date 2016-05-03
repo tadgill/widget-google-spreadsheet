@@ -12,7 +12,8 @@
         range: {
           startCell: "",
           endCell: ""
-        }
+        },
+        refresh: 5
       }
     }
   };
