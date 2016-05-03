@@ -11144,6 +11144,11 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
       $scope.$watch("settings.additionalParams.spreadsheet.fileId", function (fileId) {
         if (fileId && fileId !== "") {
+          if ($scope.settings.additionalParams.spreadsheet.selection === "key") {
+            $scope.settings.additionalParams.spreadsheet.url =
+              "https://docs.google.com/spreadsheets/d/" + fileId + "/edit#gid=0";
+          }
+
           getWorkSheets(fileId);
         }
       });
@@ -11166,13 +11171,18 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       });
 
       $scope.$on("picked", function (event, data) {
+        $scope.settings.additionalParams.spreadsheet.selection = "drive";
         $scope.settings.additionalParams.spreadsheet.docName = data[0].name;
-        $scope.settings.additionalParams.spreadsheet.docURL = encodeURI(data[0].url);
+        $scope.settings.additionalParams.spreadsheet.url = encodeURI(data[0].url);
         $scope.settings.additionalParams.spreadsheet.fileId = data[0].id;
       });
 
+      $scope.setSelection = function() {
+        $scope.settings.additionalParams.spreadsheet.selection = "key";
+      };
+
       $scope.previewFile = function () {
-        $window.open($scope.settings.additionalParams.spreadsheet.docURL, "_blank");
+        $window.open($scope.settings.additionalParams.spreadsheet.url, "_blank");
       };
 
       $scope.retryFile = function () {
@@ -11186,15 +11196,22 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.clearSelection = function () {
         $scope.published = true;
 
-        delete $scope.settings.additionalParams.spreadsheet.docName;
-        delete $scope.settings.additionalParams.spreadsheet.docURL;
-        delete $scope.settings.additionalParams.spreadsheet.fileId;
+        if ($scope.settings.additionalParams.spreadsheet.selection === "drive") {
+          $scope.settings.additionalParams.spreadsheet.docName = "";
+        }
+
+        $scope.settings.additionalParams.spreadsheet.url = "";
+        $scope.settings.additionalParams.spreadsheet.fileId = "";
       };
     }])
   .value("defaultSettings", {
     params: {},
     additionalParams: {
       spreadsheet: {
+        selection: "drive",
+        docName: "",
+        url: "",
+        fileId: "",
         cells: "sheet",
         range: {
           startCell: "",
