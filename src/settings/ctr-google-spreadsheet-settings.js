@@ -51,6 +51,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.retryFile = function () {
         if ($scope.settings.additionalParams.spreadsheet.fileId &&
           $scope.settings.additionalParams.spreadsheet.fileId !== "") {
+          $scope.published = true;
           getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
         }
       };
