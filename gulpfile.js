@@ -116,7 +116,14 @@
   // ***** e2e Testing ***** //
   gulp.task("e2e:server-close", factory.testServerClose());
 
-  gulp.task("html:e2e:settings", factory.htmlE2E());
+  gulp.task("html:e2e:settings", factory.htmlE2E({
+    files: ["./src/settings.html"],
+    e2eAngularMocks: "components/angular-mocks/angular-mocks.js",
+    e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
+    e2eSpreadsheetHTTP: "../test/mocks/google-sheet-http-mock.js",
+    e2eTestApp: "../test/e2e/settings-app.js",
+    e2eAppReplace: "../test/e2e/settings-app-replace.js"
+  }));
 
   gulp.task("e2e:server:settings", ["config", "html:e2e:settings"], factory.testServer());
 

@@ -38,6 +38,19 @@
         expect(element(by.css("input[type='radio'][value='sheet']")).isSelected()).to.eventually.be.true;
       });
 
+      it("Should apply form as invalid due to no spreadsheet doc name", function () {
+        expect(element(by.css("form[name='settingsForm'].ng-invalid")).isPresent()).to.eventually.be.true;
+      });
+
+      it("Should disable Save button", function () {
+        expect(element(by.css("button#save[disabled=disabled")).isPresent()).to.eventually.be.true;
+      });
+
+      it("Should not show publishing instructions", function () {
+        expect(element(by.css("div.content-box div.bg-danger")).isPresent()).to.eventually.be.false;
+        expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
+      });
+
     });
 
     describe("Visibility", function() {
@@ -56,6 +69,70 @@
 
     });
 
+    describe("Spreadsheet Publishing", function () {
+
+      it("Should show instructions, retry button, and disable Save when spreadsheet not published", function () {
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
+
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "not-published",
+            name: "Test File",
+            url: "https://test-not-published"
+          }]);
+        });
+
+        expect(element(by.css("div.content-box div.bg-danger")).isDisplayed()).to.eventually.be.true;
+        expect(element(by.css("div.bg-danger a.btn")).isDisplayed()).to.eventually.be.true;
+        expect(element(by.css("button#save[disabled=disabled")).isPresent()).to.eventually.be.true;
+
+      });
+
+      it("Should not show instructions when clear selection clicked", function () {
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
+
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "not-published",
+            name: "Test File",
+            url: "https://test-not-published"
+          }]);
+        });
+
+        expect(element(by.css("div.content-box div.bg-danger")).isDisplayed()).to.eventually.be.true;
+        expect(element(by.css("div.bg-danger a.btn")).isDisplayed()).to.eventually.be.true;
+
+        element(by.css("div.clear-selection span")).click();
+
+        expect(element(by.css("div.content-box div.bg-danger")).isPresent()).to.eventually.be.false;
+        expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
+      });
+
+      it("Should not show instructions and enable Save when spreadsheet is published", function () {
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
+
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "published",
+            name: "Test File",
+            url: "https://test-published"
+          }]);
+        });
+
+        expect(element(by.css("div.content-box div.bg-danger")).isPresent()).to.eventually.be.false;
+        expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
+        expect(element(by.css("button#save[disabled=disabled")).isPresent()).to.eventually.be.false;
+
+      });
+
+    });
+
     describe("Saving", function () {
 
       it("Should correctly save settings", function () {
@@ -67,10 +144,25 @@
               range: {
                 startCell: "",
                 endCell: ""
-              }
+              },
+              docName: "Test File",
+              docURL: "https://test-published",
+              fileId: "published"
             }
           }
         };
+
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
+
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "published",
+            name: "Test File",
+            url: "https://test-published"
+          }]);
+        });
 
         element(by.id("save")).click();
 

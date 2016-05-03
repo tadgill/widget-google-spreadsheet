@@ -64,7 +64,7 @@
               <div class="input-group custom-addon">
                 <div class="clear-selection">
                   <input name="storage-file-name" type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.docName"
-                         readonly="">
+                         readonly="" valid>
                   <span ng-click="clearSelection()"><i class="fa fa-times-circle" aria-hidden="true"></i></span>
                 </div>
                 <span class="input-group-addon">
@@ -93,6 +93,13 @@
             </div-->
           </div>
           <!-- END FILE SELECTOR -->
+
+          <div ng-if="!published">
+            <div class="content-box add-bottom">
+              <div class="bg-danger add-padding"> <a class="btn btn-default pull-right" ng-click="retryFile()">{{"widget-google-spreadsheet.spreadsheet.retry" | translate}}</a> {{"widget-google-spreadsheet.spreadsheet.publish.text1" | translate}} '<b>{{"widget-google-spreadsheet.spreadsheet.publish.text2" | translate}}</b>', {{"widget-google-spreadsheet.spreadsheet.publish.text3" | translate}} '<b>{{"widget-google-spreadsheet.spreadsheet.publish.text4" | translate}}</b>'.
+              </div>
+            </div>
+          </div>
 
           <!-- Entire Sheet or Range -->
           <div class="radio">
@@ -163,6 +170,13 @@
 <script src="settings/settings-app.js"></script>
 <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
 <script src="settings/ctr-google-spreadsheet-settings.js"></script>
+<script src="settings/svc-google-sheet.js"></script>
+<!-- endbuild -->
+
+<!-- build:e2eTestApp -->
+<!-- endbuild -->
+
+<!-- build:e2eAngularMocks -->
 <!-- endbuild -->
 
 <!-- build:e2egadgets -->
@@ -172,8 +186,14 @@
 <!-- Get from Bower if needed. -->
 <script src="//s3.amazonaws.com/rise-common/scripts/i18next/i18next.min.js"></script>
 
+<!-- build:e2eSpreadsheetHTTP -->
+<!-- endbuild -->
+
 <!-- build:e2ePicker -->
 <script src="//apis.google.com/js/client.js?onload=handleClientJSLoad"></script>
+<!-- endbuild -->
+
+<!-- build:e2eAppReplace -->
 <!-- endbuild -->
 
 </body>
