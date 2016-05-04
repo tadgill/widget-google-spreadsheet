@@ -11129,6 +11129,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
   .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet",
     function ($scope, $window, $log, googleSheet) {
 
+      $scope.showPreview = false;
+
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
           .then(function (sheets) {
@@ -11143,36 +11145,45 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.published = true;
 
       $scope.$watch("settings.additionalParams.spreadsheet.fileId", function (fileId) {
-        if (fileId && fileId !== "") {
-          getWorkSheets(fileId);
-        }
-      });
-
-      $scope.$watch("settings.additionalParams.spreadsheet.docName", function (docURL) {
-        if (typeof docURL === "undefined" || !docURL) {
-          $scope.settingsForm.$setValidity("docName", false);
+        if (typeof fileId === "undefined" || !fileId) {
+          $scope.settingsForm.$setValidity("fileId", false);
         }
         else {
-          $scope.settingsForm.$setValidity("docName", true);
+          $scope.showPreview = true;
+          $scope.settingsForm.$setValidity("fileId", true);
+
+          if ($scope.settings.additionalParams.spreadsheet.selection === "key") {
+            $scope.settings.additionalParams.spreadsheet.url =
+              "https://docs.google.com/spreadsheets/d/" + fileId + "/edit#gid=0";
+          }
+
+          getWorkSheets(fileId);
         }
       });
 
       $scope.$watch("published", function (value) {
         if (typeof value !== "undefined" &&
-          $scope.settings.additionalParams.spreadsheet.docName &&
-          $scope.settings.additionalParams.spreadsheet.docName !== "") {
-          $scope.settingsForm.$setValidity("docName", value);
+          $scope.settings.additionalParams.spreadsheet.fileId &&
+          $scope.settings.additionalParams.spreadsheet.fileId !== "") {
+          $scope.settingsForm.$setValidity("fileId", value);
         }
       });
 
       $scope.$on("picked", function (event, data) {
+        $scope.showPreview = true;
+        $scope.settings.additionalParams.spreadsheet.selection = "drive";
         $scope.settings.additionalParams.spreadsheet.docName = data[0].name;
-        $scope.settings.additionalParams.spreadsheet.docURL = encodeURI(data[0].url);
+        $scope.settings.additionalParams.spreadsheet.url = encodeURI(data[0].url);
         $scope.settings.additionalParams.spreadsheet.fileId = data[0].id;
       });
 
+      $scope.setSelection = function() {
+        $scope.showPreview = true;
+        $scope.settings.additionalParams.spreadsheet.selection = "key";
+      };
+
       $scope.previewFile = function () {
-        $window.open($scope.settings.additionalParams.spreadsheet.docURL, "_blank");
+        $window.open($scope.settings.additionalParams.spreadsheet.url, "_blank");
       };
 
       $scope.retryFile = function () {
@@ -11186,15 +11197,22 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.clearSelection = function () {
         $scope.published = true;
 
-        delete $scope.settings.additionalParams.spreadsheet.docName;
-        delete $scope.settings.additionalParams.spreadsheet.docURL;
-        delete $scope.settings.additionalParams.spreadsheet.fileId;
+        if ($scope.settings.additionalParams.spreadsheet.selection === "drive") {
+          $scope.settings.additionalParams.spreadsheet.docName = "";
+        }
+
+        $scope.settings.additionalParams.spreadsheet.url = "";
+        $scope.settings.additionalParams.spreadsheet.fileId = "";
       };
     }])
   .value("defaultSettings", {
     params: {},
     additionalParams: {
       spreadsheet: {
+        selection: "drive",
+        docName: "",
+        url: "",
+        fileId: "",
         cells: "sheet",
         range: {
           startCell: "",

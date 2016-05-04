@@ -58,6 +58,49 @@
     });
 
     describe("Visibility", function() {
+      it("Should not show file name and preview button", function() {
+        expect(element(by.css(".preview")).isPresent()).to.eventually.be.false;
+      });
+
+      it("Should hide spreadsheet URL field when 'Enter Spreadsheet Key' button is clicked", function() {
+        element(by.id("spreadsheet-key")).click();
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.docName")).isPresent()).to.eventually.be.false;
+      });
+
+      it("Should show spreadsheet key field when 'Enter Spreadsheet Key' button is clicked", function() {
+        element(by.id("spreadsheet-key")).click();
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.fileId")).isDisplayed()).to.eventually.be.true;
+      });
+
+      it("Should show spreadsheet URL field when 'Select Spreadsheet' button is clicked", function() {
+        element(by.id("google-drive")).click();
+
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "not-published",
+            name: "Test File",
+            url: "https://test-not-published"
+          }]);
+        });
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.docName")).isDisplayed()).to.eventually.be.true;
+      });
+
+      it("Should hide spreadsheet key field when 'Select Spreadsheet' button is clicked", function() {
+        element(by.id("google-drive")).click();
+
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "not-published",
+            name: "Test File",
+            url: "https://test-not-published"
+          }]);
+        });
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.fileId")).isPresent()).to.eventually.be.false;
+      });
 
       it("Should not show starting or ending range cell inputs if 'Show Entire Sheet' is selected", function () {
         expect(element(by.model("settings.additionalParams.spreadsheet.range.startCell")).isPresent()).to.eventually.be.false;
@@ -144,15 +187,16 @@
           params: {},
           additionalParams: {
             spreadsheet: {
+              selection: "drive",
+              docName: "Test File",
+              url: "https://test-published",
+              fileId: "published",
               cells: "sheet",
               range: {
                 startCell: "",
                 endCell: ""
               },
-              refresh: 5,
-              docName: "Test File",
-              docURL: "https://test-published",
-              fileId: "published"
+              refresh: 5
             }
           }
         };
@@ -173,8 +217,8 @@
 
         expect(browser.executeScript("return window.result")).to.eventually.deep.equal(
           {
-            'additionalParams': JSON.stringify(settings.additionalParams),
-            'params': ''
+            "additionalParams": JSON.stringify(settings.additionalParams),
+            "params": ""
           });
       });
     });
