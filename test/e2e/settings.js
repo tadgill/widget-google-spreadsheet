@@ -58,12 +58,8 @@
     });
 
     describe("Visibility", function() {
-      it("Should show spreadsheet URL field", function() {
-        expect(element(by.model("settings.additionalParams.spreadsheet.docName")).isDisplayed()).to.eventually.be.true;
-      });
-
-      it("Should not show spreadsheet key field", function() {
-        expect(element(by.model("settings.additionalParams.spreadsheet.fileId")).isPresent()).to.eventually.be.false;
+      it("Should not show file name and preview button", function() {
+        expect(element(by.css(".preview")).isPresent()).to.eventually.be.false;
       });
 
       it("Should hide spreadsheet URL field when 'Enter Spreadsheet Key' button is clicked", function() {
@@ -81,11 +77,27 @@
       it("Should show spreadsheet URL field when 'Select Spreadsheet' button is clicked", function() {
         element(by.id("google-drive")).click();
 
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "not-published",
+            name: "Test File",
+            url: "https://test-not-published"
+          }]);
+        });
+
         expect(element(by.model("settings.additionalParams.spreadsheet.docName")).isDisplayed()).to.eventually.be.true;
       });
 
       it("Should hide spreadsheet key field when 'Select Spreadsheet' button is clicked", function() {
         element(by.id("google-drive")).click();
+
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "not-published",
+            name: "Test File",
+            url: "https://test-not-published"
+          }]);
+        });
 
         expect(element(by.model("settings.additionalParams.spreadsheet.fileId")).isPresent()).to.eventually.be.false;
       });

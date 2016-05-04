@@ -60,8 +60,7 @@
               </div>
             </div>
 
-            <!--  FILE SELECTOR -->
-            <div class="form-group">
+            <div class="preview form-group" ng-if="showPreview">
               <div class="input-group custom-addon">
                 <div class="clear-selection">
                   <!-- Select Spreadsheet -->
@@ -70,7 +69,7 @@
 
                   <!-- Spreadsheet Key -->
                   <input type="text" class="form-control" placeholder="{{'widget-google-spreadsheet.spreadsheet.key.placeholder' | translate }}"
-                    ng-model="settings.additionalParams.spreadsheet.fileId" ng-if="settings.additionalParams.spreadsheet.selection === 'key'">
+                    ng-model="settings.additionalParams.spreadsheet.fileId" ng-if="settings.additionalParams.spreadsheet.selection === 'key'" valid>
 
                   <span ng-click="clearSelection()">
                     <i class="fa fa-times-circle" aria-hidden="true"></i>
