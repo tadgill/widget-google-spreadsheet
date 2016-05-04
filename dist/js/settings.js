@@ -11131,16 +11131,29 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
       $scope.showPreview = false;
 
+      $scope.sheets = [];
+      $scope.currentSheet = null;
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
           .then(function (sheets) {
             $log.debug("Worksheets", sheets);
             $scope.published = true;
+            $scope.sheets = sheets;
+            $scope.currentSheet = sheets[$scope.settings.additionalParams.spreadsheet.tabId - 1];
           })
           .then(null, function () {
             $scope.published = false;
+            $scope.sheets = [];
+            $scope.currentSheet = null;
+            $scope.settings.additionalParams.spreadsheet.tabId = 1;
           });
       }
+
+      $scope.$watch("currentSheet", function (currentSheet) {
+        if (currentSheet) {
+          $scope.settings.additionalParams.spreadsheet.tabId = currentSheet.value;
+        }
+      });
 
       $scope.published = true;
 
@@ -11162,7 +11175,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       });
 
       $scope.$watch("published", function (value) {
-        if (typeof value !== "undefined" &&
+        if (typeof value !== "undefined" && $scope.settings.additionalParams.spreadsheet &&
           $scope.settings.additionalParams.spreadsheet.fileId &&
           $scope.settings.additionalParams.spreadsheet.fileId !== "") {
           $scope.settingsForm.$setValidity("fileId", value);
@@ -11218,6 +11231,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           startCell: "",
           endCell: ""
         },
+        tabId: 1,
         refresh: 5
       }
     }
