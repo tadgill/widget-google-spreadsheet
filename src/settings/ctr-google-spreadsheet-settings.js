@@ -105,6 +105,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           endCell: ""
         },
         tabId: 1,
+        hasHeader: false,
         refresh: 5
       }
     }

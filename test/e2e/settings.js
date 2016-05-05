@@ -42,9 +42,12 @@
         expect(element(by.css("select#sheet")).isPresent()).to.eventually.be.true;
       });
 
+      it("Should show first row as header checkbox unchecked", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.hasHeader")).isSelected()).to.eventually.be.false;
+      });
+
       it("Should show refresh interval input default to 5 minutes", function () {
         expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).getAttribute('value')).to.eventually.equal("5");
-
       });
 
       it("Should apply form as invalid due to no spreadsheet doc name", function () {
@@ -224,6 +227,7 @@
                 endCell: ""
               },
               tabId: 1,
+              hasHeader: false,
               refresh: 5
             }
           }
