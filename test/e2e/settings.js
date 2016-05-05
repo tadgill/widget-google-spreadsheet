@@ -38,8 +38,13 @@
         expect(element(by.css("input[type='radio'][value='sheet']")).isSelected()).to.eventually.be.true;
       });
 
+      it("Should show Select worksheet dropbox", function () {
+        expect(element(by.css("select#sheet")).isPresent()).to.eventually.be.true;
+      });
+
       it("Should show refresh interval input default to 5 minutes", function () {
         expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).getAttribute('value')).to.eventually.equal("5");
+
       });
 
       it("Should apply form as invalid due to no spreadsheet doc name", function () {
@@ -176,8 +181,30 @@
         expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
         expect(element(by.css("button#save[disabled=disabled")).isPresent()).to.eventually.be.false;
 
+        expect(element(by.model("currentSheet")).$('option:checked').getText()).to.eventually.equal("Worksheet 1");
+
       });
 
+    });
+
+    describe("Sheet Selection", function () {
+
+      it("Should select the first sheet when file is loaded", function () {
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
+
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "published",
+            name: "Test File",
+            url: "https://test-published"
+          }]);
+        });
+
+        expect(element(by.model("currentSheet")).$('option:checked').getText()).to.eventually.equal("Worksheet 1");
+
+      });
     });
 
     describe("Saving", function () {
@@ -196,6 +223,7 @@
                 startCell: "",
                 endCell: ""
               },
+              tabId: 1,
               refresh: 5
             }
           }
