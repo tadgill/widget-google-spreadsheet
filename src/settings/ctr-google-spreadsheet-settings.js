@@ -94,6 +94,10 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
   .value("defaultSettings", {
     params: {},
     additionalParams: {
+      format: {
+        evenRowColor: "rgb(246, 247, 248)",
+        oddRowColor: "rgb(255, 255, 255)"
+      },
       spreadsheet: {
         selection: "drive",
         docName: "",
