@@ -1,82 +1,60 @@
-/* global gadgets */
+/* global RiseVision, gadgets */
 
-var RiseVision = RiseVision || {};
-RiseVision.Spreadsheet = {};
+var _prefs = new gadgets.Prefs(),
+  _additionalParams = null;
 
-RiseVision.Spreadsheet = (function (document, gadgets) {
+function _ready() {
+  gadgets.rpc.call("", "rsevent_ready", null, _prefs.getString("id"), true, true, true, true, true);
+}
 
-  "use strict";
+// function _done() {
+//   gadgets.rpc.call("", "rsevent_done", null, _prefs.getString("id"));
+// }
 
-  // private variables
-  var _prefs = new gadgets.Prefs(),
-    _additionalParams = null;
+function _init() {
+  // var _message = new RiseVision.Common.Message(document.getElementById("container"),
+  //   document.getElementById("messageContainer"));
 
-  var _message = null;
+  _ready();
+}
 
-  /*
-   *  Private Methods
-   */
-  function _ready() {
-    gadgets.rpc.call("", "rsevent_ready", null, _prefs.getString("id"), true, true, true, true, true);
-  }
+function getTableName() {
+  return "spreadsheet_events";
+}
 
-  /*function _done() {
-    gadgets.rpc.call("", "rsevent_done", null, _prefs.getString("id"));
-  }*/
+function logEvent(params) {
+  RiseVision.Common.LoggerUtils.logEvent(getTableName(), params);
+}
 
-  function _init() {
-    _message = new RiseVision.Common.Message(document.getElementById("container"),
-      document.getElementById("messageContainer"));
+function pause() {
+  console.log("pause");
+}
 
-    _ready();
-  }
+function play() {
+  console.log("play");
+}
 
-  /*
-   *  Public Methods
-   */
-  function getTableName() {
-    return "spreadsheet_events";
-  }
+function setAdditionalParams(additionalParams) {
+  _prefs = new gadgets.Prefs();
 
-  function logEvent(params) {
-    RiseVision.Common.LoggerUtils.logEvent(getTableName(), params);
-  }
+  _additionalParams = JSON.parse(JSON.stringify(additionalParams));
 
-  function pause() {
-    console.log("pause");
-  }
+  _additionalParams.width = _prefs.getInt("rsW");
+  _additionalParams.height = _prefs.getInt("rsH");
 
-  function play() {
-    console.log("play");
-  }
+  document.getElementById("container").style.width = _additionalParams.width + "px";
+  document.getElementById("container").style.height = _additionalParams.height + "px";
 
-  function setAdditionalParams(additionalParams) {
-    _prefs = new gadgets.Prefs();
+  _init();
+}
 
-    _additionalParams = JSON.parse(JSON.stringify(additionalParams));
+function stop() {
+  pause();
+}
 
-    _additionalParams.width = _prefs.getInt("rsW");
-    _additionalParams.height = _prefs.getInt("rsH");
-
-    document.getElementById("container").style.width = _additionalParams.width + "px";
-    document.getElementById("container").style.height = _additionalParams.height + "px";
-
-    _init();
-  }
-
-  function stop() {
-    pause();
-  }
-
-  return {
-    "getTableName": getTableName,
-    "logEvent": logEvent,
-    "setAdditionalParams": setAdditionalParams,
-    "pause": pause,
-    "play": play,
-    "stop": stop
-  };
-
-})(document, gadgets);
-
-
+exports.getTableName = getTableName;
+exports.logEvent = logEvent;
+exports.setAdditionalParams = setAdditionalParams;
+exports.pause  = pause;
+exports.play = play;
+exports.stop = stop;

@@ -1,5 +1,13 @@
 /* global RiseVision, gadgets */
 
+require("./css/spreadsheet.css");
+
+const React = require("react");
+const ReactDOM = require("react-dom");
+const Spreadsheet = require("./spreadsheet");
+const SpreadsheetHeader = require("./spreadsheet-header");
+const SpreadsheetTable = require("./spreadsheet-table");
+
 (function (window, document, gadgets) {
   "use strict";
 
@@ -38,29 +46,35 @@
       if (names[2] === "additionalParams") {
         additionalParams = JSON.parse(values[2]);
 
-        RiseVision.Spreadsheet.setAdditionalParams(additionalParams);
+        Spreadsheet.setAdditionalParams(additionalParams);
       }
     }
   }
 
   function play() {
-    RiseVision.Spreadsheet.play();
+    Spreadsheet.play();
   }
 
   function pause() {
-    RiseVision.Spreadsheet.pause();
+    Spreadsheet.pause();
   }
 
   function stop() {
-    RiseVision.Spreadsheet.stop();
+    Spreadsheet.stop();
   }
 
-  if (id && id !== "") {
-    gadgets.rpc.register("rscmd_play_" + id, play);
-    gadgets.rpc.register("rscmd_pause_" + id, pause);
-    gadgets.rpc.register("rscmd_stop_" + id, stop);
-    gadgets.rpc.register("rsparam_set_" + id, configure);
-    gadgets.rpc.call("", "rsparam_get", null, id, ["companyId", "displayId", "additionalParams"]);
+  function webComponentsReady() {
+    if (id && id !== "") {
+      gadgets.rpc.register("rscmd_play_" + id, play);
+      gadgets.rpc.register("rscmd_pause_" + id, pause);
+      gadgets.rpc.register("rscmd_stop_" + id, stop);
+      gadgets.rpc.register("rsparam_set_" + id, configure);
+      gadgets.rpc.call("", "rsparam_get", null, id, ["companyId", "displayId", "additionalParams"]);
+    }
+
+    ReactDOM.render(<SpreadsheetHeader />, document.querySelector(".header"));
+    ReactDOM.render(<SpreadsheetTable />, document.querySelector(".page"));
   }
 
+  window.addEventListener("WebComponentsReady", webComponentsReady);
 })(window, document, gadgets);
