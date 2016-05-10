@@ -90,12 +90,30 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         $scope.settings.additionalParams.spreadsheet.url = "";
         $scope.settings.additionalParams.spreadsheet.fileId = "";
       };
+
     }])
   .value("defaultSettings", {
     params: {},
     additionalParams: {
       format: {
         evenRowColor: "rgb(246, 247, 248)",
+        header: {
+          fontStyle:{
+            font:{
+              family:"verdana,geneva,sans-serif",
+              type:"standard",
+              url:""
+            },
+            size:"18px",
+            customSize:"",
+            align:"left",
+            bold:false,
+            italic:false,
+            underline:false,
+            forecolor:"black",
+            backcolor:"transparent"
+          }
+        },
         oddRowColor: "rgb(255, 255, 255)"
       },
       spreadsheet: {

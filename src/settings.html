@@ -22,6 +22,12 @@
   <!-- if AngularJS fails to load fallback to a local version -->
   <script>window.angular || document.write(unescape("%3Cscript src='js/vendor/angular/angular.min.js' type='text/javascript'%3E%3C/script%3E"));
   </script>
+
+  <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+  <!-- if TinyMCE fails to load fallback to a local version -->
+  <script>window.tinymce || document.write(unescape("%3Cscript src='js/vendor/tinymce-dist/tinymce.min.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+
 </head>
 <body ng-app="risevision.widget.googleSpreadsheet.settings" ng-controller="settingsController">
 <div class="container-fluid image-settings-fs">
@@ -103,7 +109,7 @@
 
           <div class="checkbox">
             <label class="control-label">
-              <input type="checkbox" id="header" name="header" ng-model="settings.additionalParams.spreadsheet.hasHeader"><strong>{{ "widget-google-spreadsheet.spreadsheet.first-row-as-header" | translate }}</strong></input>
+              <input type="checkbox" name="hasHeader" ng-model="settings.additionalParams.spreadsheet.hasHeader"><strong>{{ "widget-google-spreadsheet.spreadsheet.first-row-as-header" | translate }}</strong></input>
             </label>
           </div>
 
@@ -191,6 +197,17 @@
             </div>
           </div>
 
+          <hr>
+
+          <div class="row" ng-if="settings.additionalParams.spreadsheet.hasHeader">
+            <div class="col-md-12">
+              <h5>{{ "widget-google-spreadsheet.format.header.label" | translate}}</h5>
+              <font-setting id="header-font" font-data="settings.additionalParams.format.header.fontStyle"
+                            preview-text="{{'widget-google-spreadsheet.format.header.text' | translate }}">
+              </font-setting>
+            </div>
+          </div>
+
         </div>
 
         <!-- Modal Footer-->
@@ -214,6 +231,7 @@
 
 <!-- build:js js/settings.min.js -->
 <script src="components/angular-translate/angular-translate.js"></script>
+<script src="components/angular-load/angular-load.js"></script>
 <script src="components/angular-translate-loader-static-files/angular-translate-loader-static-files.js"></script>
 <script src="components/rv-common-i18n/dist/i18n.js"></script>
 
@@ -223,6 +241,12 @@
 <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
 <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
 <script src="components/rv-angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
+
+<!-- Font Setting -->
+<script src="components/widget-settings-ui-components/dist/js/widget-settings-ui-components.js"></script>
+<script src="components/widget-settings-ui-components/dist/js/angular/url-field.js"></script>
+<script src="components/widget-settings-ui-components/dist/js/angular/font-setting.js"></script>
+<script src="components/angular-ui-tinymce/src/tinymce.js"></script>
 
 <script src="config/config.js"></script>
 <script src="settings/settings-app.js"></script>
