@@ -27,6 +27,11 @@
       it("Should load Cancel button", function () {
         expect(element(by.css("button#cancel")).isPresent()).to.eventually.be.true;
       });
+
+      it("Should load Row Color Picker components", function () {
+        expect(element(by.model("settings.additionalParams.format.oddRowColor")).isDisplayed()).to.eventually.be.true;
+        expect(element(by.model("settings.additionalParams.format.evenRowColor")).isDisplayed()).to.eventually.be.true;
+      });
     });
 
     describe("Defaults", function () {
@@ -61,6 +66,14 @@
       it("Should not show publishing instructions", function () {
         expect(element(by.css("div.content-box div.bg-danger")).isPresent()).to.eventually.be.false;
         expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
+      });
+
+      it("Should set default for even row color", function () {
+        expect(element(by.model("settings.additionalParams.format.evenRowColor")).getAttribute("value")).to.eventually.equal("rgb(246, 247, 248)");
+      });
+
+      it("Should set default for odd row color", function () {
+        expect(element(by.model("settings.additionalParams.format.oddRowColor")).getAttribute("value")).to.eventually.equal("rgb(255, 255, 255)");
       });
 
     });
@@ -216,6 +229,10 @@
         var settings = {
           params: {},
           additionalParams: {
+            format: {
+              evenRowColor: "rgb(246, 247, 248)",
+              oddRowColor: "rgb(255, 255, 255)"
+            },
             spreadsheet: {
               selection: "drive",
               docName: "Test File",

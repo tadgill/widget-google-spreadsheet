@@ -6,6 +6,7 @@
 
   <!-- build:css css/settings.min.css -->
   <link rel="stylesheet" href="components/rv-common-style/dist/css/rise.min.css">
+  <link rel="stylesheet" href="components/rv-angular-bootstrap-colorpicker/css/colorpicker.css">
   <!-- endbuild -->
 
   <style type="text/css">
@@ -157,6 +158,39 @@
 
           <!-- END REFRESH INTERVAL -->
 
+          <hr>
+
+          <h4>{{ "widget-google-spreadsheet.format.heading" | translate}}</h4>
+
+          <h5>{{ "widget-google-spreadsheet.format.spreadsheet" | translate}}</h5>
+
+          <div class="section">
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label>{{ "widget-google-spreadsheet.format.oddRow" | translate}}</label>
+                  <div>
+                    <div class="input-group" colorpicker="rgb" colorpicker-parent="true" ng-model="settings.additionalParams.format.oddRowColor">
+                      <input class="form-control" type="text" ng-model="settings.additionalParams.format.oddRowColor">
+                      <span class="input-group-addon color-wheel"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label>{{ "widget-google-spreadsheet.format.evenRow" | translate}}</label>
+                  <div>
+                    <div class="input-group" colorpicker="rgb" colorpicker-parent="true" ng-model="settings.additionalParams.format.evenRowColor">
+                      <input class="form-control" type="text" ng-model="settings.additionalParams.format.evenRowColor">
+                      <span class="input-group-addon color-wheel"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- Modal Footer-->
@@ -188,6 +222,7 @@
 <script src="components/widget-settings-ui-components/dist/js/angular/widget-button-toolbar.js"></script>
 <script src="components/widget-settings-ui-components/dist/js/angular/tooltip.js"></script>
 <script src="components/google-drive-picker/dist/js/angular/google-drive-picker.js"></script>
+<script src="components/rv-angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js"></script>
 
 <script src="config/config.js"></script>
 <script src="settings/settings-app.js"></script>
