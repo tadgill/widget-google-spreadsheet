@@ -116,6 +116,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         },
         oddRowColor: "rgb(255, 255, 255)"
       },
+      scroll: {},
       spreadsheet: {
         selection: "drive",
         docName: "",
