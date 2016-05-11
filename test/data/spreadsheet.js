@@ -1,4 +1,5 @@
-(function(window) {
+// (function(window) {
+"use strict";
 
   "use strict";
 
@@ -63,4 +64,6 @@
     }
   };
 
-})(window);
+module.exports = window.gadget;
+
+// })(window);

@@ -44,7 +44,7 @@ module.exports = {
     loaders: [
       {
         test: /\.jsx?$/,
-        include: /src\/widget/,
+        include: [/src\/widget/, /test\/unit\/widget/],
         loader: "babel-loader"
       },
       {
@@ -70,6 +70,11 @@ module.exports = {
   output: {
     path: __dirname + "/dist",
     filename: "js/widget.min.js"
+  },
+  externals: {
+    "cheerio": "window",
+    "react/lib/ExecutionEnvironment": true,
+    "react/lib/ReactContext": true
   },
   plugins: plugins
 };
