@@ -76,6 +76,10 @@
         expect(element(by.model("settings.additionalParams.format.oddRowColor")).getAttribute("value")).to.eventually.equal("rgb(255, 255, 255)");
       });
 
+      it("Should not show Header Font Setting component", function () {
+        expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.false;
+      });
+
     });
 
     describe("Visibility", function() {
@@ -133,6 +137,12 @@
 
         expect(element(by.model("settings.additionalParams.spreadsheet.range.startCell")).isDisplayed()).to.eventually.be.true;
         expect(element(by.model("settings.additionalParams.spreadsheet.range.endCell")).isDisplayed()).to.eventually.be.true;
+      });
+
+      it("Should show Header font formatting if 'Use First Row as Header' selected", function () {
+        element(by.model("settings.additionalParams.spreadsheet.hasHeader")).click();
+
+        expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.true;
       });
 
     });
@@ -231,6 +241,23 @@
           additionalParams: {
             format: {
               evenRowColor: "rgb(246, 247, 248)",
+              header: {
+                fontStyle:{
+                  font:{
+                    family:"verdana,geneva,sans-serif",
+                    type:"standard",
+                    url:""
+                  },
+                  size:"18px",
+                  customSize:"",
+                  align:"left",
+                  bold:false,
+                  italic:false,
+                  underline:false,
+                  forecolor:"black",
+                  backcolor:"transparent"
+                }
+              },
               oddRowColor: "rgb(255, 255, 255)"
             },
             spreadsheet: {

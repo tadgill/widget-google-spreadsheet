@@ -31,6 +31,10 @@
       "./src/widget.html"
     ],
     vendorFiles = [
+      "./src/components/tinymce-dist/plugins/**/*",
+      "./src/components/tinymce-dist/skins/**/*",
+      "./src/components/tinymce-dist/themes/**/*",
+      "./src/components/tinymce-dist/tinymce*.js",
       "./src/components/jquery/dist/**/*",
       "./src/components/angular/angular*.js",
       "./src/components/angular/*.gzip",
@@ -144,8 +148,10 @@
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
       "src/components/angular/angular.js",
+      "src/components/angular-load/angular-load.js",
       "src/components/angular-translate/angular-translate.js",
       "src/components/angular-translate-loader-static-files/angular-translate-loader-static-files.js",
+      "src/components/angular-ui-tinymce/src/tinymce.js",
       "src/components/rv-angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js",
       "src/components/angular-mocks/angular-mocks.js",
       "node_modules/widget-tester/mocks/common-mock.js",

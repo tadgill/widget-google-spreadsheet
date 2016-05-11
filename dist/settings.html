@@ -19,6 +19,12 @@
   <!-- if AngularJS fails to load fallback to a local version -->
   <script>window.angular || document.write(unescape("%3Cscript src='js/vendor/angular/angular.min.js' type='text/javascript'%3E%3C/script%3E"));
   </script>
+
+  <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+  <!-- if TinyMCE fails to load fallback to a local version -->
+  <script>window.tinymce || document.write(unescape("%3Cscript src='js/vendor/tinymce-dist/tinymce.min.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+
 </head>
 <body ng-app="risevision.widget.googleSpreadsheet.settings" ng-controller="settingsController">
 <div class="container-fluid image-settings-fs">
@@ -100,7 +106,7 @@
 
           <div class="checkbox">
             <label class="control-label">
-              <input type="checkbox" id="header" name="header" ng-model="settings.additionalParams.spreadsheet.hasHeader"><strong>{{ "widget-google-spreadsheet.spreadsheet.first-row-as-header" | translate }}</strong></input>
+              <input type="checkbox" name="hasHeader" ng-model="settings.additionalParams.spreadsheet.hasHeader"><strong>{{ "widget-google-spreadsheet.spreadsheet.first-row-as-header" | translate }}</strong></input>
             </label>
           </div>
 
@@ -185,6 +191,17 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="row" ng-if="settings.additionalParams.spreadsheet.hasHeader">
+            <div class="col-md-12">
+              <h5>{{ "widget-google-spreadsheet.format.header.label" | translate}}</h5>
+              <font-setting id="header-font" font-data="settings.additionalParams.format.header.fontStyle"
+                            preview-text="{{'widget-google-spreadsheet.format.header.text' | translate }}">
+              </font-setting>
             </div>
           </div>
 
