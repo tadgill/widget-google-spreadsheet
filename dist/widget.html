@@ -4,20 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Google Spreadsheet Widget</title>
+
+  <link rel="import" href="components/rise-google-sheet/rise-google-sheet.html">
+
+  <script src="components/webcomponentsjs/webcomponents.min.js"></script>
+
 <link href="css/spreadsheet.css" rel="stylesheet"></head>
 <body>
 
-  <div id="container">
-    <div class="header"></div>
-    <div id="table">
-      <section class="page"></section>
-    </div>
-  </div>
-
+  <div id="container"></div>
   <div id="messageContainer"></div>
+
+  <rise-google-sheet refresh="60"></rise-google-sheet>
 
   <!-- build:e2egadgets -->
   <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
   <!-- endbuild -->
-<script src="js/widget.min.js"></script></body>
+<script type="text/javascript" src="js/widget.min.js"></script></body>
 </html>
