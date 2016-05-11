@@ -4,20 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Google Spreadsheet Widget</title>
-
-  <link rel="stylesheet" href="css/spreadsheet.min.css"/>
-
-</head>
+<link href="css/spreadsheet.css" rel="stylesheet"></head>
 <body>
 
-  <div id="container"></div>
+  <div id="container">
+    <div class="header"></div>
+    <div id="table">
+      <section class="page"></section>
+    </div>
+  </div>
 
   <div id="messageContainer"></div>
 
   <!-- build:e2egadgets -->
   <script src="//rvashow2.appspot.com/gadgets/gadgets.min.js"></script>
-  
-
-  <script src="js/widget.min.js"></script>
-</body>
+  <!-- endbuild -->
+<script src="js/widget.min.js"></script></body>
 </html>

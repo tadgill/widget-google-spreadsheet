@@ -21,14 +21,15 @@
   var uglify = require("gulp-uglify");
   var usemin = require("gulp-usemin");
   var wct = require("web-component-tester").gulp.init(gulp);
+  var webpackStream = require("webpack-stream");
 
   var appJSFiles = [
     "src/**/*.js",
-    "!./src/components/**/*"
+    "!./src/components/**/*",
+    "!./src/widget/**/*"
   ],
     htmlFiles = [
-      "./src/settings.html",
-      "./src/widget.html"
+      "./src/settings.html"
     ],
     vendorFiles = [
       "./src/components/tinymce-dist/plugins/**/*",
@@ -67,7 +68,7 @@
       .pipe(jshint.reporter("fail"));
   });
 
-  gulp.task("source", ["lint"], function () {
+  gulp.task("settings", ["lint"], function () {
     var isProd = (env === "prod");
 
     return gulp.src(htmlFiles)
@@ -80,6 +81,12 @@
         // Don't minify for staging.
         usemin({})
       ))
+      .pipe(gulp.dest("dist/"));
+  });
+
+  gulp.task("widget", function() {
+    return gulp.src("src/widget/main.js")
+      .pipe(webpackStream(require("./webpack.config.js")))
       .pipe(gulp.dest("dist/"));
   });
 
@@ -192,7 +199,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config", "bower-update"], ["source", "fonts", "images", "i18n", "vendor"], ["unminify"], cb);
+    runSequence(["clean", "config", "bower-update"], ["settings", "widget", "fonts", "images", "i18n", "vendor"], ["unminify"], cb);
   });
 
   gulp.task("bump", function(){
