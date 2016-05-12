@@ -212,6 +212,19 @@
             </div>
           </div>
 
+          <hr ng-if="settings.additionalParams.spreadsheet.hasHeader">
+
+          <div class="row">
+            <div class="col-md-12">
+              <h5>{{ "widget-google-spreadsheet.format.body.label" | translate}}</h5>
+              <font-setting id="body-font" font-data="settings.additionalParams.format.body.fontStyle"
+                            preview-text="{{'widget-google-spreadsheet.format.body.text' | translate }}">
+              </font-setting>
+            </div>
+          </div>
+
+          <hr>
+
         </div>
 
         <!-- Modal Footer-->
