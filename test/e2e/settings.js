@@ -32,6 +32,10 @@
         expect(element(by.model("settings.additionalParams.format.oddRowColor")).isDisplayed()).to.eventually.be.true;
         expect(element(by.model("settings.additionalParams.format.evenRowColor")).isDisplayed()).to.eventually.be.true;
       });
+
+      it("Should load scroll component", function () {
+        expect(element(by.id("scroll-by")).isPresent()).to.eventually.be.true;
+      });
     });
 
     describe("Defaults", function () {
@@ -39,6 +43,7 @@
       it("Should load drive picker button", function () {
         expect(element(by.css(".google-drive-picker")).isPresent()).to.eventually.be.true;
       });
+
       it("Should select 'Show Entire Sheet'", function () {
         expect(element(by.css("input[type='radio'][value='sheet']")).isSelected()).to.eventually.be.true;
       });
@@ -78,6 +83,10 @@
 
       it("Should not show Header Font Setting component", function () {
         expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.false;
+      });
+
+      it("Should not scroll by default", function () {
+        expect(element(by.id("scroll-by")).getAttribute("value")).to.eventually.equal("none");
       });
 
     });
@@ -259,6 +268,13 @@
                 }
               },
               oddRowColor: "rgb(255, 255, 255)"
+            },
+            scroll: {
+              by: "none",
+              direction: "up",
+              speed: "medium",
+              pause: 5,
+              pud: 10
             },
             spreadsheet: {
               selection: "drive",
