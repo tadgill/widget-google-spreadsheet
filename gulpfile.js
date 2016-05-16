@@ -122,6 +122,19 @@
       .pipe(gulp.dest("dist/js/vendor"));
   });
 
+  gulp.task("rise-google-sheet", function() {
+    return gulp.src([
+        "src/components/webcomponentsjs/webcomponents*.js",
+        "src/components/rise-google-sheet/rise-google-sheet.html",
+        "src/components/polymer/*.*{html,js}",
+        "src/components/promise-polyfill/promise-polyfill-lite.html",
+        "src/components/promise-polyfill/Promise.js",
+        "src/components/iron-ajax/iron-ajax.html",
+        "src/components/iron-ajax/iron-request.html"
+      ], {base: "./src/"})
+      .pipe(gulp.dest("dist/"));
+  });
+
   gulp.task("webdriver_update", factory.webdriveUpdate());
 
   // ***** e2e Testing ***** //
@@ -199,7 +212,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config", "bower-update"], ["settings", "widget", "fonts", "images", "i18n", "vendor"], ["unminify"], cb);
+    runSequence(["clean", "config", "bower-update"], ["settings", "widget", "fonts", "images", "i18n", "vendor", "rise-google-sheet"], ["unminify"], cb);
   });
 
   gulp.task("bump", function(){
