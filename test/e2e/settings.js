@@ -85,6 +85,10 @@
         expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.false;
       });
 
+      it("Should show Body font setting component", function () {
+        expect(element(by.css("#body-font .font-setting")).isPresent()).to.eventually.be.true;
+      });
+
       it("Should not scroll by default", function () {
         expect(element(by.id("scroll-by")).getAttribute("value")).to.eventually.equal("none");
       });
@@ -249,6 +253,23 @@
           params: {},
           additionalParams: {
             format: {
+              body: {
+                fontStyle:{
+                  font:{
+                    family:"verdana,geneva,sans-serif",
+                    type:"standard",
+                    url:""
+                  },
+                  size:"18px",
+                  customSize:"",
+                  align:"left",
+                  bold:false,
+                  italic:false,
+                  underline:false,
+                  forecolor:"black",
+                  backcolor:"transparent"
+                }
+              },
               evenRowColor: "rgb(246, 247, 248)",
               header: {
                 fontStyle:{
