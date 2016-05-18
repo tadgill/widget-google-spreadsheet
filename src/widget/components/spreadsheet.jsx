@@ -80,6 +80,8 @@ const Spreadsheet = React.createClass({
     document.getElementById("container").style.width = params.width + "px";
     document.getElementById("container").style.height = params.height + "px";
 
+    document.getElementById("rise-google-sheet").setAttribute("refresh", params.spreadsheet.refresh * 60);
+
     this.initRiseGoogleSheet();
     this.ready();
   },
