@@ -1,4 +1,3 @@
-// (function(window) {
 "use strict";
 
   "use strict";
@@ -65,5 +64,3 @@
   };
 
 module.exports = window.gadget;
-
-// })(window);
