@@ -1,37 +1,56 @@
 import React from "react";
+import { shallow } from "enzyme";
 import TestUtils from "react-addons-test-utils";
 import TableHeader from "../../../src/widget/components/table-header";
 import { expect } from "chai";
 
 describe("<TableHeader />", function() {
-  var result = null,
-    width = 600,
-    height = 50;
+  const width = 600,
+    height = 50,
+    data = ["Column 1", "Column 2", "Column 3"];
+  var wrapper;
 
   beforeEach(function () {
-    var renderer = TestUtils.createRenderer(),
-      data = ["Column 1", "Column 2", "Column 3"];
-
-    renderer.render(<TableHeader data={data} width={width} height={height} />);
-    result = renderer.getRenderOutput();
+    wrapper = shallow(<TableHeader data={data} width={width} height={height} />);
   });
 
-  it("Should render the table header", function() {
-    expect(result.props.rowHeight).to.equal(1);
-    expect(result.props.rowsCount).to.equal(0);
-    expect(result.props.width).to.equal(width);
-    expect(result.props.height).to.equal(height);
-    expect(result.props.headerHeight).to.equal(height);
+  describe("<Table />", function() {
+    it("Should have rowHeight prop", function() {
+      expect(wrapper.props().rowHeight).to.equal(1);
+    });
+
+    it("Should have rowsCount prop", function() {
+      expect(wrapper.props().rowsCount).to.equal(0);
+    });
+
+    it("Should have width prop", function() {
+      expect(wrapper.props().width).to.equal(width);
+    });
+
+    it("Should have height prop", function() {
+      expect(wrapper.props().height).to.equal(height);
+    });
+
+    it("Should have headerHeight prop", function() {
+      expect(wrapper.props().headerHeight).to.equal(height);
+    });
   });
 
-  it("Should render the table columns", function() {
-    expect(result.props.children.length).to.equal(3);
-    expect(result.props.children[0].key).to.equal("0");
-    expect(result.props.children[1].key).to.equal("1");
-    expect(result.props.children[2].key).to.equal("2");
-    expect(result.props.children[0].props.header.props.children).to.equal("Column 1");
-    expect(result.props.children[1].props.header.props.children).to.equal("Column 2");
-    expect(result.props.children[2].props.header.props.children).to.equal("Column 3");
-    expect(result.props.children[0].props.width).to.equal(width / 3);
+  describe("<Column />", function() {
+    it("Should have correct number of columns", function() {
+      expect(wrapper.props().children.length).to.equal(3);
+    });
+
+    it("Should have key prop", function() {
+      expect(wrapper.props().children[0].key).to.equal("0");
+    });
+
+    it("Should have header prop", function() {
+      expect(wrapper.props().children[0].props.header.props.children).to.equal("Column 1");
+    });
+
+    it("Should have width prop", function() {
+      expect(wrapper.props().children[0].props.width).to.equal(width / 3);
+    });
   });
 });
