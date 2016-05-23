@@ -1,6 +1,6 @@
 /* global gadgets */
 
-// require("fixed-data-table/dist/fixed-data-table.min.css");
+require("fixed-data-table/dist/fixed-data-table.min.css");
 
 const React = require("react");
 const TableHeader = require("./table-header");
