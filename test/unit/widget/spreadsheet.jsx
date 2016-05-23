@@ -77,54 +77,54 @@ describe("<Spreadsheet />", function() {
   });
 
   describe("<TableHeader />", function() {
-    it("Should contain a TableHeader component", function() {
-      wrapper.setState({ data: cells });
 
+    beforeEach(function () {
+      wrapper.setState({ data: cells });
+    });
+
+    it("Should contain a TableHeader component", function() {
       expect(wrapper.find(TableHeader)).to.have.length(1);
     });
 
     it("Should have data prop", function() {
-      wrapper.setState({ data: cells });
-
-      expect(wrapper.find(TableHeader).props().data).to.equal(cols);
+      var expected = [ 'Column 1', 'Column 2', 'Column 3' ];
+      expect(wrapper.find(TableHeader).props().data).to.deep.equal(expected);
     });
 
     it("Should have width prop", function() {
-      wrapper.setState({ data: cells });
-
       expect(wrapper.find(TableHeader).props().width).to.be.defined;
     });
 
     it("Should have height prop", function() {
-      wrapper.setState({ data: cells });
-
       expect(wrapper.find(TableHeader).props().height).to.equal(50);
     });
   });
 
   describe("<Table />", function() {
-    it("Should contain a Table component", function() {
-      wrapper.setState({ data: cells });
 
+    beforeEach(function () {
+      wrapper.setState({ data: cells });
+    });
+
+    it("Should contain a Table component", function() {
       expect(wrapper.find(Table)).to.have.length(1);
     });
 
     it("Should have data prop", function() {
-      wrapper.setState({ data: cells });
-
-      expect(wrapper.find(Table).props().data).to.equal(data);
+      var expected = [['I am the walrus!', '1', '3']];
+      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
     });
 
     it("Should have width prop", function() {
-
+      expect(wrapper.find(Table).props().width).to.equal(600);
     });
 
     it("Should have height prop", function() {
-
+      expect(wrapper.find(Table).props().height).to.equal(350);
     });
 
     it("Should have totalCols prop", function() {
-
+      expect(wrapper.find(Table).props().totalCols).to.equal(3);
     });
   });
 });
