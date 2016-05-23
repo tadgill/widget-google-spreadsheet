@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RSS Widget</title>
+
+  <link rel="stylesheet" href="../../src/components/widget-common/dist/css/message.css">
+
+  <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../src/components/web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
+</head>
+<body>
+
+<rise-rss id="rss" refresh="1"></rise-rss>
+
+<div id="container"></div>
+<div id="messageContainer"></div>
+
+<rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
+
+<script src="../data/spreadsheet.js"></script>
+<script src="../data/cells.js"></script>
+
+
+<script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
+
+<script>
+
+  suite("Spreadsheet Content", function() {
+
+    var googleSheet = document.querySelector("rise-google-sheet");
+
+    suite("Initialization", function () {
+      test("should set the width of the container", function() {
+        assert.equal(document.getElementById("container").style.width, window.innerWidth + "px");
+      });
+
+      test("should set the height of the container", function() {
+        assert.equal(document.getElementById("container").style.height, window.innerHeight + "px");
+      });
+    });
+
+    suite("Table Header", function () {
+
+      setup(function() {
+        googleSheet.dispatchEvent(new CustomEvent("rise-google-sheet-response", {
+          "detail": {
+            "cells": cells
+          },
+          "bubbles": true
+        }));
+      });
+
+      test("should set the width of the table header", function() {
+        assert.equal(document.querySelector("div.header div").style.width, window.innerWidth + "px");
+      });
+
+      test("should set the height of the table header", function() {
+        assert.equal(document.querySelector("div.header div").style.height, 50 + "px");
+      });
+    });
+  });
+
+</script>
+
+</body>
+</html>
