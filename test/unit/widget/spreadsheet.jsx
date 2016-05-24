@@ -161,4 +161,20 @@ describe("<Spreadsheet />", function() {
       expect(wrapper.state().data).to.deep.equal(newData);
     });
   });
+
+  describe("Handling error", function () {
+
+    it("should revert state back to initial value", function () {
+      var event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet");
+
+      event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = {};
+
+      sheet.dispatchEvent(event);
+
+      expect(wrapper.state().data).to.be.null;
+    });
+
+  });
 });
