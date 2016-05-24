@@ -164,6 +164,10 @@
   });
 
   // ****** Unit Testing ***** //
+  gulp.task("test:unit:widget", factory.testUnitReact(
+    {configFile: path.join(__dirname, "test/react-karma.conf.js")}
+  ));
+
   gulp.task("test:unit:settings", factory.testUnitAngular(
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
@@ -188,7 +192,7 @@
   ));
 
   gulp.task("test:unit", function(cb) {
-    runSequence("test:unit:settings", cb);
+    runSequence("test:unit:settings", "test:unit:widget", cb);
   });
 
   // ***** Integration Testing ***** //

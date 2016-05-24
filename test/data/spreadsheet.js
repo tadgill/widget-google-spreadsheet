@@ -1,5 +1,3 @@
-(function(window) {
-
   "use strict";
 
   window.gadget = window.gadget || {};
@@ -63,4 +61,7 @@
     }
   };
 
-})(window);
+window.innerWidth = 600;
+window.innerHeight = 400;
+
+module.exports = window.gadget;
