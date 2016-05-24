@@ -1,12 +1,11 @@
-require("../../data/spreadsheet");
-
 import React from "react";
 import { mount } from "enzyme";
+import { expect } from "chai";
 import TestUtils from "react-addons-test-utils";
 import Spreadsheet from "../../../src/widget/components/spreadsheet";
 import TableHeader from "../../../src/widget/components/table-header";
 import Table from "../../../src/widget/components/table";
-import { expect } from "chai";
+import "../../data/spreadsheet";
 
 describe("<Spreadsheet />", function() {
   var wrapper;
@@ -41,7 +40,7 @@ describe("<Spreadsheet />", function() {
     data = [
     {
       "content": {
-          "$t": "I am the walrus!"
+        "$t": "I am the walrus!"
       },
       "gs$cell": {
         "col": "1",
@@ -87,7 +86,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [ 'Column 1', 'Column 2', 'Column 3' ];
+      var expected = [ "Column 1", "Column 2", "Column 3" ];
       expect(wrapper.find(TableHeader).props().data).to.deep.equal(expected);
     });
 
@@ -111,7 +110,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [['I am the walrus!', '1', '3']];
+      var expected = [["I am the walrus!", "1", "3"]];
       expect(wrapper.find(Table).props().data).to.deep.equal(expected);
     });
 
@@ -125,6 +124,41 @@ describe("<Spreadsheet />", function() {
 
     it("Should have totalCols prop", function() {
       expect(wrapper.find(Table).props().totalCols).to.equal(3);
+    });
+  });
+
+  describe("Refreshing", function() {
+    it("should update the state", function() {
+      const event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet"),
+        newData = [
+          {
+            "content": {
+              "$t": "Column 1"
+            },
+            "gs$cell": {
+              "col": "1",
+              "row": "1"
+            }
+          },
+          {
+            "content": {
+              "$t": "Test data"
+            },
+            "gs$cell": {
+              "col": "1",
+              "row": "2"
+            }
+          }
+        ];
+
+      event.initEvent("rise-google-sheet-response", true, true);
+      event.detail = {};
+      event.detail.cells = newData;
+
+      sheet.dispatchEvent(event);
+
+      expect(wrapper.state().data).to.deep.equal(newData);
     });
   });
 });

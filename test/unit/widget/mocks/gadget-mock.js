@@ -1,4 +1,3 @@
-
 ;(function(window) {
 
   var rpc = function (methodName, callback, param1, param2) {

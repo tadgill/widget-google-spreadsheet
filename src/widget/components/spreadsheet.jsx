@@ -122,11 +122,11 @@ const Spreadsheet = React.createClass({
   },
 
   play: function() {
-    console.log("play");
+
   },
 
   pause: function() {
-    console.log("pause");
+
   },
 
   stop: function() {
