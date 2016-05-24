@@ -33,3 +33,7 @@ body {
   /* Visual */
   background-color: transparent;
 }
+
+html, body, #app {
+  height: 100%;
+}

@@ -195,18 +195,11 @@ const Spreadsheet = React.createClass({
       rows = this.getRows(totalCols);
 
       return(
-        <div>
-          {params.spreadsheet.hasHeader ?
-            <div className="header">
-              <TableHeader data={headers} width={params.width} height={rowHeight} />
-            </div> : false}
-          <div id="table">
-            <section className="page">
-              <Table data={rows} width={params.width}
-                height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height}
-                totalCols={totalCols} />
-            </section>
-          </div>
+        <div id="app">
+        {params.spreadsheet.hasHeader ?
+          <TableHeader data={headers} width={params.width} height={rowHeight} /> : false}
+          <Table data={rows} totalCols={totalCols} width={params.width}
+            height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height} />
         </div>
       );
     }

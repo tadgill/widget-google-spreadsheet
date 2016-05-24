@@ -33,6 +33,10 @@ body {
   /* Visual */
   background-color: transparent;
 }
+
+html, body, #app {
+  height: 100%;
+}
 /**
  * FixedDataTable v0.6.0 
  *
