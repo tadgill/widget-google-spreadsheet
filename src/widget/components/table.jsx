@@ -56,16 +56,16 @@ const Table = React.createClass({
     // Create the columns.
     for (var i = 0; i < this.props.totalCols; i++) {
       cols.push(
-        <Column key={i}
-           width={200}
+        <Column key={i} columnKey={i}
+           width={this.props.width / this.props.totalCols}
           // align={this.getColumnAlignment(i)}
           cell={ props => (
             <Cell
               width={props.width}
               height={props.height}
               // className={this.getCellClassName(props.key)}
-              key={props.key}>
-              {this.props.data[props.rowIndex][props.key]}
+              columnKey={props.columnKey}>
+              {this.props.data[props.rowIndex][props.columnKey]}
             </Cell>
           )}
         />

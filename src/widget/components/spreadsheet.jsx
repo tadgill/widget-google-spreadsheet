@@ -80,6 +80,8 @@ const Spreadsheet = React.createClass({
     document.getElementById("container").style.width = params.width + "px";
     document.getElementById("container").style.height = params.height + "px";
 
+    document.getElementById("rise-google-sheet").setAttribute("refresh", params.spreadsheet.refresh * 60);
+
     this.initRiseGoogleSheet();
     this.ready();
   },
@@ -120,11 +122,11 @@ const Spreadsheet = React.createClass({
   },
 
   play: function() {
-    console.log("play");
+
   },
 
   pause: function() {
-    console.log("pause");
+
   },
 
   stop: function() {
@@ -193,18 +195,11 @@ const Spreadsheet = React.createClass({
       rows = this.getRows(totalCols);
 
       return(
-        <div>
-          {params.spreadsheet.hasHeader ?
-            <div className="header">
-              <TableHeader data={headers} width={params.width} height={rowHeight} />
-            </div> : false}
-          <div id="table">
-            <section className="page">
-              <Table data={rows} width={params.width}
-                height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height}
-                totalCols={totalCols} />
-            </section>
-          </div>
+        <div id="app">
+        {params.spreadsheet.hasHeader ?
+          <TableHeader data={headers} width={params.width} height={rowHeight} /> : false}
+          <Table data={rows} totalCols={totalCols} width={params.width}
+            height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height} />
         </div>
       );
     }
