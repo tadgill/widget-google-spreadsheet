@@ -1,20 +1,24 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { shallow, mount } from "enzyme";
 import TestUtils from "react-addons-test-utils";
 import TableHeader from "../../../src/widget/components/table-header";
 import { expect } from "chai";
+import {Table, Column, Cell} from "fixed-data-table";
 
 describe("<TableHeader />", function() {
   const width = 600,
     height = 50,
-    data = ["Column 1", "Column 2", "Column 3"];
+    data = ["Column 1", "Column 2", "Column 3"],
+    className = "header_font-style";
+
   var wrapper;
 
-  beforeEach(function () {
-    wrapper = shallow(<TableHeader data={data} width={width} height={height} />);
-  });
-
   describe("<Table />", function() {
+    beforeEach(function () {
+      wrapper = shallow(<TableHeader class={className} data={data} align="center"
+        width={width} height={height} />);
+    });
+
     it("Should have rowHeight prop", function() {
       expect(wrapper.props().rowHeight).to.equal(1);
     });
@@ -37,6 +41,11 @@ describe("<TableHeader />", function() {
   });
 
   describe("<Column />", function() {
+    beforeEach(function () {
+      wrapper = shallow(<TableHeader class={className} data={data} align="center"
+        width={width} height={height} />);
+    });
+
     it("Should have correct number of columns", function() {
       expect(wrapper.props().children.length).to.equal(3);
     });
@@ -46,11 +55,34 @@ describe("<TableHeader />", function() {
     });
 
     it("Should have header prop", function() {
-      expect(wrapper.props().children[0].props.header.props.children).to.equal("Column 1");
+      expect(wrapper.props().children[0].props.header).to.exist;
     });
 
     it("Should have width prop", function() {
       expect(wrapper.props().children[0].props.width).to.equal(width / 3);
     });
+
+    it("Should have align prop", function() {
+      expect(wrapper.props().children[0].props.align).to.equal("center");
+    });
+  });
+
+  describe("<Cell />", function() {
+    beforeEach(function () {
+      wrapper = mount(<TableHeader class={className} data={data} align="center"
+        width={width} height={height} />);
+    });
+
+    it("Should have correct number of cells", function() {
+      expect(wrapper.find(Cell).length).to.equal(3);
+    });
+
+    it("Should have className prop", function() {
+     expect(wrapper.find(Cell).first().props().className).to.equal(className);
+    });
+
+    it("Should set cell text", function() {
+      expect(wrapper.find(Cell).first().text()).to.equal("Column 1");;
+    })
   });
 });
