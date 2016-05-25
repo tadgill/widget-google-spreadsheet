@@ -14,14 +14,14 @@
 </head>
 <body>
 
-<rise-rss id="rss" refresh="1"></rise-rss>
+<rise-rss id="rss" id="rise-google-sheet" refresh="1"></rise-rss>
 
 <div id="container"></div>
 <div id="messageContainer"></div>
 
 <rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
 
-<script src="../data/spreadsheet.js"></script>
+<script src="../data/spreadsheet-integration.js"></script>
 <script src="../data/cells.js"></script>
 
 
@@ -42,6 +42,14 @@
       test("should set the height of the container", function() {
         assert.equal(document.getElementById("container").style.height, window.innerHeight + "px");
       });
+
+      test("should set the key of the sheets component", function() {
+        assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
+      });
+
+      test("should set the tabId of the sheets component", function() {
+        assert.equal(document.getElementById("rise-google-sheet").getAttribute("tab-id"), 1);
+      });
     });
 
     suite("Table Header", function () {
@@ -56,11 +64,11 @@
       });
 
       test("should set the width of the table header", function() {
-        assert.equal(document.querySelector("div.header div").style.width, window.innerWidth + "px");
+        assert.equal(document.querySelector(".fixedDataTableLayout_main").style.width, window.innerWidth + "px");
       });
 
       test("should set the height of the table header", function() {
-        assert.equal(document.querySelector("div.header div").style.height, 50 + "px");
+        assert.equal(document.querySelector(".fixedDataTableLayout_main").style.height, 50 + "px");
       });
     });
   });

@@ -110,6 +110,7 @@ const Spreadsheet = React.createClass({
     }.bind(this));
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
+    sheet.setAttribute("tab-id", params.spreadsheet.tabId);
     sheet.go();
   },
 
