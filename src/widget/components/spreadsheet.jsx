@@ -6,6 +6,7 @@ const React = require("react");
 const TableHeader = require("./table-header");
 const Table = require("./table");
 const Logger = require("../../components/widget-common/dist/logger");
+const Common = require("../../components/widget-common/dist/common");
 
 const prefs = new gadgets.Prefs();
 const sheet = document.querySelector("rise-google-sheet");
@@ -82,8 +83,16 @@ const Spreadsheet = React.createClass({
 
     document.getElementById("rise-google-sheet").setAttribute("refresh", params.spreadsheet.refresh * 60);
 
+    this.setRowStyle();
     this.initRiseGoogleSheet();
     this.ready();
+  },
+
+  setRowStyle: function() {
+    Common.addCSSRules([
+        ".even" + " div * {background-color: " + params.format.evenRowColor + " !important }",
+        ".odd" + " div * {background-color: " + params.format.oddRowColor + " !important }"
+      ]);
   },
 
   initRiseGoogleSheet: function() {

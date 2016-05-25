@@ -5,10 +5,10 @@ const ResponsiveFixedDataTable = require("responsive-fixed-data-table");
 const {Column, Cell} = require("fixed-data-table");
 
 const Table = React.createClass({
-  // getRowClassName: function(index) {
-  //   // add 1 to index value so the first row is considered odd
-  //   return ((index + 1) % 2) ? "odd" : "even";
-  // },
+  getRowClassName: function(index) {
+    // add 1 to index value so the first row is considered odd
+    return ((index + 1) % 2) ? "odd" : "even";
+  },
 
   // getColumnAlignment: function(columnKey) {
   //   var alignment = stylingData.body.style.align;
@@ -77,7 +77,7 @@ const Table = React.createClass({
         ref={(ref) => this.table = ref}
         rowHeight={50}
         rowsCount={this.props.data.length}
-        // rowClassNameGetter={this.getRowClassName}
+        rowClassNameGetter={this.getRowClassName}
         width={this.props.width}
         height={this.props.height}
         headerHeight={0}

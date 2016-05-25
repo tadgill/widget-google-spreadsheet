@@ -58,6 +58,10 @@ module.exports = {
       {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/logger"),
         loader: "exports?RiseVision.Common.LoggerUtils"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/widget-common/dist/common"),
+        loader: "exports?RiseVision.Common.Utilities"
       }
     ]
   },

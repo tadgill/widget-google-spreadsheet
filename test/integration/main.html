@@ -5,16 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>RSS Widget</title>
 
-  <link rel="stylesheet" href="../../src/components/widget-common/dist/css/message.css">
-
   <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
   <script src="../../src/components/web-component-tester/browser.js"></script>
 
   <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
+  <link href="../../dist/css/spreadsheet.css" rel="stylesheet"></head>
+
 </head>
 <body>
-
-<rise-rss id="rss" id="rise-google-sheet" refresh="1"></rise-rss>
 
 <div id="container"></div>
 <div id="messageContainer"></div>
@@ -52,7 +50,7 @@
       });
     });
 
-    suite("Table Header", function () {
+    suite("Table", function () {
 
       setup(function() {
         googleSheet.dispatchEvent(new CustomEvent("rise-google-sheet-response", {
@@ -69,6 +67,32 @@
 
       test("should set the height of the table header", function() {
         assert.equal(document.querySelector(".fixedDataTableLayout_main").style.height, 50 + "px");
+      });
+
+      test("should set the odd row style of the table", function() {
+        var backgroundColor = window.getComputedStyle(document.querySelector(".odd")).getPropertyValue( "background-color" );
+        assert.equal(backgroundColor, "rgb(255, 255, 255)");
+      });
+
+      test("should set the even row style of the table", function(done) {
+
+        var element = document.querySelector(".even");
+
+        var check = function(done) {
+          element = document.querySelector(".even");
+
+          if (element) {
+            var backgroundColor = window.getComputedStyle(element).getPropertyValue( "background-color" );
+            assert.equal(backgroundColor, "rgb(246, 247, 248)");
+            done();
+          }
+          else {
+            setTimeout(function() {
+              check(done)
+            }, 1000);
+          }
+        };
+        check(done);
       });
     });
   });

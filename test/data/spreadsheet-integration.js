@@ -63,4 +63,7 @@
     }
   };
 
+  window.innerWidth = 600;
+  window.innerHeight = 400;
+
 })(window);
