@@ -76,7 +76,6 @@ describe("<Spreadsheet />", function() {
   });
 
   describe("<TableHeader />", function() {
-
     beforeEach(function () {
       wrapper.setState({ data: cells });
     });
@@ -85,13 +84,21 @@ describe("<Spreadsheet />", function() {
       expect(wrapper.find(TableHeader)).to.have.length(1);
     });
 
+    it("Should have class prop", function() {
+      expect(wrapper.find(TableHeader).props().class).to.equal("header_font-style");
+    });
+
     it("Should have data prop", function() {
       var expected = [ "Column 1", "Column 2", "Column 3" ];
       expect(wrapper.find(TableHeader).props().data).to.deep.equal(expected);
     });
 
+    it("Should have align prop", function() {
+      expect(wrapper.find(TableHeader).props().align).to.equal("left");
+    });
+
     it("Should have width prop", function() {
-      expect(wrapper.find(TableHeader).props().width).to.be.defined;
+      expect(wrapper.find(TableHeader).props().width).to.equal(window.innerWidth);
     });
 
     it("Should have height prop", function() {
@@ -99,8 +106,27 @@ describe("<Spreadsheet />", function() {
     });
   });
 
-  describe("<Table />", function() {
+  describe("No <TableHeader />", function() {
+    beforeEach(function () {
+      window.gadget.settings.additionalParams.spreadsheet.hasHeader = false;
+      wrapper = mount(<Spreadsheet />);
+      wrapper.setState({ data: cells });
+    });
 
+    afterEach(function() {
+      window.gadget.settings.additionalParams.spreadsheet.hasHeader = true;
+    });
+
+    it("Should not contain a TableHeader component", function() {
+      expect(wrapper.find(TableHeader)).to.have.length(0);
+    });
+
+    it("Should pass the correct height prop for the Table component", function() {
+      expect(wrapper.find(Table).props().height).to.equal(window.innerHeight);
+    });
+  });
+
+  describe("<Table />", function() {
     beforeEach(function () {
       wrapper.setState({ data: cells });
     });
@@ -115,7 +141,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have width prop", function() {
-      expect(wrapper.find(Table).props().width).to.equal(600);
+      expect(wrapper.find(Table).props().width).to.equal(window.innerWidth);
     });
 
     it("Should have height prop", function() {

@@ -1,8 +1,8 @@
 require("fixed-data-table/dist/fixed-data-table.min.css");
 
-const React = require("react");
-const ResponsiveFixedDataTable = require("responsive-fixed-data-table");
-const {Column, Cell} = require("fixed-data-table");
+import React from "react";
+import {Column, Cell} from "fixed-data-table";
+import ResponsiveFixedDataTable from "responsive-fixed-data-table";
 
 const Table = React.createClass({
   getRowClassName: function(index) {

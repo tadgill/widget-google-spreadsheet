@@ -1,14 +1,14 @@
 /* global gadgets */
 
 require("fixed-data-table/dist/fixed-data-table.min.css");
-require("widget-common/dist/css/message.css");
+require("../../components/widget-common/dist/css/message.css");
 
-const React = require("react");
-const TableHeader = require("./table-header");
-const Table = require("./table");
-const Logger = require("../../components/widget-common/dist/logger");
-const Common = require("../../components/widget-common/dist/common");
-const Message = require("../../components/widget-common/dist/message");
+import React from "react";
+import TableHeader from "./table-header";
+import Table from "./table";
+import Logger from "../../components/widget-common/dist/logger";
+import Common from "../../components/widget-common/dist/common";
+import Message from "../../components/widget-common/dist/message";
 
 const prefs = new gadgets.Prefs();
 const sheet = document.querySelector("rise-google-sheet");
@@ -17,6 +17,8 @@ var params = null;
 var message = null;
 
 const Spreadsheet = React.createClass({
+  headerClass: "header_font-style",
+
   getInitialState: function() {
     return {
       data: null
@@ -78,13 +80,8 @@ const Spreadsheet = React.createClass({
   },
 
   init: function() {
-    // var _message = new RiseVision.Common.Message(document.getElementById("container"),
-    //   document.getElementById("messageContainer"));
-
     document.getElementById("container").style.width = params.width + "px";
     document.getElementById("container").style.height = params.height + "px";
-
-    document.getElementById("rise-google-sheet").setAttribute("refresh", params.spreadsheet.refresh * 60);
 
     this.setRowStyle();
 
@@ -94,6 +91,7 @@ const Spreadsheet = React.createClass({
     // show wait message while Storage initializes
     message.show("Please wait while your google sheet is loaded.");
 
+    this.loadFonts();
     this.initRiseGoogleSheet();
     this.ready();
   },
@@ -140,7 +138,19 @@ const Spreadsheet = React.createClass({
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("tab-id", params.spreadsheet.tabId);
+    sheet.setAttribute("refresh", params.spreadsheet.refresh * 60);
     sheet.go();
+  },
+
+  loadFonts: function() {
+    var fontSettings = [];
+
+    fontSettings.push({
+      "class": this.headerClass,
+      "fontStyle": params.format.header.fontStyle
+    });
+
+    Common.loadFonts(fontSettings);
   },
 
   ready: function() {
@@ -184,6 +194,42 @@ const Spreadsheet = React.createClass({
 
     return totalCols;
   },
+
+  getColumnAlignment: function() {
+    var alignment = params.format.header.fontStyle.align;
+
+    if (!alignment) {
+      alignment = "left";
+    }
+
+    return alignment;
+  },
+
+  // getColumnWidth: function(columnKey) {
+  //   var width = stylingData.defaultColumnWidth;
+
+  //   for (var i = 0; i < stylingData.columns.length; i++) {
+  //     if (stylingData.columns[i].id === columnKey) {
+  //       width = stylingData.columns[i].width;
+  //       break;
+  //     }
+  //   }
+
+  //   return width;
+  // },
+
+  // getColumnHeader: function(dataValue) {
+  //   var value = dataValue;
+
+    // for (var i = 0; i < stylingData.columns.length; i++) {
+    //   if (stylingData.columns[i].id === columnKey) {
+    //     value = stylingData.columns[i].headerText;
+    //     break;
+    //   }
+    // }
+
+  //   return value;
+  // },
 
   getHeaders: function(totalCols) {
     var headers = [];
@@ -231,8 +277,17 @@ const Spreadsheet = React.createClass({
       return(
         <div id="app">
         {params.spreadsheet.hasHeader ?
-          <TableHeader data={headers} width={params.width} height={rowHeight} /> : false}
-          <Table data={rows} totalCols={totalCols} width={params.width}
+          <TableHeader
+            class={this.headerClass}
+            data={headers}
+            align={this.getColumnAlignment()}
+            width={params.width}
+            height={rowHeight} />
+            : false}
+          <Table
+            data={rows}
+            totalCols={totalCols}
+            width={params.width}
             height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height} />
         </div>
       );

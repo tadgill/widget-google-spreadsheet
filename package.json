@@ -64,6 +64,7 @@
     "fixed-data-table": "^0.6.0",
     "react": "0.14.8",
     "react-dom": "0.14.8",
-    "responsive-fixed-data-table": "^2.0.0"
+    "responsive-fixed-data-table": "^2.0.0",
+    "webfontloader": "^1.6.24"
   }
 }

@@ -122,7 +122,7 @@
       .pipe(gulp.dest("dist/js/vendor"));
   });
 
-  gulp.task("rise-google-sheet", function() {
+  gulp.task("components", function() {
     return gulp.src([
         "src/components/webcomponentsjs/webcomponents*.js",
         "src/components/rise-google-sheet/rise-google-sheet.html",
@@ -130,7 +130,8 @@
         "src/components/promise-polyfill/promise-polyfill-lite.html",
         "src/components/promise-polyfill/Promise.js",
         "src/components/iron-ajax/iron-ajax.html",
-        "src/components/iron-ajax/iron-request.html"
+        "src/components/iron-ajax/iron-request.html",
+        "src/components/webfontloader/webfontloader.js"
       ], {base: "./src/"})
       .pipe(gulp.dest("dist/"));
   });
@@ -216,7 +217,7 @@
   });
 
   gulp.task("build", function (cb) {
-    runSequence(["clean", "config", "bower-update"], ["settings", "widget", "fonts", "images", "i18n", "vendor", "rise-google-sheet"], ["unminify"], cb);
+    runSequence(["clean", "config", "bower-update"], ["settings", "widget", "fonts", "images", "i18n", "vendor", "components"], ["unminify"], cb);
   });
 
   gulp.task("bump", function(){
