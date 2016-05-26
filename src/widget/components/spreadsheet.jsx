@@ -104,7 +104,29 @@ const Spreadsheet = React.createClass({
   },
 
   initRiseGoogleSheet: function() {
-    // var app = $("#app");
+    var mapStartRange, mapEndRange;
+
+    function mapCell(cell) {
+      var obj = {},
+        column, row;
+
+      column = cell.substr(0, 1);
+      row = cell.substr(1);
+
+      if (!Number.isNaN(parseInt(column, 10))) {
+        return null;
+      }
+
+      if (Number.isNaN(parseInt(row, 10))) {
+        return null;
+      }
+
+      // code for lowercase 'a' is 97 so subtract
+      obj.column = (column.toLowerCase().charCodeAt(0) - 97 ) + 1;
+      obj.row = parseInt(row, 10);
+
+      return obj;
+    }
 
     sheet.addEventListener("rise-google-sheet-error", function (e) {
 
@@ -139,6 +161,19 @@ const Spreadsheet = React.createClass({
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("tab-id", params.spreadsheet.tabId);
     sheet.setAttribute("refresh", params.spreadsheet.refresh * 60);
+
+    if (params.spreadsheet.cells === "range") {
+      mapStartRange = mapCell(params.spreadsheet.range.startCell);
+      mapEndRange = mapCell(params.spreadsheet.range.endCell);
+
+      if (mapStartRange && mapEndRange) {
+        sheet.setAttribute("min-column", mapStartRange.column);
+        sheet.setAttribute("max-column", mapEndRange.column);
+        sheet.setAttribute("min-row", mapStartRange.row);
+        sheet.setAttribute("max-row", mapEndRange.row);
+      }
+    }
+
     sheet.go();
   },
 
@@ -194,10 +229,11 @@ const Spreadsheet = React.createClass({
   },
 
   getColumnCount: function() {
-    var totalCols = 0;
+    var totalCols = 0,
+      startingRow = parseInt(this.state.data[0].gs$cell.row, 10);
 
-    while (this.state.data[totalCols].gs$cell.row === "1") {
-      totalCols++;
+    while (parseInt(this.state.data[totalCols].gs$cell.row, 10) === startingRow) {
+      totalCols += 1;
     }
 
     return totalCols;
@@ -252,10 +288,12 @@ const Spreadsheet = React.createClass({
   // Convert data to a two-dimensional array of rows.
   getRows: function(totalCols) {
     var rows = [],
-      row = null
+      row = null,
+      startingCol = parseInt(this.state.data[0].gs$cell.col,10),
+      startingIndex = (params.spreadsheet.hasHeader) ? totalCols : 0;
 
-    for (var i = totalCols; i < this.state.data.length; i++) {
-      if (this.state.data[i].gs$cell.col === "1") {
+    for (var i = startingIndex; i < this.state.data.length; i += 1) {
+      if (parseInt(this.state.data[i].gs$cell.col, 10) === startingCol) {
         if (row !== null) {
           rows.push(row);
         }
