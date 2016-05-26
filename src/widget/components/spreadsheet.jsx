@@ -1,17 +1,20 @@
 /* global gadgets */
 
 require("fixed-data-table/dist/fixed-data-table.min.css");
+require("widget-common/dist/css/message.css");
 
 const React = require("react");
 const TableHeader = require("./table-header");
 const Table = require("./table");
 const Logger = require("../../components/widget-common/dist/logger");
 const Common = require("../../components/widget-common/dist/common");
+const Message = require("../../components/widget-common/dist/message");
 
 const prefs = new gadgets.Prefs();
 const sheet = document.querySelector("rise-google-sheet");
 
 var params = null;
+var message = null;
 
 const Spreadsheet = React.createClass({
   getInitialState: function() {
@@ -84,6 +87,13 @@ const Spreadsheet = React.createClass({
     document.getElementById("rise-google-sheet").setAttribute("refresh", params.spreadsheet.refresh * 60);
 
     this.setRowStyle();
+
+    message = new Message(document.getElementById("container"),
+      document.getElementById("messageContainer"));
+
+    // show wait message while Storage initializes
+    message.show("Please wait while your google sheet is loaded.");
+
     this.initRiseGoogleSheet();
     this.ready();
   },
@@ -98,7 +108,17 @@ const Spreadsheet = React.createClass({
   initRiseGoogleSheet: function() {
     // var app = $("#app");
 
+    sheet.addEventListener("rise-google-sheet-error", function (e) {
+
+      this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File &gt; Publish to the web', then click 'Publish'.");
+
+      this.setState({ data: null });
+
+    }.bind(this));
+
     sheet.addEventListener("rise-google-sheet-response", function(e) {
+      message.hide();
+
       if (e.detail && e.detail.cells) {
         this.setState({ data: e.detail.cells });
       }
@@ -149,6 +169,10 @@ const Spreadsheet = React.createClass({
 
   logEvent: function(params) {
     Logger.logEvent(this.getTableName(), params);
+  },
+
+  showError: function(messageVal) {
+    message.show(messageVal);
   },
 
   getColumnCount: function() {

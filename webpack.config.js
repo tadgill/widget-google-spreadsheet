@@ -60,6 +60,10 @@ module.exports = {
         loader: "exports?RiseVision.Common.LoggerUtils"
       },
       {
+        test: require.resolve(__dirname + "/src/components/widget-common/dist/message"),
+        loader: "exports?RiseVision.Common.Message"
+      },
+      {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/common"),
         loader: "exports?RiseVision.Common.Utilities"
       }
