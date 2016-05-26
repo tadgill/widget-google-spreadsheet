@@ -5,6 +5,7 @@ import TestUtils from "react-addons-test-utils";
 import Spreadsheet from "../../../src/widget/components/spreadsheet";
 import TableHeader from "../../../src/widget/components/table-header";
 import Table from "../../../src/widget/components/table";
+import LoggerUtils from "../../../src/components/widget-common/dist/logger";
 import "../../data/spreadsheet";
 
 describe("<Spreadsheet />", function() {
@@ -202,5 +203,35 @@ describe("<Spreadsheet />", function() {
       expect(wrapper.state().data).to.be.null;
     });
 
+  });
+});
+
+describe("Logging", function() {
+  var spy, wrapper,
+    table = "spreadsheet_events",
+    params = {
+      "url": window.gadget.settings.additionalParams.spreadsheet.url,
+      "company_id": '"companyId"',
+      "display_id": '"displayId"'
+    };
+
+  beforeEach(function() {
+    spy = sinon.spy(LoggerUtils, "logEvent");
+    wrapper = mount(<Spreadsheet />);
+  });
+
+  afterEach(function() {
+    LoggerUtils.logEvent.restore();
+  });
+
+  it("should log the play event", function() {
+    params.event = "play";
+
+    expect(spy.calledOnce).to.equal(true);
+    expect(spy.calledWith(table, params)).to.equal(true);
+  });
+
+  it("should log the done event", function() {
+    // TODO: Needs auto-scroll first.
   });
 });
