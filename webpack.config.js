@@ -24,7 +24,6 @@ if (env === "prod") {
 
 module.exports = {
   entry: [
-    "./src/components/widget-common/dist/config.js",
     "./src/components/widget-common/dist/common.js",
     "./src/components/widget-common/dist/logger.js",
     "./src/components/widget-common/dist/message.js",
@@ -54,6 +53,10 @@ module.exports = {
       {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/logger"),
         loader: "imports?WIDGET_COMMON_CONFIG=./config"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/widget-common/dist/config"),
+        loader: "exports?WIDGET_COMMON_CONFIG"
       },
       {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/logger"),

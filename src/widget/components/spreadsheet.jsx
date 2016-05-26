@@ -159,10 +159,18 @@ const Spreadsheet = React.createClass({
 
   done: function() {
     gadgets.rpc.call("", "rsevent_done", null, prefs.getString("id"));
+
+    this.logEvent({
+      "event": "done",
+      "url": params.spreadsheet.url
+    });
   },
 
   play: function() {
-
+    this.logEvent({
+      "event": "play",
+      "url": params.spreadsheet.url
+    });
   },
 
   pause: function() {

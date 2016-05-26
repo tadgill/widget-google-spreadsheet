@@ -46,9 +46,9 @@
       scroll: {},
       spreadsheet: {
         selection: "drive",
-        docName: "",
-        url: "",
-        fileId: "",
+        docName: "Test",
+        url: "https://docs.google.com/a/risevision.com/spreadsheets/d/xxxxxxxxxx/edit?usp=drive_web",
+        fileId: "xxxxxxxxxx",
         cells: "sheet",
         range: {
           startCell: "",
