@@ -3,6 +3,7 @@ import { mount } from "enzyme";
 import { expect } from "chai";
 import TestUtils from "react-addons-test-utils";
 import Spreadsheet from "../../../src/widget/components/spreadsheet";
+import Scroll from "../../../src/widget/components/scroll";
 import TableHeader from "../../../src/widget/components/table-header";
 import Table from "../../../src/widget/components/table";
 import LoggerUtils from "../../../src/components/widget-common/dist/logger";
@@ -127,38 +128,13 @@ describe("<Spreadsheet />", function() {
     });
   });
 
-  describe("<Table />", function() {
+
+
+  describe("Refreshing", function() {
     beforeEach(function () {
       wrapper.setState({ data: cells });
     });
 
-    it("Should contain a Table component", function() {
-      expect(wrapper.find(Table)).to.have.length(1);
-    });
-
-    it("Should have data prop", function() {
-      var expected = [["I am the walrus!", "1", "3"]];
-      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
-    });
-
-    it("Should have width prop", function() {
-      expect(wrapper.find(Table).props().width).to.equal(window.innerWidth);
-    });
-
-    it("Should have height prop", function() {
-      expect(wrapper.find(Table).props().height).to.equal(350);
-    });
-
-    it("Should have totalCols prop", function() {
-      expect(wrapper.find(Table).props().totalCols).to.equal(3);
-    });
-
-    it("Should have a rowHeight prop", function() {
-      expect(wrapper.find(Table).props().rowHeight).to.equal(50);
-    });
-  });
-
-  describe("Refreshing", function() {
     it("should update the state", function() {
       const event = document.createEvent("Event"),
         sheet = document.getElementById("rise-google-sheet"),
@@ -194,6 +170,9 @@ describe("<Spreadsheet />", function() {
   });
 
   describe("Handling error", function () {
+    beforeEach(function () {
+      wrapper.setState({ data: cells });
+    });
 
     it("should revert state back to initial value", function () {
       var event = document.createEvent("Event"),
@@ -208,34 +187,36 @@ describe("<Spreadsheet />", function() {
     });
 
   });
+
+  describe("Logging", function() {
+    var stub,
+      table = "spreadsheet_events",
+      params = {
+        "event": "play",
+        "url": window.gadget.settings.additionalParams.spreadsheet.url
+      };
+
+    beforeEach(function() {
+      stub = sinon.stub(LoggerUtils, "logEvent");
+      wrapper.setState({ data: cells });
+    });
+
+    afterEach(function() {
+      LoggerUtils.logEvent.restore();
+    });
+
+    it("should log the play event", function() {
+      var stubCall = LoggerUtils.logEvent.getCall(0);
+
+      expect(stub.calledOnce).to.equal(true);
+      expect(stubCall.args[0]).to.equal(table);
+      expect(stubCall.args[1]).to.deep.equal(params);
+    });
+
+    it("should log the done event", function() {
+      // TODO: Needs auto-scroll first.
+    });
+  });
 });
 
-describe("Logging", function() {
-  var stub, wrapper,
-    table = "spreadsheet_events",
-    params = {
-      "event": "play",
-      "url": window.gadget.settings.additionalParams.spreadsheet.url
-    };
 
-  beforeEach(function() {
-    stub = sinon.stub(LoggerUtils, "logEvent");
-    wrapper = mount(<Spreadsheet />);
-  });
-
-  afterEach(function() {
-    LoggerUtils.logEvent.restore();
-  });
-
-  it("should log the play event", function() {
-    var stubCall = LoggerUtils.logEvent.getCall(0);
-
-    expect(stub.calledOnce).to.equal(true);
-    expect(stubCall.args[0]).to.equal(table);
-    expect(stubCall.args[1]).to.deep.equal(params);
-  });
-
-  it("should log the done event", function() {
-    // TODO: Needs auto-scroll first.
-  });
-});

@@ -6,7 +6,7 @@ require("../../components/widget-common/dist/css/message.css");
 
 import React from "react";
 import TableHeader from "./table-header";
-import Table from "./table";
+import Scroll from "./scroll";
 import Logger from "../../components/widget-common/dist/logger";
 import Common from "../../components/widget-common/dist/common";
 import Message from "../../components/widget-common/dist/message";
@@ -40,6 +40,13 @@ const Spreadsheet = React.createClass({
       gadgets.rpc.register("rscmd_stop_" + id, this.stop);
       gadgets.rpc.register("rsparam_set_" + id, this.configure);
       gadgets.rpc.call("", "rsparam_get", null, id, ["companyId", "displayId", "additionalParams"]);
+    }
+  },
+
+  componentDidUpdate: function() {
+    if (this.isLoading) {
+      this.ready();
+      this.isLoading = false;
     }
   },
 
@@ -105,7 +112,6 @@ const Spreadsheet = React.createClass({
       this.initRiseGoogleSheet();
     }
 
-    this.ready();
   },
 
   setRowStyle: function() {
@@ -154,28 +160,12 @@ const Spreadsheet = React.createClass({
       if (e.detail && e.detail.cells) {
         this.setState({ data: e.detail.cells });
       }
-
-      if (this.isLoading) {
-        this.isLoading = false;
-      }
-      else {
+      
+      if (!this.isLoading) {
         // in case refresh fixed previous error
         this.errorFlag = false;
       }
 
-      // Must execute after data is rendered.
-      // $(".page").height(this.table.props.rowsCount * this.table.props.rowHeight);
-
-      // if ($app.data("plugin_autoScroll") === undefined) {
-      //   $app.autoScroll({
-      //     "by": "continuous",
-      //     "speed": "fastest"
-      //   }).on("done", function () {
-      //     $app.data("plugin_autoScroll").play();
-      //   });
-
-      //   $app.data("plugin_autoScroll").play();
-      // }
     }.bind(this));
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
@@ -237,10 +227,13 @@ const Spreadsheet = React.createClass({
     if (this.errorFlag) {
       this.startErrorTimer();
     }
+    this.refs.scrollComponent.play();
+
   },
 
   pause: function() {
     this.viewerPaused = true;
+    this.refs.scrollComponent.pause();
   },
 
   stop: function() {
@@ -374,7 +367,7 @@ const Spreadsheet = React.createClass({
       rows = this.getRows(totalCols);
 
       return(
-        <div id="app">
+        <div id="table">
         {params.spreadsheet.hasHeader ?
           <TableHeader
             class={this.headerClass}
@@ -383,14 +376,16 @@ const Spreadsheet = React.createClass({
             width={params.width}
             height={params.format.rowHeight} />
             : false}
-          <Table
-            data={rows}
-            align={params.format.body.fontStyle.align}
-            class={this.bodyClass}
-            totalCols={totalCols}
-            rowHeight={params.format.rowHeight}
-            width={params.width}
-            height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
+            <Scroll ref="scrollComponent"
+              onDone="{this.done}"
+              scroll={params.scroll}
+              data={rows}
+              align={params.format.body.fontStyle.align}
+              class={this.bodyClass}
+              totalCols={totalCols}
+              rowHeight={params.format.rowHeight}
+              width={params.width}
+              height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
         </div>
       );
     }
