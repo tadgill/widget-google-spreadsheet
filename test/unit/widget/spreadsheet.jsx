@@ -207,16 +207,15 @@ describe("<Spreadsheet />", function() {
 });
 
 describe("Logging", function() {
-  var spy, wrapper,
+  var stub, wrapper,
     table = "spreadsheet_events",
     params = {
-      "url": window.gadget.settings.additionalParams.spreadsheet.url,
-      "company_id": '"companyId"',
-      "display_id": '"displayId"'
+      "event": "play",
+      "url": window.gadget.settings.additionalParams.spreadsheet.url
     };
 
   beforeEach(function() {
-    spy = sinon.spy(LoggerUtils, "logEvent");
+    stub = sinon.stub(LoggerUtils, "logEvent");
     wrapper = mount(<Spreadsheet />);
   });
 
@@ -225,10 +224,11 @@ describe("Logging", function() {
   });
 
   it("should log the play event", function() {
-    params.event = "play";
+    var stubCall = LoggerUtils.logEvent.getCall(0);
 
-    expect(spy.calledOnce).to.equal(true);
-    expect(spy.calledWith(table, params)).to.equal(true);
+    expect(stub.calledOnce).to.equal(true);
+    expect(stubCall.args[0]).to.equal(table);
+    expect(stubCall.args[1]).to.deep.equal(params);
   });
 
   it("should log the done event", function() {
