@@ -1,6 +1,7 @@
 /* global gadgets */
 
-require("fixed-data-table/dist/fixed-data-table.min.css");
+require("fixed-data-table/dist/fixed-data-table.css");
+require("../css/fixed-data-table-overrides.css");
 require("../../components/widget-common/dist/css/message.css");
 
 import React from "react";
@@ -18,6 +19,7 @@ var message = null;
 
 const Spreadsheet = React.createClass({
   headerClass: "header_font-style",
+  bodyClass: "body_font-style",
 
   getInitialState: function() {
     return {
@@ -184,6 +186,11 @@ const Spreadsheet = React.createClass({
       "class": this.headerClass,
       "fontStyle": params.format.header.fontStyle
     });
+    
+    fontSettings.push({
+      "class": this.bodyClass,
+      "fontStyle": params.format.body.fontStyle
+    });
 
     Common.loadFonts(fontSettings);
   },
@@ -332,6 +339,8 @@ const Spreadsheet = React.createClass({
             : false}
           <Table
             data={rows}
+            align={params.format.body.fontStyle.align}
+            class={this.bodyClass}
             totalCols={totalCols}
             width={params.width}
             height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height} />

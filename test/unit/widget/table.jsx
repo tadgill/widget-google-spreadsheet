@@ -9,11 +9,14 @@ describe("<Table />", function() {
     height = 50,
     totalCols = 3,
     data = [["I am the walrus!", "1", "3"],
-      ["John is dead!", "500", "32"]];
+      ["John is dead!", "500", "32"]],
+    cellClassName = "body_font-style";
+  
   var wrapper;
 
   beforeEach(function () {
-    wrapper = shallow(<Table data={data} width={width} height={height} totalCols={totalCols} />);
+    wrapper = shallow(<Table data={data} class={cellClassName} align="center"
+                             width={width} height={height} totalCols={totalCols} />);
   });
 
   describe("<ResponsiveFixedDataTable />", function() {
@@ -53,6 +56,10 @@ describe("<Table />", function() {
 
     it("Should have width prop", function() {
       expect(wrapper.props().children[0].props.width).to.equal(200);
+    });
+
+    it("Should have align prop", function() {
+      expect(wrapper.props().children[0].props.align).to.equal("center");
     });
 
     it("Should have cell prop", function() {

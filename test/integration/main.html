@@ -92,20 +92,18 @@
       });
 
       test("should set the odd row style of the table", function() {
-        var backgroundColor = window.getComputedStyle(document.querySelector(".odd")).getPropertyValue( "background-color" );
-        assert.equal(backgroundColor, "rgb(255, 255, 255)");
+        var backgroundColor = window.getComputedStyle(document.querySelector(".odd .fixedDataTableCellLayout_wrap1")).getPropertyValue( "background-color" );
+        assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
       });
 
       test("should set the even row style of the table", function(done) {
 
-        var element = document.querySelector(".even");
-
         var check = function(done) {
-          element = document.querySelector(".even");
+          var element = document.querySelector(".even .fixedDataTableCellLayout_wrap1");
 
           if (element) {
             var backgroundColor = window.getComputedStyle(element).getPropertyValue( "background-color" );
-            assert.equal(backgroundColor, "rgb(246, 247, 248)");
+            assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
             done();
           }
           else {
