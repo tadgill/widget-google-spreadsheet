@@ -73,6 +73,10 @@
         expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
       });
 
+      it("Should show row height input default to 50 pixels", function () {
+        expect(element(by.model("settings.additionalParams.format.rowHeight")).getAttribute('value')).to.eventually.equal("50");
+      });
+
       it("Should set default for even row color", function () {
         expect(element(by.model("settings.additionalParams.format.evenRowColor")).getAttribute("value")).to.eventually.equal("rgba(255, 255, 255, 0)");
       });
@@ -288,7 +292,8 @@
                   backcolor:"transparent"
                 }
               },
-              oddRowColor: "rgba(255, 255, 255, 0)"
+              oddRowColor: "rgba(255, 255, 255, 0)",
+              rowHeight: 50
             },
             scroll: {
               by: "none",

@@ -175,6 +175,15 @@
             <div class="row">
               <div class="col-sm-3">
                 <div class="form-group">
+                  <label>{{ "widget-google-spreadsheet.format.rowHeight" | translate }}</label>
+                  <div class="input-group">
+                    <input type="number" class="form-control" ng-model="settings.additionalParams.format.rowHeight">
+                    <span class="input-group-addon">{{ "common.units.pixels" | translate }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
                   <label>{{ "widget-google-spreadsheet.format.oddRow" | translate}}</label>
                   <div>
                     <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.oddRowColor">

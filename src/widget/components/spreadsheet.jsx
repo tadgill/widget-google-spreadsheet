@@ -317,7 +317,6 @@ const Spreadsheet = React.createClass({
   },
 
   render: function() {
-    const rowHeight = 50;
     var totalCols = 0,
       headers = null,
       rows = null;
@@ -335,15 +334,16 @@ const Spreadsheet = React.createClass({
             data={headers}
             align={this.getColumnAlignment()}
             width={params.width}
-            height={rowHeight} />
+            height={params.format.rowHeight} />
             : false}
           <Table
             data={rows}
             align={params.format.body.fontStyle.align}
             class={this.bodyClass}
             totalCols={totalCols}
+            rowHeight={params.format.rowHeight}
             width={params.width}
-            height={params.spreadsheet.hasHeader ? params.height - rowHeight : params.height} />
+            height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
         </div>
       );
     }
