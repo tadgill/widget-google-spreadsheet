@@ -25,7 +25,7 @@
             backcolor:"transparent"
           }
         },
-        evenRowColor: "rgb(246, 247, 248)",
+        evenRowColor: "rgba(255, 255, 255, 0)",
         header: {
           fontStyle:{
             font:{
@@ -43,7 +43,7 @@
             backcolor:"transparent"
           }
         },
-        oddRowColor: "rgb(255, 255, 255)"
+        oddRowColor: "rgba(255, 255, 255, 0)"
       },
       scroll: {},
       spreadsheet: {

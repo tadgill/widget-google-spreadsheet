@@ -99,7 +99,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         body: {
           fontStyle:{
             font:{
-              family:"verdana,geneva,sans-serif",
+              family:"tahoma,arial,helvetica,sans-serif",
               type:"standard",
               url:""
             },
@@ -113,11 +113,11 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             backcolor:"transparent"
           }
         },
-        evenRowColor: "rgb(246, 247, 248)",
+        evenRowColor: "rgba(255, 255, 255, 0)",
         header: {
           fontStyle:{
             font:{
-              family:"verdana,geneva,sans-serif",
+              family:"tahoma,arial,helvetica,sans-serif",
               type:"standard",
               url:""
             },
@@ -131,7 +131,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             backcolor:"transparent"
           }
         },
-        oddRowColor: "rgb(255, 255, 255)"
+        oddRowColor: "rgba(255, 255, 255, 0)"
       },
       scroll: {},
       spreadsheet: {

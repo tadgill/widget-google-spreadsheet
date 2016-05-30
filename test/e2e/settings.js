@@ -74,11 +74,11 @@
       });
 
       it("Should set default for even row color", function () {
-        expect(element(by.model("settings.additionalParams.format.evenRowColor")).getAttribute("value")).to.eventually.equal("rgb(246, 247, 248)");
+        expect(element(by.model("settings.additionalParams.format.evenRowColor")).getAttribute("value")).to.eventually.equal("rgba(255, 255, 255, 0)");
       });
 
       it("Should set default for odd row color", function () {
-        expect(element(by.model("settings.additionalParams.format.oddRowColor")).getAttribute("value")).to.eventually.equal("rgb(255, 255, 255)");
+        expect(element(by.model("settings.additionalParams.format.oddRowColor")).getAttribute("value")).to.eventually.equal("rgba(255, 255, 255, 0)");
       });
 
       it("Should not show Header Font Setting component", function () {
@@ -256,7 +256,7 @@
               body: {
                 fontStyle:{
                   font:{
-                    family:"verdana,geneva,sans-serif",
+                    family:"tahoma,arial,helvetica,sans-serif",
                     type:"standard",
                     url:""
                   },
@@ -270,11 +270,11 @@
                   backcolor:"transparent"
                 }
               },
-              evenRowColor: "rgb(246, 247, 248)",
+              evenRowColor: "rgba(255, 255, 255, 0)",
               header: {
                 fontStyle:{
                   font:{
-                    family:"verdana,geneva,sans-serif",
+                    family:"tahoma,arial,helvetica,sans-serif",
                     type:"standard",
                     url:""
                   },
@@ -288,7 +288,7 @@
                   backcolor:"transparent"
                 }
               },
-              oddRowColor: "rgb(255, 255, 255)"
+              oddRowColor: "rgba(255, 255, 255, 0)"
             },
             scroll: {
               by: "none",
