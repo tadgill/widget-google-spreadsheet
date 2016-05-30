@@ -10,13 +10,14 @@ describe("<Table />", function() {
     totalCols = 3,
     data = [["I am the walrus!", "1", "3"],
       ["John is dead!", "500", "32"]],
-    cellClassName = "body_font-style";
+    cellClassName = "body_font-style",
+    rowHeight = 50;
   
   var wrapper;
 
   beforeEach(function () {
     wrapper = shallow(<Table data={data} class={cellClassName} align="center"
-                             width={width} height={height} totalCols={totalCols} />);
+                             width={width} height={height} rowHeight={rowHeight} totalCols={totalCols} />);
   });
 
   describe("<ResponsiveFixedDataTable />", function() {

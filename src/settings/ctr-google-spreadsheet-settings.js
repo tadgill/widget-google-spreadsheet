@@ -131,7 +131,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             backcolor:"transparent"
           }
         },
-        oddRowColor: "rgba(255, 255, 255, 0)"
+        oddRowColor: "rgba(255, 255, 255, 0)",
+        rowHeight: 50
       },
       scroll: {},
       spreadsheet: {

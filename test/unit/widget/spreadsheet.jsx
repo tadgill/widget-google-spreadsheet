@@ -152,6 +152,10 @@ describe("<Spreadsheet />", function() {
     it("Should have totalCols prop", function() {
       expect(wrapper.find(Table).props().totalCols).to.equal(3);
     });
+
+    it("Should have a rowHeight prop", function() {
+      expect(wrapper.find(Table).props().rowHeight).to.equal(50);
+    });
   });
 
   describe("Refreshing", function() {
