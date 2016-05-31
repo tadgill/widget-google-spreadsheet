@@ -377,7 +377,7 @@ const Spreadsheet = React.createClass({
             height={params.format.rowHeight} />
             : false}
             <Scroll ref="scrollComponent"
-              onDone="{this.done}"
+              onDone={this.done}
               scroll={params.scroll}
               data={rows}
               align={params.format.body.fontStyle.align}
