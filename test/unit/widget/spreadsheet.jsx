@@ -198,7 +198,7 @@ describe("<Spreadsheet />", function() {
 
     beforeEach(function() {
       stub = sinon.stub(LoggerUtils, "logEvent");
-      wrapper.setState({ data: cells });
+
     });
 
     afterEach(function() {
@@ -206,6 +206,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("should log the play event", function() {
+      wrapper.setState({ data: cells });
       var stubCall = LoggerUtils.logEvent.getCall(0);
 
       expect(stub.calledOnce).to.equal(true);
@@ -215,6 +216,25 @@ describe("<Spreadsheet />", function() {
 
     it("should log the done event", function() {
       // TODO: Needs auto-scroll first.
+    });
+
+    it("should log the error event", function() {
+      var event = document.createEvent("Event"),
+          sheet = document.getElementById("rise-google-sheet"),
+
+      params = {
+        "event": "play",
+        "event": "error",
+        "event_details": "spreadsheet not published",
+        "error_details": "error",
+        "url": window.gadget.settings.additionalParams.spreadsheet.url
+      };
+
+      event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = "error";
+      sheet.dispatchEvent(event);
+
+      expect(stub.withArgs(table,params).called).to.equal(true);
     });
   });
 });

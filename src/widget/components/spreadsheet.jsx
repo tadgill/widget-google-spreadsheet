@@ -24,6 +24,7 @@ const Spreadsheet = React.createClass({
   viewerPaused: true,
   errorFlag: false,
   errorTimer: null,
+  errorLog: null,
 
   getInitialState: function() {
     return {
@@ -150,6 +151,13 @@ const Spreadsheet = React.createClass({
 
       this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File &gt; Publish to the web', then click 'Publish'.");
 
+      this.logEvent({
+        "event": "error",
+        "event_details": "spreadsheet not published",
+        "error_details": e.detail,
+        "url": params.spreadsheet.url
+      }, true);
+
       this.setState({ data: null });
 
     }.bind(this));
@@ -210,6 +218,10 @@ const Spreadsheet = React.createClass({
   done: function() {
     gadgets.rpc.call("", "rsevent_done", null, prefs.getString("id"));
 
+    if (this.errorLog !== null) {
+      this.logEvent(this.errorLog, true);
+    }
+
     this.logEvent({
       "event": "done",
       "url": params.spreadsheet.url
@@ -227,13 +239,17 @@ const Spreadsheet = React.createClass({
     if (this.errorFlag) {
       this.startErrorTimer();
     }
-    this.refs.scrollComponent.play();
 
+    if (this.refs.scrollComponent) {
+      this.refs.scrollComponent.play();
+    }
   },
 
   pause: function() {
     this.viewerPaused = true;
-    this.refs.scrollComponent.pause();
+    if (this.refs.scrollComponent) {
+      this.refs.scrollComponent.pause();
+    }
   },
 
   stop: function() {
@@ -260,7 +276,10 @@ const Spreadsheet = React.createClass({
     }, 5000);
   },
 
-  logEvent: function(params) {
+  logEvent: function(params, isError) {
+    if (isError) {
+      this.errorLog = params;
+    }
     Logger.logEvent(this.getTableName(), params);
   },
 
