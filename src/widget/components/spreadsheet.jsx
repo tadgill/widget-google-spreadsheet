@@ -20,6 +20,10 @@ var message = null;
 const Spreadsheet = React.createClass({
   headerClass: "header_font-style",
   bodyClass: "body_font-style",
+  isLoading: true,
+  viewerPaused: true,
+  errorFlag: false,
+  errorTimer: null,
 
   getInitialState: function() {
     return {
@@ -90,11 +94,17 @@ const Spreadsheet = React.createClass({
     message = new Message(document.getElementById("container"),
       document.getElementById("messageContainer"));
 
-    // show wait message while Storage initializes
-    message.show("Please wait while your google sheet is loaded.");
+    if (Common.isLegacy()) {
+      this.showError("This version of Spreadsheet Widget is not supported on this version of Rise Player. " +
+        "Please use the latest Rise Player version available from https://help.risevision.com/user/create-a-display");
+    } else {
+      // show wait message while Storage initializes
+      message.show("Please wait while your google sheet is loaded.");
 
-    this.loadFonts();
-    this.initRiseGoogleSheet();
+      this.loadFonts();
+      this.initRiseGoogleSheet();
+    }
+
     this.ready();
   },
 
@@ -143,6 +153,14 @@ const Spreadsheet = React.createClass({
 
       if (e.detail && e.detail.cells) {
         this.setState({ data: e.detail.cells });
+      }
+
+      if (this.isLoading) {
+        this.isLoading = false;
+      }
+      else {
+        // in case refresh fixed previous error
+        this.errorFlag = false;
       }
 
       // Must execute after data is rendered.
@@ -209,14 +227,20 @@ const Spreadsheet = React.createClass({
   },
 
   play: function() {
+    this.viewerPaused = false;
+
     this.logEvent({
       "event": "play",
       "url": params.spreadsheet.url
     });
+
+    if (this.errorFlag) {
+      this.startErrorTimer();
+    }
   },
 
   pause: function() {
-
+    this.viewerPaused = true;
   },
 
   stop: function() {
@@ -227,12 +251,35 @@ const Spreadsheet = React.createClass({
     return "spreadsheet_events";
   },
 
+  clearErrorTimer: function() {
+    clearTimeout(this.errorTimer);
+    this.errorTimer = null;
+  },
+
+  startErrorTimer: function() {
+    var self = this;
+
+    this.clearErrorTimer();
+
+    this.errorTimer = setTimeout(function () {
+      // notify Viewer widget is done
+      self.done();
+    }, 5000);
+  },
+
   logEvent: function(params) {
     Logger.logEvent(this.getTableName(), params);
   },
 
   showError: function(messageVal) {
+    this.errorFlag = true;
+
     message.show(messageVal);
+
+    // if Widget is playing right now, run the timer
+    if (!this.viewerPaused) {
+      this.startErrorTimer();
+    }
   },
 
   getColumnCount: function() {
