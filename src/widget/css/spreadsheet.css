@@ -34,6 +34,6 @@ body {
   background-color: transparent;
 }
 
-html, body, #app {
+html, body, #app, #scroll, #table {
   height: 100%;
 }

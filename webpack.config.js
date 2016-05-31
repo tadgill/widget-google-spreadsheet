@@ -8,7 +8,12 @@ var webpack = require("webpack"),
       filename: "widget.html",
       inject: "body"
     }),
-    new ExtractTextPlugin("css/spreadsheet.css", { allChunks: false })
+    new ExtractTextPlugin("css/spreadsheet.css", { allChunks: false }),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jquery: "jQuery",
+      "windows.jQuery": "jquery"
+    })
   ];
 
 // Minify for Production only.
@@ -27,6 +32,11 @@ module.exports = {
     "./src/components/widget-common/dist/common.js",
     "./src/components/widget-common/dist/logger.js",
     "./src/components/widget-common/dist/message.js",
+    "./src/components/auto-scroll/jquery.auto-scroll.js",
+    "./src/components/gsap/src/uncompressed/utils/Draggable.js",
+    "./src/components/gsap/src/uncompressed/TweenLite.js",
+    "./src/components/gsap/src/uncompressed/plugins/CSSPlugin.js",
+    "./src/components/gsap/src/uncompressed/plugins/ScrollToPlugin.js",
     "./src/config/config.js",
     "./src/widget/main.js",
     "./src/widget/analytics.js"
@@ -69,7 +79,32 @@ module.exports = {
       {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/common"),
         loader: "exports?RiseVision.Common.Utilities"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/auto-scroll/jquery.auto-scroll"),
+        loader: "imports?jQuery=jquery,$=jquery,this=>window"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/gsap/src/uncompressed/TweenLite"),
+        loader: "imports?jQuery=jquery,$=jquery,this=>window"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/gsap/src/uncompressed/TweenLite"),
+        loader: "expose?TweenLite"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/gsap/src/uncompressed/utils/Draggable"),
+        loader: "imports?jQuery=jquery,$=jquery,this=>window"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/gsap/src/uncompressed/plugins/CSSPlugin"),
+        loader: "imports?jQuery=jquery,$=jquery,this=>window"
+      },
+      {
+        test: require.resolve(__dirname + "/src/components/gsap/src/uncompressed/plugins/ScrollToPlugin"),
+        loader: "imports?jQuery=jquery,$=jquery,this=>window"
       }
+
     ]
   },
   eslint: {

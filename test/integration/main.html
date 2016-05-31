@@ -21,6 +21,8 @@
 
 <script src="../data/spreadsheet-integration.js"></script>
 <script src="../data/cells.js"></script>
+<script src="../data/sheets.js"></script>
+
 
 
 <script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
@@ -28,30 +30,30 @@
 
 <script>
 
+  var clock, paramsStub, server;
+
+  var googleSheet = document.querySelector("rise-google-sheet");
+
+  paramsStub = sinon.stub(googleSheet, "go", function () {
+    // need to set the fake timer clock before any of the code within setAdditionalParams is executed
+    clock = sinon.useFakeTimers();
+    server = sinon.fakeServer.create();
+    server.respondImmediately = true;
+    server.respondWith("GET", "https://spreadsheets.google.com/feeds/cells/xxxxxxxxxx/1/public/full?alt=json",
+      [200, { "Content-Type": "application/json" },
+        JSON.stringify(sheetData)])
+
+    // restore the function
+    paramsStub.restore();
+    // call it again with the params
+    googleSheet.go();
+  });
+
   suite("Spreadsheet Content", function() {
 
-    var googleSheet = document.querySelector("rise-google-sheet"),
-      responded = false;
-
-    var check = function (done) {
-      if (responded) {
-        done();
-      } else {
-        setTimeout(function () {
-          check(done);
-        },1000);
-      }
-    };
-
-    /* need to handle the rise-google-sheet trying to request data from non-existent spreadsheet
-       before proceeding with tests
-     */
-    googleSheet.addEventListener("rise-google-sheet-error", function (e) {
-      responded = true;
-    });
-
-    suiteSetup(function (done) {
-      check(done);
+    suiteTeardown(function() {
+      clock.restore();
+      server.restore();
     });
 
     suite("Initialization", function () {
@@ -75,12 +77,7 @@
     suite("Table", function () {
 
       setup(function() {
-        googleSheet.dispatchEvent(new CustomEvent("rise-google-sheet-response", {
-          "detail": {
-            "cells": cells
-          },
-          "bubbles": true
-        }));
+        clock.tick(6000000);
       });
 
       test("should set the width of the table header", function() {
