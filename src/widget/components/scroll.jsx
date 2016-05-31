@@ -23,8 +23,9 @@ const Scroll = React.createClass({
   play: function() {
     if (this.scroll) {
       if (this.scroll.data("plugin_autoScroll") === undefined) {
+        var self = this;
         this.scroll.autoScroll(this.props.scroll).on("done", function () {
-          this.props.onDone();
+          self.props.onDone();
         });
         this.scroll.data("plugin_autoScroll").play();
       } else {
