@@ -58,7 +58,6 @@
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1",
     "webpack-stream": "^3.2.0",
-    "widget-common": "https://github.com/Rise-Vision/widget-common.git#1.8.2",
     "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.6.7",
     "jquery": "2.2.4"
   },

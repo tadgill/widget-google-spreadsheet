@@ -69,8 +69,16 @@ describe("<Spreadsheet />", function() {
     }],
     cells = cols.concat(data);
 
+  var propHandlers = {
+    initSize: function(width, height) {},
+    showMessage: function(text) {},
+    hideMessage: function() {}
+  };
+
   beforeEach(function () {
-    wrapper = mount(<Spreadsheet />);
+    wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                 showMessage={propHandlers.showMessage}
+                                 hideMessage={propHandlers.hideMessage} />);
   });
 
   it("Should have an initial data state", function () {
@@ -111,7 +119,9 @@ describe("<Spreadsheet />", function() {
   describe("No <TableHeader />", function() {
     beforeEach(function () {
       window.gadget.settings.additionalParams.spreadsheet.hasHeader = false;
-      wrapper = mount(<Spreadsheet />);
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
       wrapper.setState({ data: cells });
     });
 
@@ -206,15 +216,20 @@ describe("<Spreadsheet />", function() {
     });
 
     it("should log the play event", function() {
-      wrapper.setState({ data: cells });
-      var stubCall = LoggerUtils.logEvent.getCall(0);
+      var event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet");
 
-      expect(stub.calledOnce).to.equal(true);
-      expect(stubCall.args[0]).to.equal(table);
-      expect(stubCall.args[1]).to.deep.equal(params);
+      event.initEvent("rise-google-sheet-response", true, true);
+      event.detail = {
+        cells: cells
+      };
+
+      sheet.dispatchEvent(event);
+      
+      expect(stub.withArgs(table,params).called).to.equal(true);
     });
 
-    it("should log the done event", function() {
+    xit("should log the done event", function() {
       // TODO: Needs auto-scroll first.
     });
 
@@ -223,7 +238,6 @@ describe("<Spreadsheet />", function() {
           sheet = document.getElementById("rise-google-sheet"),
 
       params = {
-        "event": "play",
         "event": "error",
         "event_details": "spreadsheet not published",
         "error_details": "error",

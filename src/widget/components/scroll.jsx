@@ -16,7 +16,7 @@ const Scroll = React.createClass({
   scroll: "",
 
   componentDidMount: function() {
-    this.scroll = $(this.refs.scroll)
+    this.scroll = $(this.refs.scroll);
     $(this.refs.page).height(this.props.data.length * this.props.rowHeight);
   },
 

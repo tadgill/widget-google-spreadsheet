@@ -14,8 +14,7 @@
 </head>
 <body>
 
-<div id="container"></div>
-<div id="messageContainer"></div>
+<div id="mainContainer"></div>
 
 <rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
 
@@ -58,11 +57,11 @@
 
     suite("Initialization", function () {
       test("should set the width of the container", function() {
-        assert.equal(document.getElementById("container").style.width, window.innerWidth + "px");
+        assert.equal(document.getElementById("mainContainer").style.width, window.innerWidth + "px");
       });
 
       test("should set the height of the container", function() {
-        assert.equal(document.getElementById("container").style.height, window.innerHeight + "px");
+        assert.equal(document.getElementById("mainContainer").style.height, window.innerHeight + "px");
       });
 
       test("should set the key of the sheets component", function() {

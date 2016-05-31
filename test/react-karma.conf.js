@@ -12,7 +12,9 @@ module.exports = function(config){
     browsers : ["PhantomJS"],
 
     files: [
-        'unit/widget/test_index.js'
+      "unit/widget/mocks/container-mock.js",
+      "unit/widget/mocks/gadget-mock.js",
+      "unit/widget/test_index.js"
     ],
 
     preprocessors : {
