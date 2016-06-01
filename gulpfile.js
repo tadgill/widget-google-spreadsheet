@@ -172,6 +172,7 @@
   gulp.task("test:unit:settings", factory.testUnitAngular(
     {testFiles: [
       "src/components/jquery/dist/jquery.js",
+      "src/components/q/q.js",
       "src/components/angular/angular.js",
       "src/components/angular-load/angular-load.js",
       "src/components/angular-translate/angular-translate.js",
@@ -180,6 +181,7 @@
       "src/components/rv-angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js",
       "src/components/angular-mocks/angular-mocks.js",
       "node_modules/widget-tester/mocks/common-mock.js",
+      "node_modules/widget-tester/mocks/visualization-api-mock.js",
       "src/components/bootstrap-sass-official/assets/javascripts/bootstrap.js",
       "src/components/angular-bootstrap/ui-bootstrap-tpls.js",
       "src/components/widget-settings-ui-components/dist/js/**/*.js",
@@ -189,6 +191,7 @@
       "src/config/test.js",
       "src/settings/settings-app.js",
       "src/settings/**/*.js",
+      "test/data/spreadsheet.js",
       "test/unit/settings/**/*spec.js"]}
   ));
 

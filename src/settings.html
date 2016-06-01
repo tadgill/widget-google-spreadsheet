@@ -234,6 +234,13 @@
 
           <hr>
 
+          <div class="row">
+            <div class="col-md-12">
+              <column-selector columns="settings.additionalParams.format.columns" column-names="columns">
+              </column-selector>
+            </div>
+          </div>
+
         </div>
 
         <!-- Modal Footer-->
@@ -274,6 +281,12 @@
 <script src="components/widget-settings-ui-components/dist/js/angular/font-setting.js"></script>
 <script src="components/angular-ui-tinymce/src/tinymce.js"></script>
 
+<!-- Column Selector -->
+<script src="components/widget-settings-ui-components/dist/js/alignment.js"></script>
+<script src="components/widget-settings-ui-components/dist/js/angular/alignment.js"></script>
+<script src="components/widget-settings-ui-components/dist/js/angular/column-setting.js"></script>
+<script src="components/widget-settings-ui-components/dist/js/angular/column-selector.js"></script>
+
 <script src="components/widget-settings-ui-components/dist/js/angular/scroll-setting.js"></script>
 
 <script src="config/config.js"></script>
@@ -281,7 +294,13 @@
 <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
 <script src="settings/ctr-google-spreadsheet-settings.js"></script>
 <script src="settings/svc-google-sheet.js"></script>
+<script src="settings/svc-columns.js"></script>
 <!-- endbuild -->
+
+<script src="//www.google.com/jsapi"></script>
+<script>
+  google.load("visualization", "1");
+</script>
 
 <!-- build:e2eTestApp -->
 <!-- endbuild -->

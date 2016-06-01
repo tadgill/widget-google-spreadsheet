@@ -4,7 +4,7 @@ require("fixed-data-table/dist/fixed-data-table.css");
 require("../css/fixed-data-table-overrides.css");
 
 import React from "react";
-import TableHeader from "./table-header";
+import TableHeaderContainer from "../containers/TableHeaderContainer";
 import Scroll from "./scroll";
 import Logger from "../../components/widget-common/dist/logger";
 import Common from "../../components/widget-common/dist/common";
@@ -294,6 +294,14 @@ const Spreadsheet = React.createClass({
     }
   },
 
+  convertColumnFormatIds: function() {
+    const { columns } = params.format;
+
+    for (let i = 0; i < columns.length; i++) {
+      columns[i].id = columns[i].id.slice(0, (columns[i].id.indexOf("_")));
+    }
+  },
+
   getColumnCount: function() {
     var columns = [],
       found, row, val;
@@ -344,16 +352,6 @@ const Spreadsheet = React.createClass({
     return rows.length;
   },
 
-  getColumnAlignment: function() {
-    var alignment = params.format.header.fontStyle.align;
-
-    if (!alignment) {
-      alignment = "left";
-    }
-
-    return alignment;
-  },
-
   // getColumnWidth: function(columnKey) {
   //   var width = stylingData.defaultColumnWidth;
 
@@ -367,24 +365,37 @@ const Spreadsheet = React.createClass({
   //   return width;
   // },
 
-  // getColumnHeader: function(dataValue) {
-  //   var value = dataValue;
-
-    // for (var i = 0; i < stylingData.columns.length; i++) {
-    //   if (stylingData.columns[i].id === columnKey) {
-    //     value = stylingData.columns[i].headerText;
-    //     break;
-    //   }
-    // }
-
-  //   return value;
-  // },
-
   getHeaders: function(totalCols) {
-    var headers = [];
+    var matchFound = false,
+      data = null,
+      column = null,
+      columnId = "",
+      headers = [],
+      { columns } = params.format;
 
-    for (var i = 0; i < totalCols; i++) {
-      headers.push(this.state.data[i].content.$t);
+    // Iterate over every column header.
+    for (let i = 0; i < totalCols; i++) {
+      matchFound = false;
+      data = this.state.data[i];
+      // title.$t = A1, B1, etc. Remove the trailing number so that ids can be compared.
+      columnId = data.title.$t.replace(/\d+/g, "");
+
+      // Iterate over every column formatting option.
+      for (let j = 0; j < columns.length; j++) {
+        column = columns[j];
+
+        if (column.id === columnId) {
+          headers.push(column.headerText);
+          matchFound = true;
+
+          break;
+        }
+      }
+
+      // Use the header from the spreadsheet.
+      if (!matchFound) {
+        headers.push(data.content.$t);
+      }
     }
 
     return headers;
@@ -424,23 +435,22 @@ const Spreadsheet = React.createClass({
 
   render: function() {
     var totalCols = 0,
-      headers = null,
-      rows = null;
+      rows = null,
+      columnIds = null;
 
     if (this.state.data) {
       totalCols = this.getColumnCount();
-      headers = this.getHeaders(totalCols);
       rows = this.getRows(totalCols);
+      this.convertColumnFormatIds();
 
       return(
         <div id="table">
-          {params.spreadsheet.hasHeader ?
-            <TableHeader
-              class={this.headerClass}
-              data={headers}
-              align={this.getColumnAlignment()}
-              width={params.width}
-              height={params.format.rowHeight} />
+        {params.spreadsheet.hasHeader ?
+          <TableHeaderContainer
+            align={params.format.header.fontStyle.align}
+            data={this.getHeaders(totalCols)}
+            height={params.format.rowHeight}
+            width={params.width} />
             : false}
           {this.canRenderBody() ?
             <Scroll
@@ -448,6 +458,8 @@ const Spreadsheet = React.createClass({
               onDone={this.done}
               scroll={params.scroll}
               data={rows}
+              columnIds={columnIds}
+              columns={params.format.columns}
               align={params.format.body.fontStyle.align}
               class={this.bodyClass}
               totalCols={totalCols}
