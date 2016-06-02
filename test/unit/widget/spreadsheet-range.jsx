@@ -120,4 +120,74 @@ describe("<Spreadsheet />", function() {
     });
   });
 
+  describe("Single cell range", function() {
+    
+    beforeEach(function () {
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
+      wrapper.setState({ data: [{
+          "content": {
+            "$t": "Cell B3"
+          },
+          "gs$cell": {
+            "col": "2",
+            "row": "3"
+          }
+        }]
+      });
+    });
+
+    it("Should contain a TableHeader component", function() {
+      expect(wrapper.find(TableHeader)).to.have.length(1);
+    });
+
+    it("Should have data prop", function() {
+      var expected = [ "Cell B3" ];
+      expect(wrapper.find(TableHeader).props().data).to.deep.equal(expected);
+    });
+
+    it("Should not contain a Table component", function() {
+      expect(wrapper.find(Table)).to.have.length(0);
+    });
+  });
+  
+  describe("Single cell range without first row as header", function () {
+
+    beforeEach(function () {
+      window.gadget.settings.additionalParams.spreadsheet.hasHeader = false;
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
+      wrapper.setState({ data: [{
+        "content": {
+          "$t": "Cell B3"
+        },
+        "gs$cell": {
+          "col": "2",
+          "row": "3"
+        }
+      }]
+      });
+    });
+
+    afterEach(function() {
+      window.gadget.settings.additionalParams.spreadsheet.hasHeader = true;
+    });
+
+    it("Should not contain a TableHeader component", function() {
+      expect(wrapper.find(TableHeader)).to.have.length(0);
+    });
+
+    it("Should contain a Table component", function() {
+      expect(wrapper.find(Table)).to.have.length(1);
+    });
+
+    it("Should have data prop", function() {
+      var expected = [ ["Cell B3"] ];
+      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
+    });
+    
+  });
+
 });
