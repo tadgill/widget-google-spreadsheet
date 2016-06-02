@@ -14,8 +14,7 @@
 </head>
 <body>
 
-<div id="container"></div>
-<div id="messageContainer"></div>
+<div id="mainContainer"></div>
 
 <rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
 
@@ -64,8 +63,8 @@
       test("should show google sheet error message", function() {
         assert.equal(document.querySelector(".message").innerHTML, "To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File &gt; Publish to the web', then click 'Publish'.", "message text");
 
-        assert.isTrue((document.getElementById("container").style.display === "none"), "container is not showing");
-        assert.isTrue((document.getElementById("messageContainer").style.display === "block"), "message visibility");
+        assert.isNotNull((document.querySelector("#spreadsheetContainer.hide")), "spreadsheet container is not showing");
+        assert.isNotNull((document.querySelector("#messageContainer.show")), "message visibility");
       });
 
     });

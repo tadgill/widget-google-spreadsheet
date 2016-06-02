@@ -2,7 +2,7 @@ require("./css/spreadsheet.css");
 
 const React = require("react");
 const ReactDOM = require("react-dom");
-const Spreadsheet = require("./components/spreadsheet");
+const Main = require("./components/main");
 
 (function (window, document) {
   "use strict";
@@ -13,6 +13,6 @@ const Spreadsheet = require("./components/spreadsheet");
   };
 
   window.addEventListener("WebComponentsReady", function() {
-    ReactDOM.render(<Spreadsheet />, document.getElementById("container"));
+    ReactDOM.render(<Main />, document.getElementById("mainContainer"));
   });
 })(window, document);

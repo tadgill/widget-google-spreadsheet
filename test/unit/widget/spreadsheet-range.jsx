@@ -50,8 +50,16 @@ describe("<Spreadsheet />", function() {
       }],
     cells = cols.concat(data);
 
+  var propHandlers = {
+    initSize: function(width, height) {},
+    showMessage: function(text) {},
+    hideMessage: function() {}
+  };
+
   beforeEach(function () {
-    wrapper = mount(<Spreadsheet />);
+    wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                 showMessage={propHandlers.showMessage}
+                                 hideMessage={propHandlers.hideMessage} />);
   });
 
   describe("<TableHeader />", function() {
@@ -92,7 +100,9 @@ describe("<Spreadsheet />", function() {
   describe("Don't Use First Row As Header", function() {
     beforeEach(function () {
       window.gadget.settings.additionalParams.spreadsheet.hasHeader = false;
-      wrapper = mount(<Spreadsheet />);
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
       wrapper.setState({ data: cells });
     });
 

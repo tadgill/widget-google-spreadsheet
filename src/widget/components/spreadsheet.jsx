@@ -2,20 +2,17 @@
 
 require("fixed-data-table/dist/fixed-data-table.css");
 require("../css/fixed-data-table-overrides.css");
-require("../../components/widget-common/dist/css/message.css");
 
 import React from "react";
 import TableHeader from "./table-header";
 import Scroll from "./scroll";
 import Logger from "../../components/widget-common/dist/logger";
 import Common from "../../components/widget-common/dist/common";
-import Message from "../../components/widget-common/dist/message";
 
 const prefs = new gadgets.Prefs();
 const sheet = document.querySelector("rise-google-sheet");
 
 var params = null;
-var message = null;
 
 const Spreadsheet = React.createClass({
   headerClass: "header_font-style",
@@ -44,15 +41,9 @@ const Spreadsheet = React.createClass({
     }
   },
 
-  componentDidUpdate: function() {
-    if (this.isLoading) {
-      this.ready();
-      this.isLoading = false;
-    }
-  },
-
   componentWillUnmount: function() {
     sheet.removeEventListener("rise-google-sheet-response");
+    sheet.removeEventListener("rise-google-sheet-error");
   },
 
   configure: function(names, values) {
@@ -94,20 +85,16 @@ const Spreadsheet = React.createClass({
   },
 
   init: function() {
-    document.getElementById("container").style.width = params.width + "px";
-    document.getElementById("container").style.height = params.height + "px";
+    this.props.initSize(params.width, params.height);
 
     this.setRowStyle();
-
-    message = new Message(document.getElementById("container"),
-      document.getElementById("messageContainer"));
 
     if (Common.isLegacy()) {
       this.showError("This version of Spreadsheet Widget is not supported on this version of Rise Player. " +
         "Please use the latest Rise Player version available from https://help.risevision.com/user/create-a-display");
     } else {
       // show wait message while Storage initializes
-      message.show("Please wait while your google sheet is loaded.");
+      this.props.showMessage("Please wait while your google sheet is loaded.");
 
       this.loadFonts();
       this.initRiseGoogleSheet();
@@ -149,7 +136,7 @@ const Spreadsheet = React.createClass({
 
     sheet.addEventListener("rise-google-sheet-error", function (e) {
 
-      this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File &gt; Publish to the web', then click 'Publish'.");
+      this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File > Publish to the web', then click 'Publish'.");
 
       this.logEvent({
         "event": "error",
@@ -160,16 +147,25 @@ const Spreadsheet = React.createClass({
 
       this.setState({ data: null });
 
+      if (this.isLoading) {
+        this.isLoading = false;
+        this.ready();
+      }
+
     }.bind(this));
 
     sheet.addEventListener("rise-google-sheet-response", function(e) {
-      message.hide();
+      this.props.hideMessage();
 
       if (e.detail && e.detail.cells) {
         this.setState({ data: e.detail.cells });
       }
-      
-      if (!this.isLoading) {
+
+      if (this.isLoading) {
+        this.isLoading = false;
+        this.ready();
+      }
+      else {
         // in case refresh fixed previous error
         this.errorFlag = false;
       }
@@ -202,7 +198,7 @@ const Spreadsheet = React.createClass({
       "class": this.headerClass,
       "fontStyle": params.format.header.fontStyle
     });
-    
+
     fontSettings.push({
       "class": this.bodyClass,
       "fontStyle": params.format.body.fontStyle
@@ -286,7 +282,7 @@ const Spreadsheet = React.createClass({
   showError: function(messageVal) {
     this.errorFlag = true;
 
-    message.show(messageVal);
+    this.props.showMessage(messageVal);
 
     // if Widget is playing right now, run the timer
     if (!this.viewerPaused) {
@@ -387,24 +383,25 @@ const Spreadsheet = React.createClass({
 
       return(
         <div id="table">
-        {params.spreadsheet.hasHeader ?
-          <TableHeader
-            class={this.headerClass}
-            data={headers}
-            align={this.getColumnAlignment()}
-            width={params.width}
-            height={params.format.rowHeight} />
-            : false}
-            <Scroll ref="scrollComponent"
-              onDone={this.done}
-              scroll={params.scroll}
-              data={rows}
-              align={params.format.body.fontStyle.align}
-              class={this.bodyClass}
-              totalCols={totalCols}
-              rowHeight={params.format.rowHeight}
+          {params.spreadsheet.hasHeader ?
+            <TableHeader
+              class={this.headerClass}
+              data={headers}
+              align={this.getColumnAlignment()}
               width={params.width}
-              height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
+              height={params.format.rowHeight} />
+            : false}
+          <Scroll
+            ref="scrollComponent"
+            onDone={this.done}
+            scroll={params.scroll}
+            data={rows}
+            align={params.format.body.fontStyle.align}
+            class={this.bodyClass}
+            totalCols={totalCols}
+            rowHeight={params.format.rowHeight}
+            width={params.width}
+            height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
         </div>
       );
     }

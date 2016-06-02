@@ -31,7 +31,6 @@ module.exports = {
   entry: [
     "./src/components/widget-common/dist/common.js",
     "./src/components/widget-common/dist/logger.js",
-    "./src/components/widget-common/dist/message.js",
     "./src/components/auto-scroll/jquery.auto-scroll.js",
     "./src/components/gsap/src/uncompressed/utils/Draggable.js",
     "./src/components/gsap/src/uncompressed/TweenLite.js",
@@ -71,10 +70,6 @@ module.exports = {
       {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/logger"),
         loader: "exports?RiseVision.Common.LoggerUtils"
-      },
-      {
-        test: require.resolve(__dirname + "/src/components/widget-common/dist/message"),
-        loader: "exports?RiseVision.Common.Message"
       },
       {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/common"),
