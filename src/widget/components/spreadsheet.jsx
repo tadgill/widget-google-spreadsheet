@@ -92,6 +92,10 @@ const Spreadsheet = React.createClass({
     if (Common.isLegacy()) {
       this.showError("This version of Spreadsheet Widget is not supported on this version of Rise Player. " +
         "Please use the latest Rise Player version available from https://help.risevision.com/user/create-a-display");
+
+      this.isLoading = false;
+      this.ready();
+
     } else {
       // show wait message while Storage initializes
       this.props.showMessage("Please wait while your google sheet is loaded.");
