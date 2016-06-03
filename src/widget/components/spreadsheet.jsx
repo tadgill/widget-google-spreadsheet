@@ -291,14 +291,53 @@ const Spreadsheet = React.createClass({
   },
 
   getColumnCount: function() {
-    var totalCols = 0,
-      startingRow = parseInt(this.state.data[0].gs$cell.row, 10);
+    var columns = [],
+      found, row, val;
 
-    while (parseInt(this.state.data[totalCols].gs$cell.row, 10) === startingRow) {
-      totalCols += 1;
+    for (var i = 0; i < this.state.data.length; i += 1) {
+      if (row && parseInt(this.state.data[i].gs$cell.row, 10) !== row) {
+        // no need to go further than first row
+        break;
+      } else {
+        row = parseInt(this.state.data[i].gs$cell.row, 10);
+      }
+
+      val = parseInt(this.state.data[i].gs$cell.col, 10);
+      found = columns.some(function (col) {
+        return col === val;
+      });
+
+      if (!found) {
+        columns.push(val);
+      }
     }
 
-    return totalCols;
+    return columns.length;
+  },
+
+  getRowCount: function() {
+    var rows = [],
+      found, col, val;
+
+    for (var i = 0; i < this.state.data.length; i += 1) {
+      if (col && parseInt(this.state.data[i].gs$cell.col, 10) === col) {
+        // skip to next cell
+        continue;
+      } else {
+        col = parseInt(this.state.data[i].gs$cell.col, 10);
+      }
+
+      val = parseInt(this.state.data[i].gs$cell.row, 10);
+      found = rows.some(function (row) {
+        return row === val;
+      });
+
+      if (!found) {
+        rows.push(val);
+      }
+    }
+
+    return rows.length;
   },
 
   getColumnAlignment: function() {
@@ -371,6 +410,14 @@ const Spreadsheet = React.createClass({
     return rows;
   },
 
+  canRenderBody: function() {
+    if (!params.spreadsheet.hasHeader) {
+      return true;
+    }
+
+    return this.getRowCount() > 1;
+  },
+
   render: function() {
     var totalCols = 0,
       headers = null,
@@ -391,17 +438,19 @@ const Spreadsheet = React.createClass({
               width={params.width}
               height={params.format.rowHeight} />
             : false}
-          <Scroll
-            ref="scrollComponent"
-            onDone={this.done}
-            scroll={params.scroll}
-            data={rows}
-            align={params.format.body.fontStyle.align}
-            class={this.bodyClass}
-            totalCols={totalCols}
-            rowHeight={params.format.rowHeight}
-            width={params.width}
-            height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
+          {this.canRenderBody() ?
+            <Scroll
+              ref="scrollComponent"
+              onDone={this.done}
+              scroll={params.scroll}
+              data={rows}
+              align={params.format.body.fontStyle.align}
+              class={this.bodyClass}
+              totalCols={totalCols}
+              rowHeight={params.format.rowHeight}
+              width={params.width}
+              height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
+          : false}
         </div>
       );
     }
