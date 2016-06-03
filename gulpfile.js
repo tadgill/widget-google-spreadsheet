@@ -238,6 +238,7 @@
     console.log("  gulp bump: bump the release version".yellow);
     console.log("  gulp test: run e2e, integration, and unit tests".yellow);
     console.log("********************************************************************".yellow);
+    
     return true;
   });
 
