@@ -1,9 +1,9 @@
 import React from "react";
 import { shallow } from "enzyme";
+import { expect } from "chai";
 import TestUtils from "react-addons-test-utils";
 import Scroll from "../../../src/widget/components/scroll";
 import Table from "../../../src/widget/components/table";
-import { expect } from "chai";
 
 describe("<Scroll />", function() {
   const onDone = function () {},

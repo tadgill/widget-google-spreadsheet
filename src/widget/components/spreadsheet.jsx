@@ -42,8 +42,8 @@ const Spreadsheet = React.createClass({
   },
 
   componentWillUnmount: function() {
-    sheet.removeEventListener("rise-google-sheet-response");
-    sheet.removeEventListener("rise-google-sheet-error");
+    sheet.removeEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
+    sheet.removeEventListener("rise-google-sheet-error", this.onGoogleSheetError);
   },
 
   configure: function(names, values) {
@@ -151,43 +151,8 @@ const Spreadsheet = React.createClass({
       return obj;
     }
 
-    sheet.addEventListener("rise-google-sheet-error", function (e) {
-
-      this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File > Publish to the web', then click 'Publish'.");
-
-      this.logEvent({
-        "event": "error",
-        "event_details": "spreadsheet not published",
-        "error_details": e.detail,
-        "url": params.spreadsheet.url
-      }, true);
-
-      this.setState({ data: null });
-
-      if (this.isLoading) {
-        this.isLoading = false;
-        this.ready();
-      }
-
-    }.bind(this));
-
-    sheet.addEventListener("rise-google-sheet-response", function(e) {
-      this.props.hideMessage();
-
-      if (e.detail && e.detail.cells) {
-        this.setState({ data: e.detail.cells });
-      }
-
-      if (this.isLoading) {
-        this.isLoading = false;
-        this.ready();
-      }
-      else {
-        // in case refresh fixed previous error
-        this.errorFlag = false;
-      }
-
-    }.bind(this));
+    sheet.addEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
+    sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("tab-id", params.spreadsheet.tabId);
@@ -206,6 +171,41 @@ const Spreadsheet = React.createClass({
     }
 
     sheet.go();
+  },
+
+  onGoogleSheetResponse: function(e) {
+    this.props.hideMessage();
+
+    if (e.detail && e.detail.cells) {
+      this.setState({ data: e.detail.cells });
+    }
+
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.ready();
+    }
+    else {
+      // in case refresh fixed previous error
+      this.errorFlag = false;
+    }
+  },
+
+  onGoogleSheetError: function(e) {
+    this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File > Publish to the web', then click 'Publish'.");
+
+    this.logEvent({
+      "event": "error",
+      "event_details": "spreadsheet not published",
+      "error_details": e.detail,
+      "url": params.spreadsheet.url
+    }, true);
+
+    this.setState({ data: null });
+
+    if (this.isLoading) {
+      this.isLoading = false;
+      this.ready();
+    }
   },
 
   loadFonts: function() {

@@ -1,8 +1,8 @@
 import React from "react";
-import { shallow } from "enzyme";
-import TestUtils from "react-addons-test-utils";
-import Table from "../../../src/widget/components/table";
+import { shallow, mount } from "enzyme";
 import { expect } from "chai";
+import { Column, Cell } from "fixed-data-table";
+import Table from "../../../src/widget/components/table";
 
 describe("<Table />", function() {
   const width = 600,
@@ -12,7 +12,7 @@ describe("<Table />", function() {
       ["John is dead!", "500", "32"]],
     cellClassName = "body_font-style",
     rowHeight = 50;
-  
+
   var wrapper;
 
   beforeEach(function () {
@@ -44,13 +44,13 @@ describe("<Table />", function() {
     it("Should have overflowY prop", function() {
       expect(wrapper.props().overflowY).to.equal("hidden");
     });
-  });
 
-  describe("<Column />", function() {
     it("Should have correct number of columns", function() {
       expect(wrapper.props().children.length).to.equal(3);
     });
+  });
 
+  describe("<Column />", function() {
     it("Should have key prop", function() {
       expect(wrapper.props().children[0].key).to.equal("0");
     });

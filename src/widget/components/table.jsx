@@ -36,7 +36,6 @@ const Table = React.createClass({
 
     return(
       <ResponsiveFixedDataTable
-        ref={(ref) => this.table = ref}
         rowHeight={this.props.rowHeight}
         rowsCount={this.props.data.length}
         rowClassNameGetter={this.getRowClassName}

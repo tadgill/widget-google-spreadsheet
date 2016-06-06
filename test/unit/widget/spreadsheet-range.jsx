@@ -1,7 +1,6 @@
 import React from "react";
 import { mount } from "enzyme";
 import { expect } from "chai";
-import TestUtils from "react-addons-test-utils";
 import Spreadsheet from "../../../src/widget/components/spreadsheet";
 import TableHeaderContainer from "../../../src/widget/containers/TableHeaderContainer";
 import Table from "../../../src/widget/components/table";
