@@ -3,7 +3,7 @@
 window.gadget = window.gadget || {};
 
 window.gadget.settings = {
-  "params": {},
+  params: {},
   additionalParams: {
     format: {
       body: {
@@ -23,6 +23,7 @@ window.gadget.settings = {
           backcolor:"transparent"
         }
       },
+      columns: [],
       evenRowColor: "rgba(255, 255, 255, 0)",
       header: {
         fontStyle:{

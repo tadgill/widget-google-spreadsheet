@@ -274,6 +274,7 @@
                   backcolor:"transparent"
                 }
               },
+              columns: [],
               evenRowColor: "rgba(255, 255, 255, 0)",
               header: {
                 fontStyle:{

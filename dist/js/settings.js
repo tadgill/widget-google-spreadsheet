@@ -12052,7 +12052,9 @@ module.run(["$templateCache", function($templateCache) {
     "<div class=\"font-setting\">\n" +
     "  <div class=\"row\">\n" +
     "    <div class=\"col-md-12\">\n" +
-    "      <textarea ui-tinymce=\"tinymceOptions\" ng-model=\"tinymceModel\" ng-if=\"tinymceOptions\"></textarea>\n" +
+    "      <div ng-class=\"{'form-group': !previewText}\">\n" +
+    "        <textarea ui-tinymce=\"tinymceOptions\" ng-model=\"tinymceModel\" ng-if=\"tinymceOptions\"></textarea>\n" +
+    "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
     "  <div class=\"row\" ng-if=\"previewText\">\n" +
@@ -12320,6 +12322,455 @@ angular.module('ui.tinymce', [])
     };
   }]);
 
+if(typeof TEMPLATES === 'undefined') {var TEMPLATES = {};}
+TEMPLATES['alignment.html'] = "<div class=\"btn-group alignment\">\n" +
+    "  <button type=\"button\" class=\"btn btn-default btn-sm btn-alignment dropdown-toggle\"\n" +
+    "    data-toggle=\"dropdown\" data-wysihtml5-command-value=\"left\">\n" +
+    "    <i class=\"fa fa-align-left\"></i>\n" +
+    "    <span class=\"caret\"></span>\n" +
+    "  </button>\n" +
+    "  <div class=\"dropdown-menu\" role=\"menu\">\n" +
+    "    <div class=\"btn-group\">\n" +
+    "      <button type=\"button\" class=\"btn btn-default btn-sm\" data-wysihtml5-command=\"alignment\"\n" +
+    "        data-wysihtml5-command-value=\"left\" tabindex=\"-1\">\n" +
+    "        <i class=\"fa fa-align-left\"></i>\n" +
+    "      </button>\n" +
+    "      <button type=\"button\" class=\"btn btn-default btn-sm\" data-wysihtml5-command=\"alignment\"\n" +
+    "        data-wysihtml5-command-value=\"center\" tabindex=\"-1\">\n" +
+    "        <i class=\"fa fa-align-center\"></i>\n" +
+    "      </button>\n" +
+    "      <button type=\"button\" class=\"btn btn-default btn-sm\" data-wysihtml5-command=\"alignment\"\n" +
+    "        data-wysihtml5-command-value=\"right\" tabindex=\"-1\">\n" +
+    "        <i class=\"fa fa-align-right\"></i>\n" +
+    "      </button>\n" +
+    "      <button type=\"button\" class=\"btn btn-default btn-sm\" data-wysihtml5-command=\"alignment\"\n" +
+    "        data-wysihtml5-command-value=\"justify\" tabindex=\"-1\">\n" +
+    "        <i class=\"fa fa-align-justify\"></i>\n" +
+    "      </button>\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    ""; 
+/*  Copyright © 2014 Rise Vision Incorporated.
+ *  Use of this software is governed by the GPLv3 license
+ *  (reproduced in the LICENSE file).
+ */
+
+/* global TEMPLATES */
+;(function ($, window, document, TEMPLATES, undefined) {
+  "use strict";
+
+  var _pluginName = "alignment";
+
+  function Plugin(element, options) {
+    var $element = $(element);
+    var $btnAlignment = null;
+    var defaultAlignment = "left";
+
+    options = $.extend({}, { "align": defaultAlignment }, options);
+
+    /*
+     *  Private Methods
+     */
+    function _init() {
+      // Get the HTML markup from the template.
+      $element.append(TEMPLATES["alignment.html"]);
+      $btnAlignment = $element.find(".btn-alignment");
+
+      setAlignment(options.align);
+
+      $element.find(".dropdown-menu button").on("click", function() {
+        var alignment = $(this).data("wysihtml5-command-value");
+
+        setAlignment(alignment);
+        $element.trigger("alignmentChanged", alignment);
+      });
+    }
+
+    /*
+     *  Public Methods
+     */
+    function getAlignment() {
+     return $btnAlignment.data("wysihtml5-command-value");
+    }
+
+    function setAlignment(alignment) {
+      var $primaryIcon = $element.find(".btn-alignment .fa");
+      var currentClass = $primaryIcon.attr("class").match(/fa-align-[a-z]+/g);
+      var newClass = "fa-align-" + alignment;
+
+      // Remove current alignment icon.
+      if (currentClass && currentClass.length > 0) {
+        $primaryIcon.removeClass(currentClass[0]);
+      }
+
+      // Add new alignment icon.
+      $primaryIcon.addClass(newClass);
+      $btnAlignment.data("wysihtml5-command-value", alignment);
+    }
+
+    function reset() {
+      setAlignment(defaultAlignment);
+    }
+
+    _init();
+
+    return {
+      getAlignment: getAlignment,
+      setAlignment: setAlignment,
+      reset:        reset
+    };
+  }
+
+  /*
+   *  A lightweight plugin wrapper around the constructor that prevents
+   *  multiple instantiations.
+   */
+  $.fn.alignment = function(options) {
+    return this.each(function() {
+      if (!$.data(this, "plugin_" + _pluginName)) {
+        $.data(this, "plugin_" + _pluginName, new Plugin(this, options));
+      }
+    });
+  };
+})(jQuery, window, document, TEMPLATES);
+
+/* exported WIDGET_SETTINGS_UI_CONFIG */
+var WIDGET_SETTINGS_UI_CONFIG = {
+  "families": "Andale Mono=andale mono,monospace;" +
+      "Arial=arial,helvetica,sans-serif;" +
+      "Arial Black=arial black,sans-serif;" +
+      "Book Antiqua=book antiqua,palatino,serif;" +
+      "Comic Sans MS=comic sans ms,sans-serif;" +
+      "Courier New=courier new,courier,monospace;" +
+      "Georgia=georgia,palatino,serif;" +
+      "Helvetica=helvetica,arial,sans-serif;" +
+      "Impact=impact,sans-serif;" +
+      "Symbol=symbol;" +
+      "Tahoma=tahoma,arial,helvetica,sans-serif;" +
+      "Terminal=terminal,monaco,monospace;" +
+      "Times New Roman=times new roman,times,serif;" +
+      "Trebuchet MS=trebuchet ms,geneva,sans-serif;" +
+      "Verdana=verdana,geneva,sans-serif;" +
+      "Webdings=webdings;" +
+      "Wingdings=wingdings,zapf dingbats;",
+  "sizes": "8px 9px 10px 11px 12px 14px 18px 24px 30px 36px 48px 60px 72px 96px"
+};
+
+(function () {
+  "use strict";
+
+  angular.module("risevision.widget.common.alignment", [])
+    .directive("alignment", function () {
+      return {
+        restrict: "E",
+        scope: {
+          align: "="
+        },
+        transclude: false,
+        link: function (scope, element) {
+          var $element = $(element);
+
+          scope.$watch("align", function(align) {
+            if (align) {
+              if ($element.data("plugin_alignment")) {
+                $element.data("plugin_alignment").setAlignment(align);
+              }
+              else {
+                $element.alignment({ align: align });
+              }
+            }
+          });
+
+          $element.on("alignmentChanged", function(event, alignment) {
+            scope.$apply(function() {
+              scope.align = alignment;
+            });
+          });
+        }
+      };
+    });
+}());
+
+(function () {
+  "use strict";
+
+  angular.module("risevision.widget.common.column-setting", ["risevision.common.i18n", "risevision.widget.common.font-setting"])
+    .directive("columnSetting", ["$templateCache", function ($templateCache) {
+      return {
+        restrict: "E",
+        scope: {
+          column: "=",
+          expand: "="
+        },
+        template: $templateCache.get("_angular/column-setting/column-setting.html"),
+        transclude: false,
+        link: function($scope) {
+          var defaultSettings = {
+            fontStyle: {
+              font: {
+                "family":"verdana,geneva,sans-serif",
+                "type":"standard",
+                "url":""
+              },
+              size: "18px",
+              customSize: "",
+              align: "left",
+              bold: false,
+              italic: false,
+              underline: false,
+              forecolor: "black",
+              backcolor: "transparent"
+            },
+            header: "",
+            width: 100,
+            colorCondition: "none"
+          };
+
+          $scope.defaults = function(obj) {
+            if (obj) {
+              for (var i = 1, length = arguments.length; i < length; i++) {
+                var source = arguments[i];
+                for (var prop in source) {
+
+                  if (obj[prop] === void 0) {
+                    obj[prop] = source[prop];
+                  }
+                }
+              }
+            }
+            return obj;
+          };
+
+          $scope.$watch("column.numeric", function(value) {
+            if (typeof value !== "undefined" && value !== "") {
+              if (value) {
+                defaultSettings.type = "int";
+              }
+              else {
+                defaultSettings.type = "string";
+              }
+            }
+            else {
+              defaultSettings.type = "string";
+            }
+
+            $scope.defaults($scope.column, defaultSettings);
+          });
+
+          $scope.remove = function() {
+            $scope.$parent.remove($scope.column);
+          };
+        }
+      };
+    }]);
+}());
+
+(function(module) {
+try { module = angular.module("risevision.widget.common.column-setting"); }
+catch(err) { module = angular.module("risevision.widget.common.column-setting", []); }
+module.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("_angular/column-setting/column-setting.html",
+    "<div class=\"panel panel-default\">\n" +
+    "  <div class=\"collapse-panel panel-heading\">\n" +
+    "    <a href=\"\" ondragstart=\"return false;\"\n" +
+    "    ng-class=\"{'panel-heading':true, collapsed:!collapse}\" ng-click=\"collapse=!collapse\">\n" +
+    "       {{column.name | translate}}\n" +
+    "    </a>\n" +
+    "    <a href=\"\" ondragstart=\"return false;\" class=\"fa fa-minus-circle fa-lg remove-column-button\" ng-click=\"remove()\"></a>\n" +
+    "  </div>\n" +
+    "  <div ng-class=\"{'panel-collapse':true, collapse:true, in:collapse}\">\n" +
+    "    <div class=\"panel-body\">\n" +
+    "\n" +
+    "      <!-- Numeric data column -->\n" +
+    "      <div class=\"checkbox\">\n" +
+    "        <label>\n" +
+    "          <input type=\"checkbox\" ng-model=\"column.numeric\">{{'column.numeric' | translate}}\n" +
+    "        </label>\n" +
+    "        <span class=\"text-danger\" style=\"float:right\">\n" +
+    "          {{'column.note' | translate}}\n" +
+    "        </span>\n" +
+    "      </div>\n" +
+    "\n" +
+    "      <font-setting font-data=\"column.fontStyle\">\n" +
+    "      </font-setting>\n" +
+    "\n" +
+    "      <div class=\"row\">\n" +
+    "\n" +
+    "        <!-- Header Text -->\n" +
+    "        <div class=\"col-sm-6 col-xs-12\">\n" +
+    "          <div class=\"form-group\">\n" +
+    "            <label for=\"column-header-text\">\n" +
+    "              {{'column.header-text.label' | translate}}\n" +
+    "            </label>\n" +
+    "            <input type=\"text\" ng-model=\"column.headerText\" class=\"form-control\">\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <!-- Width -->\n" +
+    "        <div class=\"col-sm-3 col-xs-12\">\n" +
+    "          <div class=\"form-group\">\n" +
+    "            <label for=\"column-width\">\n" +
+    "              {{'column.width' | translate}}\n" +
+    "            </label>\n" +
+    "            <div class=\"input-group\">\n" +
+    "              <input type=\"number\" ng-model=\"column.width\" class=\"form-control\">\n" +
+    "              <span class=\"input-group-addon\">{{'common.units.pixels' | translate}}</span>\n" +
+    "            </div>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "        <!-- Color Conditions -->\n" +
+    "        <div class=\"col-sm-3 col-xs-12\">\n" +
+    "          <div class=\"form-group\">\n" +
+    "            <label for=\"column-color-condition\">\n" +
+    "                {{'column.color-condition.label' | translate}}\n" +
+    "              </label>\n" +
+    "            <select class=\"form-control\" ng-model=\"column.colorCondition\"\n" +
+    "              ng-disabled=\"!column.numeric\">\n" +
+    "              <option value=\"none\">{{'column.color-condition.none' | translate}}</option>\n" +
+    "              <option value=\"change-up\">{{'column.color-condition.change-up' | translate}}</option>\n" +
+    "              <option value=\"change-down\">{{'column.color-condition.change-down' | translate}}</option>\n" +
+    "              <option value=\"value-positive\">{{'column.color-condition.value-positive' | translate}}</option>\n" +
+    "              <option value=\"value-negative\">{{'column.color-condition.value-negative' | translate}}</option>\n" +
+    "            </select>\n" +
+    "          </div>\n" +
+    "        </div>\n" +
+    "\n" +
+    "      </div>\n" +
+    "\n" +
+    "    </div>\n" +
+    "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
+(function () {
+  "use strict";
+
+  angular.module("risevision.widget.common.column-selector", ["risevision.widget.common.column-setting",
+          "risevision.common.i18n"])
+    .directive("columnSelector", ["$templateCache", function ($templateCache) {
+      return {
+        restrict: "E",
+        require: "?ngModel",
+        scope: {
+          columns: "=",
+          columnNames: "="
+        },
+        template: $templateCache.get("_angular/column-selector/column-selector.html"),
+        transclude: false,
+        link: function($scope, elm, attrs, ctrl) {
+          var columnsWatcher = $scope.$watch("columns", function() {
+            if ($scope.columns && $scope.columnNames) {
+              updateColumns();
+              setValidity();
+
+              // Destroy watch
+              columnsWatcher();
+            }
+          });
+
+          var columnNamesWatcher = $scope.$watch("columnNames", function(columnNames) {
+            if ($scope.columns && columnNames && columnNames.length > 0) {
+              updateColumns();
+
+              // Destroy watch
+              columnNamesWatcher();
+            }
+          });
+
+          $scope.show = function(v){return !v.show;};
+
+          $scope.addColumn = function(){
+            console.log($scope.selectedColumn);
+            $scope.add($scope.selectedColumn);
+            $scope.selectedColumn = null;
+          };
+
+          $scope.add = function(column) {
+            column.show = true;
+            $scope.columns.push(column);
+
+            setValidity();
+          };
+
+          $scope.remove = function (column) {
+            if (column) {
+              removeColumn($scope.columns, column.id);
+
+              for (var i = 0; i < $scope.columnNames.length; i++) {
+                if (column.id === $scope.columnNames[i].id) {
+                  $scope.columnNames[i].show = false;
+                  break;
+                }
+              }
+
+              setValidity();
+            }
+          };
+
+          function removeColumn(columnsList, id) {
+            for(var i = 0; i < columnsList.length; i++) {
+              if (columnsList[i].id === id) {
+                columnsList.splice(i, 1);
+                break;
+              }
+            }
+          }
+
+          function setValidity() {
+            if (ctrl) {
+              ctrl.$setValidity("required", $scope.columns.length);
+            }
+          }
+
+          function updateColumns() {
+            for (var i = 0; i < $scope.columns.length; i++) {
+              for (var j = 0; j < $scope.columnNames.length; j++) {
+                if ($scope.columns[i].id === $scope.columnNames[j].id) {
+                  $scope.columns[i].type = $scope.columnNames[j].type;
+                  $scope.columns[i].name = $scope.columnNames[j].name;
+                  $scope.columnNames[j].show = true;
+                }
+              }
+            }
+          }
+        }
+      };
+    }]);
+}());
+
+(function(module) {
+try { module = angular.module("risevision.widget.common.column-selector"); }
+catch(err) { module = angular.module("risevision.widget.common.column-selector", []); }
+module.run(["$templateCache", function($templateCache) {
+  "use strict";
+  $templateCache.put("_angular/column-selector/column-selector.html",
+    "<div class=\"section\">\n" +
+    "	<div class=\"row\">\n" +
+    "		<div class=\"col-md-12\">\n" +
+    "			<div class=\"form-group\">\n" +
+    "				<label for=\"columns\" class=\"control-label\">{{'column.select-title' | translate}}</label>\n" +
+    "		    <select id=\"column-selector\" class=\"form-control\" ng-model=\"selectedColumn\"\n" +
+    "				ng-options=\"column.name | translate for column in columnNames | filter:show track by column.id\"\n" +
+    "				ng-change=\"addColumn()\"></select>\n" +
+    "			</div>\n" +
+    "		</div>\n" +
+    "	</div>\n" +
+    "	<div class=\"row\">\n" +
+    "		<div class=\"col-md-12\">\n" +
+    "			<div class=\"panel-group\">\n" +
+    "				<column-setting column=\"column\" ng-repeat=\"column in columns\"></column-setting>\n" +
+    "			</div>\n" +
+    "	</div>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
 (function () {
   "use strict";
 
@@ -12438,9 +12889,11 @@ angular.module("risevision.widget.googleSpreadsheet.settings", [
   "risevision.widget.common",
   "risevision.widget.common.tooltip",
   "risevision.widget.common.widget-button-toolbar",
+  "risevision.widget.common.column-selector",
   "risevision.widget.common.font-setting",
   "risevision.widget.common.scroll-setting",
   "risevision.widget.common.google-drive-picker",
+  "risevision.widget.common.visualization",
   "colorpicker.module"
 ]);
 
@@ -12922,13 +13375,24 @@ angular.module("risevision.widget.common")
 })(angular);
 
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet",
-    function ($scope, $window, $log, googleSheet) {
+  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet", "columns",
+    function ($scope, $window, $log, googleSheet, columns) {
 
       $scope.showPreview = false;
-
       $scope.sheets = [];
       $scope.currentSheet = null;
+      $scope.columns = [];
+
+      $scope.getColumns = function (url) {
+        columns.getColumns(url)
+          .then(function (columns) {
+            if (columns.length > 0) {
+              $scope.columns = columns;
+            }
+          })
+          .then(null, $log.error);
+      };
+
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
           .then(function (sheets) {
@@ -12967,6 +13431,23 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           }
 
           getWorkSheets(fileId);
+        }
+      });
+
+      $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
+        if (typeof newUrl !== "undefined") {
+          if (newUrl !== oldUrl) {
+            $scope.columns = [];
+
+            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
+              // Widget settings have already gone through initialization. Safe to reset columns array.
+              $scope.settings.additionalParams.format.columns = [];
+            }
+
+            if (newUrl !== "") {
+              $scope.getColumns(newUrl);
+            }
+          }
         }
       });
 
@@ -13036,6 +13517,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             backcolor:"transparent"
           }
         },
+        columns: [],
         evenRowColor: "rgba(255, 255, 255, 0)",
         header: {
           fontStyle:{
@@ -13116,3 +13598,83 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       return factory;
 
     }]);
+
+(function() {
+  "use strict";
+
+  angular.module("risevision.widget.googleSpreadsheet.settings")
+    .factory("columns", ["visualizationApi", "$q", function (visualizationApi, $q) {
+
+      var factory = {};
+
+      function configureColumns(response) {
+        var dataTable = response.getDataTable(),
+          columnNames = [],
+          columnIndexes = [],
+          cellValue, columnLabel, columnId, i, j;
+
+        // Narrow down actual columns being used.
+        for (i = 0; i < dataTable.getNumberOfColumns(); i++) {
+          for (j = 0; j < dataTable.getNumberOfRows(); j++) {
+            cellValue = dataTable.getValue(j, i);
+
+            if (cellValue && cellValue !== "") {
+              columnIndexes.push(i);
+              break;
+            }
+          }
+        }
+
+        // Configure the column objects and populate columnNames array.
+        for (i = 0; i < columnIndexes.length; i++) {
+          columnLabel = dataTable.getColumnLabel(columnIndexes[i]);
+
+          if (columnLabel === "") {
+            // There's no header row or the column is untitled. Use the column id instead (eg. A).
+            columnLabel = dataTable.getColumnId(columnIndexes[i]);
+          }
+
+          // Create an id that can be referenced again when restoring saved widget settings.
+          columnId = dataTable.getColumnId(columnIndexes[i]) + "_" + dataTable.getColumnType(columnIndexes[i]) +
+            "_" + columnLabel;
+
+          columnNames.push({
+            id: columnId,
+            name: columnLabel,
+            type: dataTable.getColumnType(columnIndexes[i])
+          });
+        }
+
+        return columnNames;
+      }
+
+      factory.getColumns = function (url) {
+        var deferred = $q.defer();
+
+        visualizationApi.get().then(function (viz) {
+          var query = new viz.Query(url);
+
+          // Only need the first row.
+          query.setQuery("select * limit 1");
+          query.setTimeout(30);
+
+          query.send(function (response) {
+            if (!response) {
+              deferred.reject("No response");
+            }
+            else if (response.isError()) {
+              deferred.reject(response.getMessage());
+            }
+            else {
+              deferred.resolve(configureColumns(response));
+            }
+          });
+
+        });
+
+        return deferred.promise;
+      };
+
+      return factory;
+    }]);
+})();

@@ -1,11 +1,22 @@
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet",
-    function ($scope, $window, $log, googleSheet) {
+  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet", "columns",
+    function ($scope, $window, $log, googleSheet, columns) {
 
       $scope.showPreview = false;
-
       $scope.sheets = [];
       $scope.currentSheet = null;
+      $scope.columns = [];
+
+      $scope.getColumns = function (url) {
+        columns.getColumns(url)
+          .then(function (columns) {
+            if (columns.length > 0) {
+              $scope.columns = columns;
+            }
+          })
+          .then(null, $log.error);
+      };
+
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
           .then(function (sheets) {
@@ -44,6 +55,23 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           }
 
           getWorkSheets(fileId);
+        }
+      });
+
+      $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
+        if (typeof newUrl !== "undefined") {
+          if (newUrl !== oldUrl) {
+            $scope.columns = [];
+
+            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
+              // Widget settings have already gone through initialization. Safe to reset columns array.
+              $scope.settings.additionalParams.format.columns = [];
+            }
+
+            if (newUrl !== "") {
+              $scope.getColumns(newUrl);
+            }
+          }
         }
       });
 
@@ -113,6 +141,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             backcolor:"transparent"
           }
         },
+        columns: [],
         evenRowColor: "rgba(255, 255, 255, 0)",
         header: {
           fontStyle:{
