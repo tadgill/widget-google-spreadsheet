@@ -12594,7 +12594,7 @@ var WIDGET_SETTINGS_UI_CONFIG = {
               forecolor: "black",
               backcolor: "transparent"
             },
-            header: "",
+            headerText: "",
             width: 100,
             colorCondition: "none"
           };

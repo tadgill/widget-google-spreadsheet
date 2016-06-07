@@ -310,8 +310,10 @@ const Spreadsheet = React.createClass({
   convertColumnFormatIds: function() {
     const { columns } = params.format;
 
-    for (let i = 0; i < columns.length; i++) {
-      columns[i].id = columns[i].id.slice(0, (columns[i].id.indexOf("_")));
+    if (columns !== undefined) {
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].id = columns[i].id.slice(0, (columns[i].id.indexOf("_")));
+      }
     }
   },
 
@@ -394,14 +396,18 @@ const Spreadsheet = React.createClass({
       columnId = data.title.$t.replace(/\d+/g, "");
 
       // Iterate over every column formatting option.
-      for (let j = 0; j < columns.length; j++) {
-        column = columns[j];
+      if (columns !== undefined) {
+        for (let j = 0; j < columns.length; j++) {
+          column = columns[j];
 
-        if (column.id === columnId) {
-          headers.push(column.headerText);
-          matchFound = true;
+          if (column.id === columnId) {
+            if ((column.headerText !== undefined) && (column.headerText !== "")) {
+              headers.push(column.headerText);
+              matchFound = true;
+            }
 
-          break;
+            break;
+          }
         }
       }
 
@@ -448,8 +454,7 @@ const Spreadsheet = React.createClass({
 
   render: function() {
     var totalCols = 0,
-      rows = null,
-      columnIds = null;
+      rows = null;
 
     if (this.state.data) {
       totalCols = this.getColumnCount();
@@ -471,8 +476,6 @@ const Spreadsheet = React.createClass({
               onDone={this.done}
               scroll={params.scroll}
               data={rows}
-              columnIds={columnIds}
-              columns={params.format.columns}
               align={params.format.body.fontStyle.align}
               class={this.bodyClass}
               totalCols={totalCols}
