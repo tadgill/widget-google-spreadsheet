@@ -108,8 +108,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [additionalParams.format.columns[0].headerText,
-        "Column 2", "Column 3" ];
+      var expected = [additionalParams.format.columns[0].headerText, "Column 2", "Column 3" ];
 
       expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
     });
@@ -217,7 +216,6 @@ describe("<Spreadsheet />", function() {
 
     beforeEach(function() {
       stub = sinon.stub(LoggerUtils, "logEvent");
-
     });
 
     afterEach(function() {
@@ -259,5 +257,33 @@ describe("<Spreadsheet />", function() {
 
       expect(stub.withArgs(table,params).called).to.equal(true);
     });
+  });
+
+  describe("Column formatting", function() {
+    it("Should use default header text if custom header text is empty", function() {
+      var expected = ["Column 1", "Column 2", "Column 3" ];
+
+      additionalParams.format.columns[0].headerText = "";
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
+
+      wrapper.setState({ data: cells });
+
+      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+    });
+
+    it("should use default header text if column formatting is not defined", function() {
+      var expected = ["Column 1", "Column 2", "Column 3" ];
+
+      delete additionalParams.format.columns;
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
+
+      wrapper.setState({ data: cells });
+
+      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+    })
   });
 });
