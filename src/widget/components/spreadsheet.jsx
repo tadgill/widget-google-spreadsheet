@@ -101,6 +101,7 @@ const Spreadsheet = React.createClass({
       this.props.showMessage("Please wait while your google sheet is loaded.");
 
       this.loadFonts();
+      this.setVerticalAlignment();
       this.initRiseGoogleSheet();
     }
 
@@ -111,6 +112,18 @@ const Spreadsheet = React.createClass({
         ".even" + " div * {background-color: " + params.format.evenRowColor + " !important }",
         ".odd" + " div * {background-color: " + params.format.oddRowColor + " !important }"
       ]);
+  },
+
+  setVerticalAlignment: function() {
+    if (params.spreadsheet.hasHeader ) {
+      Common.addCSSRules([
+        ".header_font-style .fixedDataTableCellLayout_wrap3 {vertical-align: " + params.format.header.fontStyle.verticalAlign + " }"
+      ]);  
+    }
+
+    Common.addCSSRules([
+      ".body_font-style .fixedDataTableCellLayout_wrap3 {vertical-align: " + params.format.body.fontStyle.verticalAlign + " }"
+    ]);
   },
 
   initRiseGoogleSheet: function() {

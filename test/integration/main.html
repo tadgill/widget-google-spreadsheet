@@ -111,6 +111,20 @@
         check(done);
       });
     });
+
+    suite("Vertical Alignment", function() {
+
+      test("should set the table header vertical alignment of cells", function() {
+        var verticalAlign = window.getComputedStyle(document.querySelector(".header_font-style .fixedDataTableCellLayout_wrap3")).getPropertyValue( "vertical-align" );
+        assert.equal(verticalAlign, "top");
+      });
+
+      test("should set the table vertical alignment of cells", function() {
+        var verticalAlign = window.getComputedStyle(document.querySelector(".body_font-style .fixedDataTableCellLayout_wrap3")).getPropertyValue( "vertical-align" );
+        assert.equal(verticalAlign, "bottom");
+      });
+
+    });
   });
 
 </script>
