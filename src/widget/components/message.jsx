@@ -12,4 +12,4 @@ Message.propTypes = {
   text: PropTypes.string.isRequired
 };
 
-module.exports = Message;
+export default Message;

@@ -1,7 +1,6 @@
 import React from "react";
-import { shallow, mount } from "enzyme";
+import { shallow } from "enzyme";
 import { expect } from "chai";
-import TestUtils from "react-addons-test-utils";
 import Message from "../../../src/widget/components/message";
 
 describe("<Message />", function() {
@@ -16,9 +15,9 @@ describe("<Message />", function() {
   it("Should have className prop", function() {
     expect(wrapper.props().className).to.be.equal("message");
   });
-  
+
   it("Should apply text prop value", function() {
     expect(wrapper.text()).to.be.equal("Test message");
   });
-  
+
 });

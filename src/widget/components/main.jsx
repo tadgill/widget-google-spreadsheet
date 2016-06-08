@@ -1,7 +1,6 @@
 import React from "react";
-
-const Spreadsheet = require("./spreadsheet");
-const Message = require("./message");
+import Spreadsheet from "./spreadsheet";
+import MessageContainer from "../containers/MessageContainer";
 
 const Main = React.createClass({
 
@@ -40,11 +39,11 @@ const Main = React.createClass({
             showMessage={this.showMessage}
             hideMessage={this.hideMessage} />
         </div>
-        <div id="messageContainer" className={this.state.showMessage ? "show" : "hide"}>
-          <Message text={this.state.messageText} />
-        </div>
+        <MessageContainer
+          show={this.state.showMessage}
+          text={this.state.messageText} />
       </div>
-      )
+    )
   }
 
 });

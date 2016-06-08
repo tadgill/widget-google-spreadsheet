@@ -1,10 +1,9 @@
 import React from "react";
 import { shallow, mount } from "enzyme";
-import TestUtils from "react-addons-test-utils";
-import TableHeaderContainer from "../../../src/widget/containers/TableHeaderContainer"
-import TableHeader from "../../../src/widget/components/TableHeader";
 import { expect } from "chai";
 import { Table, Column, Cell } from "fixed-data-table";
+import TableHeaderContainer from "../../../src/widget/containers/TableHeaderContainer"
+import TableHeader from "../../../src/widget/components/TableHeader";
 
 describe("<TableHeaderContainer />", function() {
   const align = "center",
@@ -19,6 +18,10 @@ describe("<TableHeaderContainer />", function() {
       wrapper = shallow(<TableHeaderContainer align={align} data={data} height={height} width={width} />);
     });
 
+    it("Should contain a TableHeader component", function() {
+      expect(wrapper.find(TableHeader)).to.exist;
+    });
+
     it("Should have height prop", function() {
       expect(wrapper.props().height).to.equal(height);
     });
@@ -28,6 +31,10 @@ describe("<TableHeaderContainer />", function() {
     });
 
     it("Should have correct number of columns as children", function() {
+      expect(wrapper.props().children.length).to.equal(3);
+    });
+
+    it("Should have correct number of columns", function() {
       expect(wrapper.props().children.length).to.equal(3);
     });
   });
