@@ -89,6 +89,7 @@ const Spreadsheet = React.createClass({
   init: function() {
     this.props.initSize(params.width, params.height);
 
+    this.convertColumnFormatIds();
     this.setRowStyle();
     this.setSeparator();
 
@@ -542,7 +543,6 @@ const Spreadsheet = React.createClass({
       let columnWidths = [];
 
       this.setColumnCount();
-      this.convertColumnFormatIds();
       this.setDataColumnIds();
 
       columnWidths = this.getColumnWidths();
