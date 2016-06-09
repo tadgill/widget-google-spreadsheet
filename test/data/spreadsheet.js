@@ -16,6 +16,7 @@ window.gadget.settings = {
           size:"18px",
           customSize:"",
           align:"left",
+          verticalAlign: "middle",
           bold:false,
           italic:false,
           underline:false,
@@ -70,7 +71,12 @@ window.gadget.settings = {
         }
       },
       oddRowColor: "rgba(255, 255, 255, 0)",
-      rowHeight: 50
+      rowHeight: 50,
+      separator: {
+        color: "rgba(238,238,238, 1)",
+        show: true,
+        size: 1
+      }
     },
     scroll: {},
     spreadsheet: {

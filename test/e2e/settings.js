@@ -36,6 +36,10 @@
       it("Should load scroll component", function () {
         expect(element(by.id("scroll-by")).isPresent()).to.eventually.be.true;
       });
+
+      it("Should load Separator Color Picker component", function () {
+        expect(element(by.model("settings.additionalParams.format.separator.color")).isDisplayed()).to.eventually.be.true;
+      });
     });
 
     describe("Defaults", function () {
@@ -95,6 +99,18 @@
 
       it("Should not scroll by default", function () {
         expect(element(by.id("scroll-by")).getAttribute("value")).to.eventually.equal("none");
+      });
+
+      it("Should select 'Show Separator'", function () {
+        expect(element(by.model("settings.additionalParams.format.separator.show")).isSelected()).to.eventually.be.true;
+      });
+
+      it("Should set default for Separator size", function () {
+        expect(element(by.model("settings.additionalParams.format.separator.size")).getAttribute("value")).to.eventually.equal("1");
+      });
+
+      it("Should set default for Separator color", function () {
+        expect(element(by.model("settings.additionalParams.format.separator.color")).getAttribute("value")).to.eventually.equal("rgba(238,238,238, 1)");
       });
 
     });
@@ -160,6 +176,12 @@
         element(by.model("settings.additionalParams.spreadsheet.hasHeader")).click();
 
         expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.true;
+      });
+
+      it("Should not display size and color selections for Separator", function () {
+        element(by.model("settings.additionalParams.format.separator.show")).click();
+        expect(element(by.model("settings.additionalParams.format.separator.size")).isPresent()).to.eventually.be.false;
+        expect(element(by.model("settings.additionalParams.format.separator.color")).isPresent()).to.eventually.be.false;
       });
 
     });
@@ -296,7 +318,12 @@
                 }
               },
               oddRowColor: "rgba(255, 255, 255, 0)",
-              rowHeight: 50
+              rowHeight: 50,
+              separator: {
+                color: "rgba(238,238,238, 1)",
+                show: true,
+                size: 1
+              }
             },
             scroll: {
               by: "none",
