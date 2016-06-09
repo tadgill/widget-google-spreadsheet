@@ -5,6 +5,7 @@ import {Column, Cell} from "fixed-data-table";
 import ResponsiveFixedDataTable from "responsive-fixed-data-table";
 
 const Table = React.createClass({
+
   getRowClassName: function(index) {
     // add 1 to index value so the first row is considered odd
     return ((index + 1) % 2) ? "odd" : "even";
@@ -19,7 +20,7 @@ const Table = React.createClass({
         <Column
           key={i}
           columnKey={i}
-          width={this.props.width / this.props.totalCols}
+          width={this.props.columnWidths[i]}
           align={this.props.align}
           cell={ props => (
             <Cell
@@ -49,4 +50,4 @@ const Table = React.createClass({
   }
 });
 
-module.exports = Table;
+export default Table;

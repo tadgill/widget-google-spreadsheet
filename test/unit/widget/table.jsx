@@ -10,13 +10,14 @@ describe("<Table />", function() {
     totalCols = 3,
     data = [["I am the walrus!", "1", "3"],
       ["John is dead!", "500", "32"]],
+    columnWidths = [100, 200, 300],
     cellClassName = "body_font-style",
     rowHeight = 50;
 
   var wrapper;
 
   beforeEach(function () {
-    wrapper = shallow(<Table data={data} class={cellClassName} align="center"
+    wrapper = shallow(<Table data={data} columnWidths={columnWidths} class={cellClassName} align="center"
                              width={width} height={height} rowHeight={rowHeight} totalCols={totalCols} />);
   });
 
@@ -56,7 +57,7 @@ describe("<Table />", function() {
     });
 
     it("Should have width prop", function() {
-      expect(wrapper.props().children[0].props.width).to.equal(200);
+      expect(wrapper.props().children[0].props.width).to.equal(columnWidths[0]);
     });
 
     it("Should have align prop", function() {
