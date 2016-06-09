@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RSS Widget</title>
+  <title>Spreadsheet Widget</title>
 
   <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
   <script src="../../src/components/web-component-tester/browser.js"></script>
@@ -125,6 +125,25 @@
       });
 
     });
+
+    suite("Separator", function () {
+
+      test("should set the separator width on table cells", function() {
+        var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-width" );
+        var val2 = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-width" );
+        assert.equal(val1, "1px 1px 0px 0px");
+        assert.equal(val2, "0px 1px 1px");
+      });
+
+      test("should set the separator color of table cells", function() {
+        var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-color" );
+        var val2 = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
+        assert.equal(val1, "rgb(238, 238, 238)");
+        assert.equal(val2, "rgb(238, 238, 238)");
+      });
+
+    });
+
   });
 
 </script>

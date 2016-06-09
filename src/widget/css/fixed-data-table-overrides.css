@@ -20,32 +20,17 @@
 /******************/
 
 .fixedDataTableCellLayout_main {
-  border-width: 0;
-}
-
-.fixedDataTableCellLayout_lastChild {
-  border-width: 0;
-}
-
-.fixedDataTableColumnResizerLineLayout_main {
-  border-right-width: 0;
+  border-style: solid;
+  border-width: 0px;
 }
 
 .fixedDataTableLayout_main {
   border-width: 0;
 }
 
-.fixedDataTableLayout_header,
-.fixedDataTableLayout_hasBottomBorder {
+.public_fixedDataTable_header,
+.public_fixedDataTable_hasBottomBorder {
   border-bottom-width: 0;
-}
-
-.fixedDataTableLayout_footer .public_fixedDataTableCell_main {
-  border-top-width: 0;
-}
-
-.fixedDataTableRowLayout_fixedColumnsDivider {
-  border-left-width: 0;
 }
 
 /* Remove Shadow */

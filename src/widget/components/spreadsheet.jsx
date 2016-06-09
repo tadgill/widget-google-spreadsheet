@@ -88,6 +88,7 @@ const Spreadsheet = React.createClass({
     this.props.initSize(params.width, params.height);
 
     this.setRowStyle();
+    this.setSeparator();
 
     if (Common.isLegacy()) {
       this.showError("This version of Spreadsheet Widget is not supported on this version of Rise Player. " +
@@ -124,6 +125,22 @@ const Spreadsheet = React.createClass({
     Common.addCSSRules([
       ".body_font-style .fixedDataTableCellLayout_wrap3 {vertical-align: " + params.format.body.fontStyle.verticalAlign + " }"
     ]);
+  },
+
+  setSeparator: function() {
+    if (!params.format.separator.show) {
+      return;
+    }
+
+    Common.addCSSRules([
+      ".fixedDataTableCellLayout_main {border-width: " +
+      params.format.separator.size + "px " + params.format.separator.size + "px 0 0; }",
+      ".fixedDataTableLayout_main {border-width: " +
+      "0 " + params.format.separator.size + "px " + params.format.separator.size + "px " +
+      params.format.separator.size + "px; border-color: " + params.format.separator.color + "; }",
+      ".public_fixedDataTableCell_main {border-color: " + params.format.separator.color + "; }"
+    ]);
+
   },
 
   initRiseGoogleSheet: function() {

@@ -18,7 +18,7 @@
             size:"18px",
             customSize:"",
             align:"left",
-            verticalAlign: "middle",
+            verticalAlign: "bottom",
             bold:false,
             italic:false,
             underline:false,
@@ -38,7 +38,7 @@
             size:"18px",
             customSize:"",
             align:"left",
-            verticalAlign: "middle",
+            verticalAlign: "top",
             bold:false,
             italic:false,
             underline:false,
@@ -50,7 +50,7 @@
         rowHeight: 50,
         separator: {
           color: "rgba(238,238,238, 1)",
-          show: true,
+          show: false,
           size: 1
         }
       },
@@ -60,13 +60,13 @@
         docName: "",
         url: "",
         fileId: "xxxxxxxxxx",
-        cells: "range",
+        cells: "sheet",
         range: {
-          startCell: "B2",
-          endCell: "C3"
+          startCell: "",
+          endCell: ""
         },
         tabId: 1,
-        hasHeader: false,
+        hasHeader: true,
         refresh: 5
       }
     }
