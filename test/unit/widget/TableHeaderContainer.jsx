@@ -8,6 +8,7 @@ import TableHeader from "../../../src/widget/components/TableHeader";
 describe("<TableHeaderContainer />", function() {
   const align = "center",
     data = ["Column 1", "Column 2", "Column 3"],
+    columnWidths = [100, 200, 300],
     width = 600,
     height = 50;
 
@@ -15,7 +16,8 @@ describe("<TableHeaderContainer />", function() {
 
   describe("<TableHeader />", function() {
     beforeEach(function () {
-      wrapper = shallow(<TableHeaderContainer align={align} data={data} height={height} width={width} />);
+      wrapper = shallow(<TableHeaderContainer align={align} data={data} columnWidths={columnWidths}
+        height={height} width={width} />);
     });
 
     it("Should contain a TableHeader component", function() {
@@ -41,7 +43,8 @@ describe("<TableHeaderContainer />", function() {
 
   describe("<Column />", function() {
     beforeEach(function () {
-      wrapper = shallow(<TableHeaderContainer align={align} data={data} height={height} width={width} />);
+      wrapper = shallow(<TableHeaderContainer align={align} data={data} columnWidths={columnWidths}
+        height={height} width={width} />);
     });
 
     it("Should have key prop", function() {
@@ -53,7 +56,7 @@ describe("<TableHeaderContainer />", function() {
     });
 
     it("Should have width prop", function() {
-      expect(wrapper.props().children[0].props.width).to.equal(width / 3);
+      expect(wrapper.props().children[0].props.width).to.equal(columnWidths[0]);
     });
 
     it("Should have align prop", function() {
@@ -63,7 +66,8 @@ describe("<TableHeaderContainer />", function() {
 
   describe("<Cell />", function() {
     beforeEach(function () {
-      wrapper = mount(<TableHeaderContainer align={align} data={data} height={height} width={width} />);
+      wrapper = mount(<TableHeaderContainer align={align} data={data} columnWidths={columnWidths}
+        height={height} width={width} />);
     });
 
     it("Should have correct number of cells", function() {

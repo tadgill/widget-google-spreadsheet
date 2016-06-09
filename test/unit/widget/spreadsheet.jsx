@@ -4,6 +4,7 @@ import { expect } from "chai";
 import Spreadsheet from "../../../src/widget/components/spreadsheet";
 import TableHeaderContainer from "../../../src/widget/containers/TableHeaderContainer";
 import Table from "../../../src/widget/components/table";
+import Scroll from "../../../src/widget/components/scroll";
 import LoggerUtils from "../../../src/components/widget-common/dist/logger";
 import "../../data/spreadsheet";
 
@@ -107,9 +108,15 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [additionalParams.format.columns[0].headerText, "Column 2", "Column 3" ];
+      var expected = [additionalParams.format.columns[0].headerText, "Column 2", "Column 3"];
 
       expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+    });
+
+    it("Should have columnWidths prop", function() {
+      var expected = [additionalParams.format.columns[0].width, 250, 250];
+
+      expect(wrapper.find(TableHeaderContainer).props().columnWidths).to.deep.equal(expected);
     });
 
     it("Should have height prop", function() {
@@ -141,6 +148,18 @@ describe("<Spreadsheet />", function() {
 
     it("Should pass the correct height prop for the Table component", function() {
       expect(wrapper.find(Table).props().height).to.equal(window.innerHeight);
+    });
+  });
+
+  describe("<Scroll />", function() {
+    beforeEach(function () {
+      wrapper.setState({ data: cells });
+    });
+
+    it("Should have columnWidths prop", function() {
+      var expected = [additionalParams.format.columns[0].width, 250, 250];
+
+      expect(wrapper.find(Scroll).props().columnWidths).to.deep.equal(expected);
     });
   });
 
@@ -272,6 +291,20 @@ describe("<Spreadsheet />", function() {
       expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
     });
 
+    it("Should use calculated column widths if custom width is empty", function() {
+      var expected = [200, 200, 200];
+
+      additionalParams.format.columns[0].width = "";
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
+
+      wrapper.setState({ data: cells });
+
+      expect(wrapper.find(TableHeaderContainer).props().columnWidths).to.deep.equal(expected);
+      expect(wrapper.find(Scroll).props().columnWidths).to.deep.equal(expected);
+    });
+
     it("should use default header text if column formatting is not defined", function() {
       var expected = ["Column 1", "Column 2", "Column 3" ];
 
@@ -283,6 +316,19 @@ describe("<Spreadsheet />", function() {
       wrapper.setState({ data: cells });
 
       expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
-    })
+    });
+
+    it("Should use calculated column widths if column formatting is not defined", function() {
+      var expected = [200, 200, 200];
+
+      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                   showMessage={propHandlers.showMessage}
+                                   hideMessage={propHandlers.hideMessage} />);
+
+      wrapper.setState({ data: cells });
+
+      expect(wrapper.find(TableHeaderContainer).props().columnWidths).to.deep.equal(expected);
+      expect(wrapper.find(Scroll).props().columnWidths).to.deep.equal(expected);
+    });
   });
 });

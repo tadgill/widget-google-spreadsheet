@@ -11,7 +11,7 @@ const TableHeaderContainer = React.createClass({
         <Column
           key={i}
           header={<Cell className="header_font-style">{this.props.data[i]}</Cell>}
-          width={this.props.width / this.props.data.length}
+          width={this.props.columnWidths[i]}
           align={this.getColumnAlignment()}
         />
       );

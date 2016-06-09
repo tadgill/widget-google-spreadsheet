@@ -47,6 +47,7 @@ const Scroll = React.createClass({
         <section className="page" ref="page">
             <Table
                 data={this.props.data}
+                columnWidths={this.props.columnWidths}
                 align={this.props.align}
                 class={this.props.class}
                 totalCols={this.props.totalCols}
@@ -59,4 +60,4 @@ const Scroll = React.createClass({
   }
 });
 
-module.exports = Scroll;
+export default Scroll;

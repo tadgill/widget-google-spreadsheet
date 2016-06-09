@@ -4,8 +4,8 @@ require("fixed-data-table/dist/fixed-data-table.css");
 require("../css/fixed-data-table-overrides.css");
 
 import React from "react";
-import TableHeaderContainer from "../containers/TableHeaderContainer";
 import Scroll from "./scroll";
+import TableHeaderContainer from "../containers/TableHeaderContainer";
 import Logger from "../../components/widget-common/dist/logger";
 import Common from "../../components/widget-common/dist/common";
 
@@ -22,6 +22,8 @@ const Spreadsheet = React.createClass({
   errorFlag: false,
   errorTimer: null,
   errorLog: null,
+  dataColumnIds: [],
+  totalCols: 0,
 
   getInitialState: function() {
     return {
@@ -87,6 +89,7 @@ const Spreadsheet = React.createClass({
   init: function() {
     this.props.initSize(params.width, params.height);
 
+    this.convertColumnFormatIds();
     this.setRowStyle();
     this.setSeparator();
 
@@ -119,7 +122,7 @@ const Spreadsheet = React.createClass({
     if (params.spreadsheet.hasHeader ) {
       Common.addCSSRules([
         ".header_font-style .fixedDataTableCellLayout_wrap3 {vertical-align: " + params.format.header.fontStyle.verticalAlign + " }"
-      ]);  
+      ]);
     }
 
     Common.addCSSRules([
@@ -334,7 +337,91 @@ const Spreadsheet = React.createClass({
     }
   },
 
-  getColumnCount: function() {
+  setDataColumnIds: function() {
+    var matchFound = false;
+
+    this.dataColumnIds = [];
+
+    // For every column...
+    for (let i = 0; i < this.totalCols; i++) {
+      // title.$t = A1, B1, etc. Remove the trailing number so that ids can be compared.
+      this.dataColumnIds.push(this.state.data[i].title.$t.replace(/\d+/g, ""));
+    }
+  },
+
+  // Calculate the width that is taken up by rendering columns with an explicit width.
+  getColumnWidthObj: function() {
+    const { columns } = params.format;
+
+    var column = null,
+      width = 0,
+      numCols = 0;
+
+    if (columns !== undefined) {
+      // For every column formatting option...
+      for (let j = 0; j < columns.length; j++) {
+        column = columns[j];
+
+        if ((column.width !== undefined) && (column.width !== "")) {
+          width += parseInt(column.width, 10);
+          numCols++;
+        }
+      }
+    }
+    else {
+      width = 0;
+    }
+
+    return {
+      width: width,
+      numCols: numCols
+    };
+  },
+
+  getColumnWidths: function() {
+    const { columns } = params.format,
+      columnWidthObj = this.getColumnWidthObj();
+
+    var found = false,
+      column = null,
+      widths = [];
+
+    if (columns !== undefined) {
+      // For every column...
+      for (let i = 0; i < this.totalCols; i++) {
+        found = false;
+
+        // For every column formatting option...
+        for (let j = 0; j < columns.length; j++) {
+          column = columns[j];
+
+          if (column.id === this.dataColumnIds[i]) {
+            if ((column.width !== undefined) && (column.width !== "")) {
+              widths.push(parseInt(column.width, 10));
+              found = true;
+
+              break;
+            }
+          }
+        }
+
+        // No column formatting option for this column OR no explicit width specified.
+        if (!found) {
+          widths.push((params.width - columnWidthObj.width) / (this.totalCols - columnWidthObj.numCols));
+        }
+      }
+    }
+    else {
+      // All columns have an equal width.
+      for (let i = 0; i < this.totalCols; i++) {
+        widths.push(params.width / this.totalCols);
+      }
+    }
+
+    return widths;
+  },
+
+  setColumnCount: function() {
     var columns = [],
       found, row, val;
 
@@ -356,7 +443,7 @@ const Spreadsheet = React.createClass({
       }
     }
 
-    return columns.length;
+    this.totalCols = columns.length;
   },
 
   getRowCount: function() {
@@ -384,40 +471,22 @@ const Spreadsheet = React.createClass({
     return rows.length;
   },
 
-  // getColumnWidth: function(columnKey) {
-  //   var width = stylingData.defaultColumnWidth;
-
-  //   for (var i = 0; i < stylingData.columns.length; i++) {
-  //     if (stylingData.columns[i].id === columnKey) {
-  //       width = stylingData.columns[i].width;
-  //       break;
-  //     }
-  //   }
-
-  //   return width;
-  // },
-
-  getHeaders: function(totalCols) {
+  getHeaders: function() {
     var matchFound = false,
-      data = null,
       column = null,
-      columnId = "",
       headers = [],
       { columns } = params.format;
 
     // Iterate over every column header.
-    for (let i = 0; i < totalCols; i++) {
+    for (let i = 0; i < this.totalCols; i++) {
       matchFound = false;
-      data = this.state.data[i];
-      // title.$t = A1, B1, etc. Remove the trailing number so that ids can be compared.
-      columnId = data.title.$t.replace(/\d+/g, "");
 
       // Iterate over every column formatting option.
       if (columns !== undefined) {
         for (let j = 0; j < columns.length; j++) {
           column = columns[j];
 
-          if (column.id === columnId) {
+          if (column.id === this.dataColumnIds[i]) {
             if ((column.headerText !== undefined) && (column.headerText !== "")) {
               headers.push(column.headerText);
               matchFound = true;
@@ -430,7 +499,7 @@ const Spreadsheet = React.createClass({
 
       // Use the header from the spreadsheet.
       if (!matchFound) {
-        headers.push(data.content.$t);
+        headers.push(this.state.data[i].content.$t);
       }
     }
 
@@ -438,11 +507,11 @@ const Spreadsheet = React.createClass({
   },
 
   // Convert data to a two-dimensional array of rows.
-  getRows: function(totalCols) {
+  getRows: function() {
     var rows = [],
       row = null,
       startingCol = parseInt(this.state.data[0].gs$cell.col,10),
-      startingIndex = (params.spreadsheet.hasHeader) ? totalCols : 0;
+      startingIndex = (params.spreadsheet.hasHeader) ? this.totalCols : 0;
 
     for (var i = startingIndex; i < this.state.data.length; i += 1) {
       if (parseInt(this.state.data[i].gs$cell.col, 10) === startingCol) {
@@ -470,20 +539,21 @@ const Spreadsheet = React.createClass({
   },
 
   render: function() {
-    var totalCols = 0,
-      rows = null;
-
     if (this.state.data) {
-      totalCols = this.getColumnCount();
-      rows = this.getRows(totalCols);
-      this.convertColumnFormatIds();
+      let columnWidths = [];
+
+      this.setColumnCount();
+      this.setDataColumnIds();
+
+      columnWidths = this.getColumnWidths();
 
       return(
         <div id="table">
         {params.spreadsheet.hasHeader ?
           <TableHeaderContainer
             align={params.format.header.fontStyle.align}
-            data={this.getHeaders(totalCols)}
+            data={this.getHeaders()}
+            columnWidths={columnWidths}
             height={params.format.rowHeight}
             width={params.width} />
             : false}
@@ -492,10 +562,11 @@ const Spreadsheet = React.createClass({
               ref="scrollComponent"
               onDone={this.done}
               scroll={params.scroll}
-              data={rows}
+              data={this.getRows()}
+              columnWidths={columnWidths}
               align={params.format.body.fontStyle.align}
               class={this.bodyClass}
-              totalCols={totalCols}
+              totalCols={this.totalCols}
               rowHeight={params.format.rowHeight}
               width={params.width}
               height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
@@ -509,4 +580,4 @@ const Spreadsheet = React.createClass({
   }
 });
 
-module.exports = Spreadsheet;
+export default Spreadsheet;
