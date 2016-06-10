@@ -131,19 +131,38 @@ const Spreadsheet = React.createClass({
   },
 
   setSeparator: function() {
-    if (!params.format.separator.show) {
+    var rules, columnBorderW, rowBorderW;
+
+    if (!params.format.separator.showRow && !params.format.separator.showColumn) {
+      // rely on default css overrides which have all borders transparent
       return;
     }
 
-    Common.addCSSRules([
-      ".fixedDataTableCellLayout_main {border-width: " +
-      params.format.separator.size + "px " + params.format.separator.size + "px 0 0; }",
-      ".fixedDataTableLayout_main {border-width: " +
-      "0 " + params.format.separator.size + "px " + params.format.separator.size + "px " +
-      params.format.separator.size + "px; border-color: " + params.format.separator.color + "; }",
+    // colors
+    rules = [
+      ".fixedDataTableCellLayout_main {border-color: " + params.format.separator.color + "; }",
       ".public_fixedDataTableCell_main {border-color: " + params.format.separator.color + "; }"
-    ]);
+    ];
 
+    // row and column separators (border widths of either 1 or 0)
+    columnBorderW = (params.format.separator.showColumn) ? "1px" : "0";
+    rowBorderW = (params.format.separator.showRow) ? "1px" : "0";
+
+    rules.push(".fixedDataTableCellLayout_main {border-style: solid; border-width: 0 " + columnBorderW +
+      " " + rowBorderW + " 0; }");
+    
+    if (params.spreadsheet.hasHeader) {
+      // fill in gap between header and data tables
+      rules.push(".fixedDataTableLayout_main, .public_fixedDataTable_main {margin-bottom: -2px; }");
+      
+      if (params.format.separator.showRow) {
+        // apply border color to the border that visually shows to the top of the first row of the data table
+        rules.push(".public_fixedDataTable_header, .public_fixedDataTable_hasBottomBorder {border-color: " +
+          params.format.separator.color + "; }");  
+      }
+    }
+
+    Common.addCSSRules(rules);
   },
 
   initRiseGoogleSheet: function() {

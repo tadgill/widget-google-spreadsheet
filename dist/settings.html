@@ -213,27 +213,24 @@
               <div class="col-md-3">
                 <div class="checkbox">
                   <label class="control-label">
-                    <input type="checkbox" name="showSeparator" ng-model="settings.additionalParams.format.separator.show">{{ "widget-google-spreadsheet.format.separator.show" | translate }}</input>
+                    <input type="checkbox" name="showRowSeparator" ng-model="settings.additionalParams.format.separator.showRow">{{ "widget-google-spreadsheet.format.separator.row" | translate }}</input>
                   </label>
                 </div>
               </div>
 
-              <div ng-if="settings.additionalParams.format.separator.show">
-                <div class="col-md-3">
-                  <div class="form-group">
-                    <div class="input-group">
-                      <input id="row-separator-size" type="number" class="form-control"
-                             ng-model="settings.additionalParams.format.separator.size" />
-                      <span class="input-group-addon">{{'common.units.pixels' | translate}}</span>
-                    </div>
-                  </div>
+              <div class="col-md-3">
+                <div class="checkbox">
+                  <label class="control-label">
+                    <input type="checkbox" name="showColumnSeparator" ng-model="settings.additionalParams.format.separator.showColumn">{{ "widget-google-spreadsheet.format.separator.column" | translate }}
+                  </label>
                 </div>
-                <!-- Color -->
-                <div class="col-md-3">
-                  <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.separator.color">
-                    <input class="form-control" type="text" ng-model="settings.additionalParams.format.separator.color">
-                    <span class="input-group-addon color-wheel"></span>
-                  </div>
+              </div>
+
+              <!-- Color -->
+              <div class="col-md-3" ng-if="settings.additionalParams.format.separator.showRow || settings.additionalParams.format.separator.showColumn">
+                <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.separator.color">
+                  <input class="form-control" type="text" ng-model="settings.additionalParams.format.separator.color">
+                  <span class="input-group-addon color-wheel"></span>
                 </div>
               </div>
             </div>

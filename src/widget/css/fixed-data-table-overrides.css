@@ -16,21 +16,40 @@
   background-color: transparent;
 }
 
-/* Disable borders */
-/******************/
+/* Override border colors */
+/***************************/
 
 .fixedDataTableCellLayout_main {
-  border-style: solid;
-  border-width: 0px;
+  border-color: transparent;
 }
 
 .fixedDataTableLayout_main {
-  border-width: 0;
+  border-color: transparent;
 }
 
 .public_fixedDataTable_header,
 .public_fixedDataTable_hasBottomBorder {
-  border-bottom-width: 0;
+  border-color: transparent;
+}
+
+.public_fixedDataTable_main {
+  border-color: transparent;
+}
+
+.public_fixedDataTable_footer .public_fixedDataTableCell_main {
+  border-color: transparent;
+}
+
+.public_fixedDataTableCell_main {
+  border-color: transparent;
+}
+
+.public_fixedDataTableColumnResizerLine_main {
+  border-color: transparent;
+}
+
+.public_fixedDataTableRow_fixedColumnsDivider {
+  border-color: transparent;
 }
 
 /* Remove Shadow */
@@ -38,5 +57,5 @@
 
 .fixedDataTableLayout_topShadow,
 .fixedDataTableLayout_bottomShadow {
-  height: 0;
+  visibility: hidden;
 }
