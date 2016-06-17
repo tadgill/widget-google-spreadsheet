@@ -101,12 +101,12 @@
         expect(element(by.id("scroll-by")).getAttribute("value")).to.eventually.equal("none");
       });
 
-      it("Should select 'Show Separator'", function () {
-        expect(element(by.model("settings.additionalParams.format.separator.show")).isSelected()).to.eventually.be.true;
+      it("Should select 'Show Separator Between Rows'", function () {
+        expect(element(by.model("settings.additionalParams.format.separator.showRow")).isSelected()).to.eventually.be.true;
       });
 
-      it("Should set default for Separator size", function () {
-        expect(element(by.model("settings.additionalParams.format.separator.size")).getAttribute("value")).to.eventually.equal("1");
+      it("Should select 'Show Separator Between Columns'", function () {
+        expect(element(by.model("settings.additionalParams.format.separator.showColumn")).isSelected()).to.eventually.be.true;
       });
 
       it("Should set default for Separator color", function () {
@@ -178,9 +178,9 @@
         expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.true;
       });
 
-      it("Should not display size and color selections for Separator", function () {
-        element(by.model("settings.additionalParams.format.separator.show")).click();
-        expect(element(by.model("settings.additionalParams.format.separator.size")).isPresent()).to.eventually.be.false;
+      it("Should not display color selection for Separator", function () {
+        element(by.model("settings.additionalParams.format.separator.showRow")).click();
+        element(by.model("settings.additionalParams.format.separator.showColumn")).click();
         expect(element(by.model("settings.additionalParams.format.separator.color")).isPresent()).to.eventually.be.false;
       });
 
@@ -321,8 +321,8 @@
               rowHeight: 50,
               separator: {
                 color: "rgba(238,238,238, 1)",
-                show: true,
-                size: 1
+                showColumn: true,
+                showRow: true
               }
             },
             scroll: {

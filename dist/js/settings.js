@@ -13614,7 +13614,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         rowHeight: 50,
         separator: {
           color: "rgba(238,238,238, 1)",
-          show: true,
+          showColumn: true,
+          showRow: true,
           size: 1
         }
       },

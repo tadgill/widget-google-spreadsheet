@@ -50,8 +50,8 @@
         rowHeight: 50,
         separator: {
           color: "rgba(238,238,238, 1)",
-          show: false,
-          size: 1
+          showColumn: false,
+          showRow: false
         }
       },
       scroll: {},

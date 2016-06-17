@@ -64,13 +64,13 @@
       test("should set the separator width on table cells to be 0", function(done) {
 
         var check = function(done) {
-          var element = document.querySelector(".fixedDataTableCellLayout_main");
+          var element = document.querySelector(".public_fixedDataTableCell_main");
 
           if (element) {
-            var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-width" );
-            var val2 = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-width" );
-            assert.equal(val1, "0px");
-            assert.equal(val2, "0px");
+            var val1 = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
+            var val2 = window.getComputedStyle(document.querySelector(".public_fixedDataTable_header")).getPropertyValue( "border-color" );
+            assert.equal(val1, "rgba(0, 0, 0, 0)");
+            assert.equal(val2, "rgba(0, 0, 0, 0)");
 
             done();
           }

@@ -130,16 +130,19 @@
 
       test("should set the separator width on table cells", function() {
         var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-width" );
-        var val2 = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-width" );
-        assert.equal(val1, "1px 1px 0px 0px");
-        assert.equal(val2, "0px 1px 1px");
+        var val2 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-style" );
+        assert.equal(val1, "0px 1px 1px 0px");
+        assert.equal(val2, "solid");
       });
 
       test("should set the separator color of table cells", function() {
-        var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-color" );
-        var val2 = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
-        assert.equal(val1, "rgb(238, 238, 238)");
-        assert.equal(val2, "rgb(238, 238, 238)");
+        var val = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
+        assert.equal(val, "rgb(238, 238, 238)");
+      });
+
+      test("should set the diving separator betweeen header and data tables", function() {
+        var val = window.getComputedStyle(document.querySelector(".public_fixedDataTable_header")).getPropertyValue( "border-color" );
+        assert.equal(val, "rgb(238, 238, 238)");
       });
 
     });
