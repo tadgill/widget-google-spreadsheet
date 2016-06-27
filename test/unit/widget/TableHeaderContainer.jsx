@@ -7,44 +7,40 @@ import TableHeader from "../../../src/widget/components/TableHeader";
 
 describe("<TableHeaderContainer />", function() {
   const align = "center",
-    data = ["Column 1", "Column 2", "Column 3"],
-    columnWidths = [100, 200, 300],
     width = 600,
-    height = 50;
+    height = 50,
+    data = ["Column 1", "Column 2", "Column 3"];
 
-  var wrapper;
+  var wrapper,
+    columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }];
 
   describe("<TableHeader />", function() {
     beforeEach(function () {
-      wrapper = shallow(<TableHeaderContainer align={align} data={data} columnWidths={columnWidths}
-        height={height} width={width} />);
+      wrapper = shallow(<TableHeaderContainer align={align} data={data} width={width} height={height}
+        columnFormats={columnFormats} />);
     });
 
     it("Should contain a TableHeader component", function() {
       expect(wrapper.find(TableHeader)).to.exist;
     });
 
-    it("Should have height prop", function() {
-      expect(wrapper.props().height).to.equal(height);
-    });
-
     it("Should have width prop", function() {
       expect(wrapper.props().width).to.equal(width);
     });
 
-    it("Should have correct number of columns as children", function() {
-      expect(wrapper.props().children.length).to.equal(3);
+    it("Should have height prop", function() {
+      expect(wrapper.props().height).to.equal(height);
     });
 
-    it("Should have correct number of columns", function() {
+    it("Should have correct number of columns as children", function() {
       expect(wrapper.props().children.length).to.equal(3);
     });
   });
 
   describe("<Column />", function() {
     beforeEach(function () {
-      wrapper = shallow(<TableHeaderContainer align={align} data={data} columnWidths={columnWidths}
-        height={height} width={width} />);
+      wrapper = shallow(<TableHeaderContainer align={align} data={data} width={width} height={height}
+        columnFormats={columnFormats} />);
     });
 
     it("Should have key prop", function() {
@@ -56,30 +52,67 @@ describe("<TableHeaderContainer />", function() {
     });
 
     it("Should have width prop", function() {
-      expect(wrapper.props().children[0].props.width).to.equal(columnWidths[0]);
+      expect(wrapper.props().children[0].props.width).to.equal(columnFormats[0].width);
     });
 
-    it("Should have align prop", function() {
-      expect(wrapper.props().children[0].props.align).to.equal(align);
+    describe("Alignment", function() {
+      it("Should use alignment from align prop", function() {
+        expect(wrapper.props().children[0].props.align).to.equal(align);
+      });
+
+      it("Should use default alignment if neither align nor columnFormats.alignment props exist", function() {
+        wrapper = shallow(<TableHeaderContainer data={data} width={width} height={height}
+          columnFormats={columnFormats} />);
+
+        expect(wrapper.props().children[0].props.align).to.equal("left");
+      });
+
+      it("Should use alignment from columnFormats prop", function() {
+        columnFormats = [
+          { "alignment": "right", "width": 100 },
+          { "width": 200 },
+          { "width": 300 }
+        ];
+
+        wrapper = shallow(<TableHeaderContainer align={align} data={data} width={width} height={height}
+          columnFormats={columnFormats} />);
+
+        expect(wrapper.props().children[0].props.align).to.equal(columnFormats[0].alignment);
+      });
     });
   });
 
   describe("<Cell />", function() {
+
     beforeEach(function () {
-      wrapper = mount(<TableHeaderContainer align={align} data={data} columnWidths={columnWidths}
-        height={height} width={width} />);
+      wrapper = mount(<TableHeaderContainer align={align} data={data} width={width} height={height}
+        columnFormats={columnFormats} />);
     });
 
     it("Should have correct number of cells", function() {
       expect(wrapper.find(Cell).length).to.equal(3);
     });
 
+    it("Should set cell text", function() {
+      expect(wrapper.find(Cell).first().text()).to.equal(data[0]);
+    });
+
     it("Should have className prop", function() {
      expect(wrapper.find(Cell).first().props().className).to.equal("header_font-style");
     });
 
-    it("Should set cell text", function() {
-      expect(wrapper.find(Cell).first().text()).to.equal("Column 1");;
-    })
+    it("Should use className from columnFormats prop", function() {
+      columnFormats = [
+        { "id": "A", "width": 100 },
+        { "width": 200 },
+        { "width": 300 }
+      ];
+
+      wrapper = mount(<TableHeaderContainer align={align} data={data} width={width} height={height}
+        columnFormats={columnFormats} />);
+
+      expect(wrapper.find(Cell).first().props().className).to.equal(columnFormats[0].id);
+    });
+
   });
 });

@@ -11,6 +11,33 @@ const Table = React.createClass({
     return ((index + 1) % 2) ? "odd" : "even";
   },
 
+  getAlignment: function(index) {
+    var { align, columnFormats } = this.props;
+
+    // Column formatting overrides header formatting.
+    if (columnFormats[index].alignment) {
+      return columnFormats[index].alignment;
+    }
+    else if (align) {
+      return align;
+    }
+    else {
+      return "left";
+    }
+  },
+
+  getClassName: function(index) {
+    var { columnFormats } = this.props;
+
+    // Column formatting overrides header formatting.
+    if (columnFormats[index].id) {
+      return columnFormats[index].id;
+    }
+    else {
+      return this.props.class;
+    }
+  },
+
   render: function() {
     var cols = [];
 
@@ -20,13 +47,13 @@ const Table = React.createClass({
         <Column
           key={i}
           columnKey={i}
-          width={this.props.columnWidths[i]}
-          align={this.props.align}
+          align={this.getAlignment(i)}
+          width={this.props.columnFormats[i].width}
           cell={ props => (
             <Cell
               width={props.width}
               height={props.height}
-              className={this.props.class}
+              className={this.getClassName(props.columnKey)}
               columnKey={props.columnKey}>
               {this.props.data[props.rowIndex][props.columnKey]}
             </Cell>

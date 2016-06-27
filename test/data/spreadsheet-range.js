@@ -24,7 +24,33 @@ window.gadget.settings = {
           backcolor:"transparent"
         }
       },
-      columns: [],
+      columns: [
+        {
+          id: "A_string_Column 1",
+          name: "Column 1",
+          type: "string",
+          show: true,
+          fontStyle: {
+            font:{
+              family:"verdana,geneva,sans-serif",
+              type:"standard",
+              url:""
+            },
+            size:"18px",
+            customSize:"",
+            align:"left",
+            verticalAlign: "middle",
+            bold:false,
+            italic:false,
+            underline:false,
+            forecolor:"black",
+            backcolor:"transparent"
+          },
+          width: 100,
+          colorCondition: "none",
+          headerText: "Custom Header"
+        }
+      ],
       evenRowColor: "rgba(255, 255, 255, 0)",
       header: {
         fontStyle:{

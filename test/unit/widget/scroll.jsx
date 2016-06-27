@@ -8,18 +8,20 @@ import Table from "../../../src/widget/components/table";
 describe("<Scroll />", function() {
   const onDone = function () {},
     scroll = {},
+    align = "center",
+    className = "body_font-style",
     width = 600,
     height = 50,
     totalCols = 3,
+    rowHeight = 50,
     data = [["I am the walrus!", "1", "3"],
       ["John is dead!", "500", "32"]],
-    columnWidths = [100, 200, 300];
+    columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }];
 
   var wrapper, renderedComponent;
 
   beforeEach(function () {
-    var component = <Scroll onDone={onDone} scroll={scroll} data={data} columnWidths={columnWidths}
-      width={width} height={height} totalCols={totalCols} />;
+    var component = <Scroll onDone={onDone} scroll={scroll} data={data} align={align} class={className} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />;
 
     wrapper = shallow(component);
     renderedComponent = TestUtils.renderIntoDocument(component);
@@ -44,20 +46,20 @@ describe("<Scroll />", function() {
       expect(wrapper.find(Table).props().data).to.deep.equal(expected);
     });
 
-    it("Should have columnWidths prop", function() {
-      expect(wrapper.find(Table).props().columnWidths).to.deep.equal(columnWidths);
+    it("Should have columnFormats prop", function() {
+      expect(wrapper.find(Table).props().columnFormats).to.deep.equal(columnFormats);
     });
 
     it("Should have width prop", function() {
-      expect(wrapper.find(Table).props().width).to.equal(600);
+      expect(wrapper.find(Table).props().width).to.equal(width);
     });
 
     it("Should have height prop", function() {
-      expect(wrapper.find(Table).props().height).to.equal(50);
+      expect(wrapper.find(Table).props().height).to.equal(height);
     });
 
     it("Should have totalCols prop", function() {
-      expect(wrapper.find(Table).props().totalCols).to.equal(3);
+      expect(wrapper.find(Table).props().totalCols).to.equal(totalCols);
     });
   });
 });
