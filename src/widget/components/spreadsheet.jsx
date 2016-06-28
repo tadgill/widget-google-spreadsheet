@@ -150,15 +150,15 @@ const Spreadsheet = React.createClass({
 
     rules.push(".fixedDataTableCellLayout_main {border-style: solid; border-width: 0 " + columnBorderW +
       " " + rowBorderW + " 0; }");
-    
+
     if (params.spreadsheet.hasHeader) {
       // fill in gap between header and data tables
       rules.push(".fixedDataTableLayout_main, .public_fixedDataTable_main {margin-bottom: -2px; }");
-      
+
       if (params.format.separator.showRow) {
         // apply border color to the border that visually shows to the top of the first row of the data table
         rules.push(".public_fixedDataTable_header, .public_fixedDataTable_hasBottomBorder {border-color: " +
-          params.format.separator.color + "; }");  
+          params.format.separator.color + "; }");
       }
     }
 
@@ -175,11 +175,11 @@ const Spreadsheet = React.createClass({
       column = cell.substr(0, 1);
       row = cell.substr(1);
 
-      if (!Number.isNaN(parseInt(column, 10))) {
+      if (!isNaN(parseInt(column, 10))) {
         return null;
       }
 
-      if (Number.isNaN(parseInt(row, 10))) {
+      if (isNaN(parseInt(row, 10))) {
         return null;
       }
 
@@ -248,6 +248,8 @@ const Spreadsheet = React.createClass({
   },
 
   loadFonts: function() {
+    const { columns } = params.format;
+
     var fontSettings = [];
 
     fontSettings.push({
@@ -258,6 +260,18 @@ const Spreadsheet = React.createClass({
     fontSettings.push({
       "class": this.bodyClass,
       "fontStyle": params.format.body.fontStyle
+    });
+
+    fontSettings.push({
+      "class": this.bodyClass,
+      "fontStyle": params.format.body.fontStyle
+    });
+
+    columns.forEach(function (column, index, array) {
+      fontSettings.push({
+        "class": column.id,
+        "fontStyle": column.fontStyle
+      });
     });
 
     Common.loadFonts(fontSettings);
@@ -397,47 +411,84 @@ const Spreadsheet = React.createClass({
     };
   },
 
-  getColumnWidths: function() {
-    const { columns } = params.format,
-      columnWidthObj = this.getColumnWidthObj();
+  getColumnWidth: function(column) {
+    if ((column.width !== undefined) && (column.width !== "")) {
+      return parseInt(column.width, 10);
+    }
+    else {
+      return this.getDefaultColumnWidth();
+    }
+  },
+
+  getDefaultColumnWidth: function() {
+    const columnWidthObj = this.getColumnWidthObj();
+
+    return (params.width - columnWidthObj.width) / (this.totalCols - columnWidthObj.numCols);
+  },
+
+  getColumnAlignment: function(column) {
+    var alignment = "";
+
+    if ((column.fontStyle !== undefined) && (column.fontStyle.align !== undefined)
+      && (column.fontStyle.align !== "")) {
+      return column.fontStyle.align;
+    }
+    else {
+      return this.getDefaultColumnAlignment();
+    }
+  },
+
+  getDefaultColumnAlignment: function() {
+    return "left";
+  },
+
+  /* Get per column formatting as an object.
+   * Object format: [{id: "A", alignment: "left", width: 100}]
+   * 'width' is always returned; 'id' and 'alignment' are optionally returned.
+   */
+  getColumnFormats: function() {
+    const { columns } = params.format;
 
     var found = false,
       column = null,
-      widths = [];
+      columnFormats = [];
 
     if (columns !== undefined) {
-      // For every column...
+      // Iterate over every column.
       for (let i = 0; i < this.totalCols; i++) {
         found = false;
+        columnFormats[i] = {};
 
-        // For every column formatting option...
+        // Iterate over every column format setting.
         for (let j = 0; j < columns.length; j++) {
           column = columns[j];
 
           if (column.id === this.dataColumnIds[i]) {
-            if ((column.width !== undefined) && (column.width !== "")) {
-              widths.push(parseInt(column.width, 10));
-              found = true;
+            columnFormats[i].id = column.id;
+            columnFormats[i].alignment = this.getColumnAlignment(column);
+            columnFormats[i].width = this.getColumnWidth(column);
+            found = true;
 
-              break;
-            }
+            break;
           }
         }
 
-        // No column formatting option for this column OR no explicit width specified.
+        // No column formatting option for just this column.
         if (!found) {
-          widths.push((params.width - columnWidthObj.width) / (this.totalCols - columnWidthObj.numCols));
+          columnFormats[i].width = this.getDefaultColumnWidth();
         }
       }
     }
+    // No per column format settings.
     else {
-      // All columns have an equal width.
       for (let i = 0; i < this.totalCols; i++) {
-        widths.push(params.width / this.totalCols);
+        columnFormats[i] = {};
+        // Equal width columns.
+        columnFormats[i].width = params.width / this.totalCols;
       }
     }
 
-    return widths;
+    return columnFormats;
   },
 
   setColumnCount: function() {
@@ -559,12 +610,8 @@ const Spreadsheet = React.createClass({
 
   render: function() {
     if (this.state.data) {
-      let columnWidths = [];
-
       this.setColumnCount();
       this.setDataColumnIds();
-
-      columnWidths = this.getColumnWidths();
 
       return(
         <div id="table">
@@ -572,9 +619,9 @@ const Spreadsheet = React.createClass({
           <TableHeaderContainer
             align={params.format.header.fontStyle.align}
             data={this.getHeaders()}
-            columnWidths={columnWidths}
+            width={params.width}
             height={params.format.rowHeight}
-            width={params.width} />
+            columnFormats={this.getColumnFormats()} />
             : false}
           {this.canRenderBody() ?
             <Scroll
@@ -582,13 +629,13 @@ const Spreadsheet = React.createClass({
               onDone={this.done}
               scroll={params.scroll}
               data={this.getRows()}
-              columnWidths={columnWidths}
               align={params.format.body.fontStyle.align}
               class={this.bodyClass}
               totalCols={this.totalCols}
               rowHeight={params.format.rowHeight}
               width={params.width}
-              height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height} />
+              height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height}
+              columnFormats={this.getColumnFormats()} />
           : false}
         </div>
       );

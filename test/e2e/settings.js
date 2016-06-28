@@ -81,14 +81,6 @@
         expect(element(by.model("settings.additionalParams.format.rowHeight")).getAttribute('value')).to.eventually.equal("50");
       });
 
-      it("Should set default for even row color", function () {
-        expect(element(by.model("settings.additionalParams.format.evenRowColor")).getAttribute("value")).to.eventually.equal("rgba(255, 255, 255, 0)");
-      });
-
-      it("Should set default for odd row color", function () {
-        expect(element(by.model("settings.additionalParams.format.oddRowColor")).getAttribute("value")).to.eventually.equal("rgba(255, 255, 255, 0)");
-      });
-
       it("Should not show Header Font Setting component", function () {
         expect(element(by.css("#header-font .font-setting")).isPresent()).to.eventually.be.false;
       });
@@ -298,7 +290,7 @@
                 }
               },
               columns: [],
-              evenRowColor: "rgba(255, 255, 255, 0)",
+              evenRowColor: "",
               header: {
                 fontStyle:{
                   font:{
@@ -317,7 +309,7 @@
                   backcolor:"transparent"
                 }
               },
-              oddRowColor: "rgba(255, 255, 255, 0)",
+              oddRowColor: "",
               rowHeight: 50,
               separator: {
                 color: "rgba(238,238,238, 1)",

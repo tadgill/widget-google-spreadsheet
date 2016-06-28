@@ -13591,7 +13591,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           }
         },
         columns: [],
-        evenRowColor: "rgba(255, 255, 255, 0)",
+        evenRowColor: "",
         header: {
           fontStyle:{
             font:{
@@ -13610,13 +13610,12 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             backcolor:"transparent"
           }
         },
-        oddRowColor: "rgba(255, 255, 255, 0)",
+        oddRowColor: "",
         rowHeight: 50,
         separator: {
           color: "rgba(238,238,238, 1)",
           showColumn: true,
-          showRow: true,
-          size: 1
+          showRow: true
         }
       },
       scroll: {},

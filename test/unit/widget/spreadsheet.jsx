@@ -76,7 +76,8 @@ describe("<Spreadsheet />", function() {
       }
     }],
     cells = cols.concat(data),
-    additionalParams = window.gadget.settings.additionalParams;
+    additionalParams = window.gadget.settings.additionalParams,
+    columnsParam = additionalParams.format.columns;
 
   var propHandlers = {
     initSize: function(width, height) {},
@@ -113,10 +114,11 @@ describe("<Spreadsheet />", function() {
       expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
     });
 
-    it("Should have columnWidths prop", function() {
-      var expected = [additionalParams.format.columns[0].width, 250, 250];
+    it("Should have columnFormats prop", function() {
+      var expected = [{ id: "A", alignment: "left", width: additionalParams.format.columns[0].width},
+        { width: 250 }, { width: 250 }];
 
-      expect(wrapper.find(TableHeaderContainer).props().columnWidths).to.deep.equal(expected);
+      expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
     });
 
     it("Should have height prop", function() {
@@ -156,10 +158,11 @@ describe("<Spreadsheet />", function() {
       wrapper.setState({ data: cells });
     });
 
-    it("Should have columnWidths prop", function() {
-      var expected = [additionalParams.format.columns[0].width, 250, 250];
+    it("Should have columnFormats prop", function() {
+      var expected = [{ id: "A", alignment: "left", width: additionalParams.format.columns[0].width},
+        { width: 250 }, { width: 250 }];
 
-      expect(wrapper.find(Scroll).props().columnWidths).to.deep.equal(expected);
+      expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
     });
   });
 
@@ -278,57 +281,68 @@ describe("<Spreadsheet />", function() {
   });
 
   describe("Column formatting", function() {
-    it("Should use default header text if custom header text is empty", function() {
-      var expected = ["Column 1", "Column 2", "Column 3" ];
 
-      additionalParams.format.columns[0].headerText = "";
-      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
-                                   showMessage={propHandlers.showMessage}
-                                   hideMessage={propHandlers.hideMessage} />);
+    describe("Header text", function() {
+      it("Should use default header text if custom header text is empty", function() {
+        var expected = ["Column 1", "Column 2", "Column 3" ];
 
-      wrapper.setState({ data: cells });
+        additionalParams.format.columns[0].headerText = "";
+        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                     showMessage={propHandlers.showMessage}
+                                     hideMessage={propHandlers.hideMessage} />);
 
-      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+        wrapper.setState({ data: cells });
+
+        expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+      });
+
+      it("should use default header text if column formatting is not defined", function() {
+        var expected = ["Column 1", "Column 2", "Column 3" ];
+
+        additionalParams.format.columns = [];
+        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                     showMessage={propHandlers.showMessage}
+                                     hideMessage={propHandlers.hideMessage} />);
+
+        wrapper.setState({ data: cells });
+
+        expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+      });
     });
 
-    it("Should use calculated column widths if custom width is empty", function() {
-      var expected = [200, 200, 200];
+    describe("columnFormats prop", function() {
+      it("Should return id and alignment for those columns with column formatting and should " +
+        "always return the width", function() {
+        var expected = [{ id: "A", alignment: "left", width: 100 }, { width: 250 }, { width: 250 }];
 
-      additionalParams.format.columns[0].width = "";
-      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
-                                   showMessage={propHandlers.showMessage}
-                                   hideMessage={propHandlers.hideMessage} />);
+        additionalParams.format.columns = columnsParam;
 
-      wrapper.setState({ data: cells });
+        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                     showMessage={propHandlers.showMessage}
+                                     hideMessage={propHandlers.hideMessage} />);
 
-      expect(wrapper.find(TableHeaderContainer).props().columnWidths).to.deep.equal(expected);
-      expect(wrapper.find(Scroll).props().columnWidths).to.deep.equal(expected);
+        wrapper.setState({ data: cells });
+
+        expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
+        expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
+      });
+
+      it("Should not return id or alignment if column formatting is not defined but should return " +
+        "equal width columns", function() {
+        var expected = [{ width: 200 }, { width: 200 }, { width: 200 }];
+
+        additionalParams.format.columns = [];
+
+        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                     showMessage={propHandlers.showMessage}
+                                     hideMessage={propHandlers.hideMessage} />);
+
+        wrapper.setState({ data: cells });
+
+        expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
+        expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
+      });
     });
 
-    it("should use default header text if column formatting is not defined", function() {
-      var expected = ["Column 1", "Column 2", "Column 3" ];
-
-      delete additionalParams.format.columns;
-      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
-                                   showMessage={propHandlers.showMessage}
-                                   hideMessage={propHandlers.hideMessage} />);
-
-      wrapper.setState({ data: cells });
-
-      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
-    });
-
-    it("Should use calculated column widths if column formatting is not defined", function() {
-      var expected = [200, 200, 200];
-
-      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
-                                   showMessage={propHandlers.showMessage}
-                                   hideMessage={propHandlers.hideMessage} />);
-
-      wrapper.setState({ data: cells });
-
-      expect(wrapper.find(TableHeaderContainer).props().columnWidths).to.deep.equal(expected);
-      expect(wrapper.find(Scroll).props().columnWidths).to.deep.equal(expected);
-    });
   });
 });

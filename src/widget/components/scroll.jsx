@@ -46,14 +46,14 @@ const Scroll = React.createClass({
       <div id="scroll" ref="scroll">
         <section className="page" ref="page">
             <Table
-                data={this.props.data}
-                columnWidths={this.props.columnWidths}
-                align={this.props.align}
-                class={this.props.class}
-                totalCols={this.props.totalCols}
-                rowHeight={this.props.rowHeight}
-                width={this.props.width}
-                height={this.props.height} />
+              data={this.props.data}
+              align={this.props.align}
+              class={this.props.class}
+              totalCols={this.props.totalCols}
+              rowHeight={this.props.rowHeight}
+              width={this.props.width}
+              height={this.props.height}
+              columnFormats={this.props.columnFormats} />
         </section>
       </div>
     );

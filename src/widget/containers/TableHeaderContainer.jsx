@@ -3,6 +3,33 @@ import { Column, Cell } from "fixed-data-table";
 import TableHeader from "../components/TableHeader";
 
 const TableHeaderContainer = React.createClass({
+  getAlignment: function(index) {
+    var { align, columnFormats } = this.props;
+
+    // Column formatting overrides header formatting.
+    if (columnFormats[index].alignment) {
+      return columnFormats[index].alignment;
+    }
+    else if (align) {
+      return align;
+    }
+    else {
+      return "left";
+    }
+  },
+
+  getClassName: function(index) {
+    var { columnFormats } = this.props;
+
+    // Column formatting overrides header formatting.
+    if (columnFormats[index].id) {
+      return columnFormats[index].id;
+    }
+    else {
+      return "header_font-style";
+    }
+  },
+
   getColumns: function() {
     var cols = [];
 
@@ -10,9 +37,9 @@ const TableHeaderContainer = React.createClass({
       cols.push(
         <Column
           key={i}
-          header={<Cell className="header_font-style">{this.props.data[i]}</Cell>}
-          width={this.props.columnWidths[i]}
-          align={this.getColumnAlignment()}
+          header={<Cell className={this.getClassName(i)}>{this.props.data[i]}</Cell>}
+          width={this.props.columnFormats[i].width}
+          align={this.getAlignment(i)}
         />
       );
     }
@@ -20,23 +47,13 @@ const TableHeaderContainer = React.createClass({
     return cols;
   },
 
-  getColumnAlignment: function() {
-    var alignment = this.props.align;
-
-    if (!alignment) {
-      alignment = "left";
-    }
-
-    return alignment;
-  },
-
   render: function () {
     const { height, width } = this.props;
 
     return(
       <TableHeader
-        height={height}
-        width={width}>
+        width={width}
+        height={height}>
         {this.getColumns()}
       </TableHeader>
     );

@@ -4,6 +4,8 @@ import { expect } from "chai";
 import Main from "../../../src/widget/components/main";
 import Spreadsheet from "../../../src/widget/components/spreadsheet";
 import MessageContainer from "../../../src/widget/containers/MessageContainer";
+import "widget-tester/mocks/gadget-mocks";
+import "../../data/spreadsheet";
 
 describe("<Main />", function() {
 
