@@ -11,17 +11,17 @@ describe("<Table />", function() {
     totalCols = 3,
     rowHeight = 50,
     cellClassName = "body_font-style",
-    data = [["I am the walrus!", "1", "3"],
+    data = [["I am the<br> walrus!", "1", "3"],
       ["John is dead!", "500", "32"]];
 
   var columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }],
     wrapper;
 
-  beforeEach(function () {
-    wrapper = shallow(<Table data={data} align={align} class={cellClassName} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-  });
-
   describe("<ResponsiveFixedDataTable />", function() {
+    beforeEach(function () {
+      wrapper = shallow(<Table data={data} align={align} class={cellClassName} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+    });
+
     it("Should have rowHeight prop", function() {
       expect(wrapper.props().rowHeight).to.be.equal(50);
     });
@@ -52,6 +52,10 @@ describe("<Table />", function() {
   });
 
   describe("<Column />", function() {
+    beforeEach(function () {
+      wrapper = shallow(<Table data={data} align={align} class={cellClassName} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+    });
+
     it("Should have key prop", function() {
       expect(wrapper.props().children[0].key).to.equal("0");
     });
@@ -89,9 +93,15 @@ describe("<Table />", function() {
     });
 
     describe("<Cell />", function() {
-      it("Should use className from class prop", function() {
+      beforeEach(function () {
         wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+      });
 
+      it("Should set cell text", function() {
+        expect(wrapper.find("span").at(0).text()).to.equal("I am the walrus!");
+      });
+
+      it("Should use className from class prop", function() {
         expect(wrapper.find(Cell).last().props().className).to.equal(cellClassName);
       });
 

@@ -6,6 +6,12 @@ import ResponsiveFixedDataTable from "responsive-fixed-data-table";
 
 const Table = React.createClass({
 
+  createMarkup: function(html) {
+    return {
+      __html: html
+    }
+  },
+
   getRowClassName: function(index) {
     // add 1 to index value so the first row is considered odd
     return ((index + 1) % 2) ? "odd" : "even";
@@ -55,7 +61,7 @@ const Table = React.createClass({
               height={props.height}
               className={this.getClassName(props.columnKey)}
               columnKey={props.columnKey}>
-              {this.props.data[props.rowIndex][props.columnKey]}
+              <span dangerouslySetInnerHTML={this.createMarkup(this.props.data[props.rowIndex][props.columnKey])}></span>
             </Cell>
           )}
         />
