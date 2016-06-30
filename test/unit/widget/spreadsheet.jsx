@@ -115,8 +115,21 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have columnFormats prop", function() {
-      var expected = [{ id: "A", alignment: "left", width: additionalParams.format.columns[0].width},
-        { width: 250 }, { width: 250 }];
+      var expected = [
+        {
+          id: "A",
+          numeric: false,
+          alignment: "left",
+          width: additionalParams.format.columns[0].width,
+          colorCondition: "none"
+        },
+        {
+          width: 250
+        },
+        {
+          width: 250
+        }
+      ];
 
       expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
     });
@@ -132,7 +145,7 @@ describe("<Spreadsheet />", function() {
 
   describe("No <TableHeaderContainer />", function() {
     beforeEach(function () {
-     additionalParams.spreadsheet.hasHeader = false;
+      additionalParams.spreadsheet.hasHeader = false;
       wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                    showMessage={propHandlers.showMessage}
                                    hideMessage={propHandlers.hideMessage} />);
@@ -159,8 +172,21 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have columnFormats prop", function() {
-      var expected = [{ id: "A", alignment: "left", width: additionalParams.format.columns[0].width},
-        { width: 250 }, { width: 250 }];
+      var expected = [
+        {
+          id: "A",
+          numeric: false,
+          alignment: "left",
+          width: additionalParams.format.columns[0].width,
+          colorCondition: "none"
+        },
+        {
+          width: 250
+        },
+        {
+          width: 250
+        }
+      ];
 
       expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
     });
@@ -269,7 +295,7 @@ describe("<Spreadsheet />", function() {
         "event": "error",
         "event_details": "spreadsheet not published",
         "error_details": "error",
-        "url": window.gadget.settings.additionalParams.spreadsheet.url
+        "url": additionalParams.spreadsheet.url
       };
 
       event.initEvent("rise-google-sheet-error", true, true);
@@ -281,6 +307,10 @@ describe("<Spreadsheet />", function() {
   });
 
   describe("Column formatting", function() {
+
+    afterEach(function() {
+      additionalParams.format.columns = columnsParam;
+    });
 
     describe("Header text", function() {
       it("Should use default header text if custom header text is empty", function() {
@@ -311,11 +341,23 @@ describe("<Spreadsheet />", function() {
     });
 
     describe("columnFormats prop", function() {
-      it("Should return id and alignment for those columns with column formatting and should " +
-        "always return the width", function() {
-        var expected = [{ id: "A", alignment: "left", width: 100 }, { width: 250 }, { width: 250 }];
-
-        additionalParams.format.columns = columnsParam;
+      it("Should set all properties for those columns with formatting applied and should set the " +
+        "width of all other columns", function() {
+        var expected = [
+          {
+            id: "A",
+            numeric: false,
+            alignment: "left",
+            width: 100,
+            colorCondition: "none"
+          },
+          {
+            width: 250
+          },
+          {
+            width: 250
+          }
+        ];
 
         wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                      showMessage={propHandlers.showMessage}
@@ -327,8 +369,8 @@ describe("<Spreadsheet />", function() {
         expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
       });
 
-      it("Should not return id or alignment if column formatting is not defined but should return " +
-        "equal width columns", function() {
+      it("Should return equal width columns if column formatting is not defined on any " +
+        "columns", function() {
         var expected = [{ width: 200 }, { width: 200 }, { width: 200 }];
 
         additionalParams.format.columns = [];
@@ -342,6 +384,36 @@ describe("<Spreadsheet />", function() {
         expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
         expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
       });
+
+      it("Should return numeric property as defined by params", function() {
+        var expected = [
+          {
+            id: "A",
+            numeric: true,
+            alignment: "left",
+            width: 100,
+            colorCondition: "none"
+          },
+          {
+            width: 250
+          },
+          {
+            width: 250
+          }
+        ];
+
+        additionalParams.format.columns[0].numeric = true;
+
+        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+                                     showMessage={propHandlers.showMessage}
+                                     hideMessage={propHandlers.hideMessage} />);
+
+        wrapper.setState({ data: cells });
+
+        expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
+        expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
+      });
+
     });
 
   });

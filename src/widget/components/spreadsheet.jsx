@@ -464,9 +464,13 @@ const Spreadsheet = React.createClass({
           column = columns[j];
 
           if (column.id === this.dataColumnIds[i]) {
-            columnFormats[i].id = column.id;
-            columnFormats[i].alignment = this.getColumnAlignment(column);
-            columnFormats[i].width = this.getColumnWidth(column);
+            const columnFormat = columnFormats[i];
+
+            columnFormat.id = column.id;
+            columnFormat.numeric = column.numeric ? column.numeric : false;
+            columnFormat.alignment = this.getColumnAlignment(column);
+            columnFormat.width = this.getColumnWidth(column);
+            columnFormat.colorCondition = column.colorCondition;
             found = true;
 
             break;

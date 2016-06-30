@@ -68,3 +68,11 @@ html, body, #app, #main, #scroll, #table {
 .hide {
   display: none;
 }
+
+.green {
+  color: rgb(0,255,0) !important;
+}
+
+.red {
+  color: rgb(255,0,0) !important;
+}

@@ -10,11 +10,11 @@ describe("<Table />", function() {
     height = 50,
     totalCols = 3,
     rowHeight = 50,
-    cellClassName = "body_font-style",
-    data = [["I am the<br> walrus!", "1", "3"],
-      ["John is dead!", "500", "32"]];
+    cellClassName = "body_font-style";
 
-  var columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }],
+  var data = [["I am the<br> walrus!", "1", "-3"],
+      ["John is dead!", "500", "-32"]],
+    columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }],
     wrapper;
 
   describe("<ResponsiveFixedDataTable />", function() {
@@ -93,15 +93,18 @@ describe("<Table />", function() {
     });
 
     describe("<Cell />", function() {
-      beforeEach(function () {
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-      });
 
       it("Should set cell text", function() {
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
         expect(wrapper.find("span").at(0).text()).to.equal("I am the walrus!");
       });
 
       it("Should use className from class prop", function() {
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
         expect(wrapper.find(Cell).last().props().className).to.equal(cellClassName);
       });
 
@@ -112,10 +115,79 @@ describe("<Table />", function() {
           { "id": "A", "width": 300 }
         ];
 
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
 
         expect(wrapper.find(Cell).last().props().className).to.equal(columnFormats[2].id);
       });
+
+      it("Should add 'green' class for a positive number when condition is 'value-positive'", function() {
+        columnFormats = [
+          { width: 100 },
+          { id: "A", width: 200, numeric: true, colorCondition: "value-positive" },
+          { width: 300 }
+        ];
+
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
+        expect(wrapper.find(Cell).at(4).props().className).to.equal("A green");
+      });
+
+      it("Should add 'red' class for a negative number when condition is 'value-positive'", function() {
+        columnFormats = [
+          { width: 100 },
+          { width: 200 },
+          { id: "A", width: 300, numeric: true, colorCondition: "value-positive" }
+        ];
+
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
+        expect(wrapper.find(Cell).at(5).props().className).to.equal("A red");
+      });
+
+
+      it("Should add 'red' class for a positive number when condition is 'value-negative'", function() {
+        columnFormats = [
+          { width: 100 },
+          { id: "A", width: 200, numeric: true, colorCondition: "value-negative" },
+          { width: 300 }
+        ];
+
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
+        expect(wrapper.find(Cell).at(4).props().className).to.equal("A red");
+      });
+
+      it("Should add 'green' class for a negative number when condition is 'value-negative'", function() {
+        columnFormats = [
+          { width: 100 },
+          { width: 200 },
+          { id: "A", width: 300, numeric: true, colorCondition: "value-negative" }
+        ];
+
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
+        expect(wrapper.find(Cell).at(5).props().className).to.equal("A green");
+      });
+
+
+      it("Should not add color condition class if value is not a number", function() {
+        columnFormats = [
+          { id: "A", width: 100, numeric: true, colorCondition: "value-positive" },
+          { width: 200 },
+          { width: 300 }
+        ];
+
+        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
+          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
+
+        expect(wrapper.find(Cell).at(3).props().className).to.equal("A");
+      });
+
     });
   });
 });
