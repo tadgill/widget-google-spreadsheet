@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spreadsheet Widget</title>
+
+  <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../src/components/web-component-tester/browser.js"></script>
+  <script src="../../src/components/Canteen/build/canteen.min.js"></script>
+
+  <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
+  <link href="../../dist/css/spreadsheet.css" rel="stylesheet"></head>
+
+
+</head>
+<body>
+
+<div id="mainContainer"></div>
+
+<rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
+
+<script src="../data/spreadsheet-integration-scroll-left.js"></script>
+<script src="../data/cells.js"></script>
+<script src="../data/sheets.js"></script>
+
+<script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
+
+<script>
+
+  var clock, paramsStub, server, context, json, scroller;
+
+  var googleSheet = document.querySelector("rise-google-sheet");
+
+  paramsStub = sinon.stub(googleSheet, "go", function () {
+    // need to set the fake timer clock before any of the code within setAdditionalParams is executed
+    clock = sinon.useFakeTimers();
+    server = sinon.fakeServer.create();
+    server.respondImmediately = true;
+
+    server.respondWith("GET", "https://spreadsheets.google.com/feeds/cells/xxxxxxxxxx/1/public/full?alt=json",
+      [200, { "Content-Type": "application/json" },
+        JSON.stringify(sheetData)]);
+
+    // restore the function
+    paramsStub.restore();
+    // call it again with the params
+    googleSheet.go();
+  });
+
+
+  suite("Horizontal Scroll", function() {
+    suiteSetup(function() {
+
+      clock.tick(6000000);
+      var secondary = document.querySelector("#secondary");
+
+      context = secondary.getContext("2d");
+      json = JSON.parse(context.json());
+      scroller = document.querySelector("#scroller");
+    });
+
+    suiteTeardown(function() {
+      clock.restore();
+      server.restore();
+    });
+
+    test("should show scroller", function () {
+      assert.equal(window.getComputedStyle(scroller).visibility, "visible");
+    });
+
+    test("should start scrolling", function () {
+      var ctx = scroller.getContext("2d");
+
+      assert.isBelow(ctx.xpos, 0);
+    });
+
+    test("should scroll RSS feed data", function() {
+      assert.equal(json[5].arguments[0], "Apple Fruit 23 Orange Fruit 44 ");
+    });
+
+    test("should refresh scroller after content has finished scrolling", function (done) {
+      context.clear();
+
+      var responseHandler = function() {
+        json = JSON.parse(context.json());
+
+        assert.equal(json[5].arguments[0], "Apple Fruit 23 Orange Fruit 44 ", "text");
+
+        scroller.removeEventListener("done", responseHandler);
+        done();
+      }
+
+      googleSheet.go();
+
+      this.timeout(30000);
+      scroller.addEventListener("done", responseHandler);
+    });
+  });
+
+
+</script>
+
+</body>
+</html>

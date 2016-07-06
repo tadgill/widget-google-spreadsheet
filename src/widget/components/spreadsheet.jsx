@@ -612,6 +612,10 @@ const Spreadsheet = React.createClass({
     return this.getRowCount() > 1;
   },
 
+  showHeader: function() {
+    return params.spreadsheet.hasHeader && !(params.scroll.direction == "left");
+  },
+
   render: function() {
     if (this.state.data) {
       this.setColumnCount();
@@ -619,7 +623,7 @@ const Spreadsheet = React.createClass({
 
       return(
         <div id="table">
-        {params.spreadsheet.hasHeader ?
+        {this.showHeader() ?
           <TableHeaderContainer
             align={params.format.header.fontStyle.align}
             data={this.getHeaders()}
@@ -639,6 +643,7 @@ const Spreadsheet = React.createClass({
               rowHeight={params.format.rowHeight}
               width={params.width}
               height={params.spreadsheet.hasHeader ? params.height - params.format.rowHeight : params.height}
+              bodyFontStyle={params.format.body.fontStyle}
               columnFormats={this.getColumnFormats()} />
           : false}
         </div>
