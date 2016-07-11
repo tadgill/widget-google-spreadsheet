@@ -12852,7 +12852,8 @@ module.run(["$templateCache", function($templateCache) {
       return {
         restrict: "E",
         scope: {
-          scroll: "="
+          scroll: "=",
+          hideDirection: "@"
         },
         template: $templateCache.get("_angular/scroll-setting/scroll-setting.html"),
         transclude: false,
@@ -12905,7 +12906,7 @@ module.run(["$templateCache", function($templateCache) {
     "      </select>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div class=\"col-md-2\" ng-show=\"scroll.by != 'none'\">\n" +
+    "  <div class=\"col-md-2\" ng-show=\"!hideDirection && scroll.by == 'continuous'\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label class=\"control-label\">{{\"transition.direction.label\" | translate}}</label>\n" +
     "      <select id=\"scroll-direction\" name=\"scroll-direction\" ng-model=\"scroll.direction\" class=\"form-control\">\n" +
@@ -12924,7 +12925,7 @@ module.run(["$templateCache", function($templateCache) {
     "      </select>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div class=\"col-md-2\" ng-show=\"scroll.by != 'none' && scroll.direction == 'up'\">\n" +
+    "  <div class=\"col-md-2\" ng-show=\"scroll.by != 'none' && scroll.direction != 'left'\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label class=\"control-label\">{{'scroll.pause.label' | translate}}</label>\n" +
     "      <div class=\"input-group\">\n" +
@@ -12933,7 +12934,7 @@ module.run(["$templateCache", function($templateCache) {
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
-    "  <div class=\"col-md-2\" ng-show=\"scroll.by != 'none' && scroll.direction == 'up'\">\n" +
+    "  <div class=\"col-md-2\" ng-show=\"scroll.by != 'none' && scroll.direction != 'left'\">\n" +
     "    <div class=\"form-group\">\n" +
     "      <label class=\"control-label\">{{'scroll.pud.label' | translate}}</label>\n" +
     "      <span popover=\"{{'scroll.pud.tooltip' | translate}}\" popover-trigger=\"click\"\n" +
