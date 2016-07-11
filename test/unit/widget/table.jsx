@@ -1,8 +1,9 @@
 import React from "react";
 import { shallow, mount } from "enzyme";
 import { expect } from "chai";
-import { Column, Cell } from "fixed-data-table";
+import { Column } from "fixed-data-table";
 import Table from "../../../src/widget/components/table";
+import CellContainer from "../../../src/widget/containers/CellContainer";
 
 describe("<Table />", function() {
   const align = "center",
@@ -92,100 +93,27 @@ describe("<Table />", function() {
       });
     });
 
-    describe("<Cell />", function() {
+    describe("<CellContainer />", function() {
 
-      it("Should set cell text", function() {
+      beforeEach(function () {
         wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find("span").at(0).text()).to.equal("I am the walrus!");
+                               rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
       });
 
-      it("Should use className from class prop", function() {
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).last().props().className).to.equal(cellClassName);
+      it("Should have data prop", function() {
+        expect(wrapper.find(CellContainer).last().props().data).to.equal("-3");
+      });
+      
+      it("Should have mainClass prop", function() {
+        expect(wrapper.find(CellContainer).last().props().mainClass).to.equal(cellClassName);
       });
 
-      it("Should use className from columnFormats prop", function() {
-        columnFormats = [
-          { "width": 100 },
-          { "width": 200 },
-          { "id": "A", "width": 300 }
-        ];
-
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).last().props().className).to.equal(columnFormats[2].id);
+      it("Should have columnFormats prop", function() {
+        expect(wrapper.find(CellContainer).last().props().columnFormats).to.deep.equal(columnFormats);
       });
 
-      it("Should add 'green' class for a positive number when condition is 'value-positive'", function() {
-        columnFormats = [
-          { width: 100 },
-          { id: "A", width: 200, numeric: true, colorCondition: "value-positive" },
-          { width: 300 }
-        ];
-
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).at(4).props().className).to.equal("A green");
-      });
-
-      it("Should add 'red' class for a negative number when condition is 'value-positive'", function() {
-        columnFormats = [
-          { width: 100 },
-          { width: 200 },
-          { id: "A", width: 300, numeric: true, colorCondition: "value-positive" }
-        ];
-
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).at(5).props().className).to.equal("A red");
-      });
-
-
-      it("Should add 'red' class for a positive number when condition is 'value-negative'", function() {
-        columnFormats = [
-          { width: 100 },
-          { id: "A", width: 200, numeric: true, colorCondition: "value-negative" },
-          { width: 300 }
-        ];
-
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).at(4).props().className).to.equal("A red");
-      });
-
-      it("Should add 'green' class for a negative number when condition is 'value-negative'", function() {
-        columnFormats = [
-          { width: 100 },
-          { width: 200 },
-          { id: "A", width: 300, numeric: true, colorCondition: "value-negative" }
-        ];
-
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).at(5).props().className).to.equal("A green");
-      });
-
-
-      it("Should not add color condition class if value is not a number", function() {
-        columnFormats = [
-          { id: "A", width: 100, numeric: true, colorCondition: "value-positive" },
-          { width: 200 },
-          { width: 300 }
-        ];
-
-        wrapper = mount(<Table data={data} align={align} class={cellClassName} totalCols={totalCols}
-          rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />);
-
-        expect(wrapper.find(Cell).at(3).props().className).to.equal("A");
+      it("Should have columnKey prop", function() {
+        expect(wrapper.find(CellContainer).last().props().columnKey).to.equal(2);
       });
 
     });
