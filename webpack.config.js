@@ -30,7 +30,6 @@ if (env === "prod") {
 module.exports = {
   entry: [
     "./src/components/widget-common/dist/common.js",
-    "./src/components/widget-common/dist/scroller.js",
     "./src/components/widget-common/dist/logger.js",
     "./src/components/auto-scroll/jquery.auto-scroll.js",
     "./src/components/gsap/src/uncompressed/utils/Draggable.js",
@@ -73,16 +72,8 @@ module.exports = {
         loader: "exports?RiseVision.Common.LoggerUtils"
       },
       {
-        test: require.resolve(__dirname + "/src/components/widget-common/dist/scroller"),
-        loader: "imports?RiseVision=>{Common:{Utilities:require('./common')}}"
-      },
-      {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/common"),
         loader: "exports?RiseVision.Common.Utilities"
-      },
-      {
-        test: require.resolve(__dirname + "/src/components/widget-common/dist/scroller"),
-        loader: "exports?RiseVision.Common.Scroller"
       },
       {
         test: require.resolve(__dirname + "/src/components/auto-scroll/jquery.auto-scroll"),

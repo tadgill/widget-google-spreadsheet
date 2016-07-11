@@ -3,10 +3,9 @@ import { shallow } from "enzyme";
 import { expect } from "chai";
 import TestUtils from "react-addons-test-utils";
 import Scroll from "../../../src/widget/components/scroll";
-import Vertical from "../../../src/widget/components/vertical";
-import Horizontal from "../../../src/widget/components/horizontal";
+import Table from "../../../src/widget/components/table";
 
-describe("<Vertical />", function() {
+describe("<Scroll />", function() {
   const onDone = function () {},
     scroll = {},
     align = "center",
@@ -17,91 +16,50 @@ describe("<Vertical />", function() {
     rowHeight = 50,
     data = [["I am the walrus!", "1", "3"],
       ["John is dead!", "500", "32"]],
-    columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }],
-    bodyFontStyle={
-                   font:{
-                     family:"verdana,geneva,sans-serif",
-                     type:"standard",
-                     url:""
-                   },
-                   size:"18px",
-                   customSize:"",
-                   align:"left",
-                   verticalAlign: "bottom",
-                   bold:false,
-                   italic:false,
-                   underline:false,
-                   forecolor:"black",
-                   backcolor:"transparent"
-                 };
+    columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }];
 
-  var wrapper;
+  var wrapper, renderedComponent;
 
-  describe("<Vertical />", function() {
+  beforeEach(function () {
+    var component = <Scroll onDone={onDone} scroll={scroll} data={data} align={align} class={className} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />;
 
-    beforeEach(function () {
-      scroll.direction = "up"
-      var component = <Scroll onDone={onDone} scroll={scroll} data={data} align={align} class={className} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} bodyFontStyle={bodyFontStyle}/>;
+    wrapper = shallow(component);
+    renderedComponent = TestUtils.renderIntoDocument(component);
 
-      wrapper = shallow(component);
+  });
+
+  describe("Page", function() {
+    it("Should set the page class to the section element", function() {
+      expect(renderedComponent.refs.page.className).to.equal("page");
     });
+  });
 
-    it("Should contain a Vertical component", function() {
-      expect(wrapper.find(Vertical)).to.have.length(1);
+
+  describe("<Table />", function() {
+    it("Should contain a Table component", function() {
+      expect(wrapper.find(Table)).to.have.length(1);
     });
 
     it("Should have data prop", function() {
       var expected = [["I am the walrus!", "1", "3"],
                            ["John is dead!", "500", "32"]];
-      expect(wrapper.find(Vertical).props().data).to.deep.equal(expected);
+      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
     });
 
     it("Should have columnFormats prop", function() {
-      expect(wrapper.find(Vertical).props().columnFormats).to.deep.equal(columnFormats);
+      expect(wrapper.find(Table).props().columnFormats).to.deep.equal(columnFormats);
     });
 
     it("Should have width prop", function() {
-      expect(wrapper.find(Vertical).props().width).to.equal(width);
+      expect(wrapper.find(Table).props().width).to.equal(width);
     });
 
     it("Should have height prop", function() {
-      expect(wrapper.find(Vertical).props().height).to.equal(height);
+      expect(wrapper.find(Table).props().height).to.equal(height);
     });
 
     it("Should have totalCols prop", function() {
-      expect(wrapper.find(Vertical).props().totalCols).to.equal(totalCols);
+      expect(wrapper.find(Table).props().totalCols).to.equal(totalCols);
     });
   });
-
-  describe("<Horizontal />", function() {
-
-      beforeEach(function () {
-        scroll.direction = "left"
-        var component = <Scroll onDone={onDone} scroll={scroll} data={data} align={align} class={className} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} bodyFontStyle={bodyFontStyle}/>;
-
-        wrapper = shallow(component);
-      });
-
-      it("Should contain a Horizontal component", function() {
-        expect(wrapper.find(Horizontal)).to.have.length(1);
-      });
-
-      it("Should have data prop", function() {
-        var expected = [["I am the walrus!", "1", "3"],
-                             ["John is dead!", "500", "32"]];
-        expect(wrapper.find(Horizontal).props().data).to.deep.equal(expected);
-      });
-
-      it("Should have columnFormats prop", function() {
-        expect(wrapper.find(Horizontal).props().bodyFontStyle).to.deep.equal(bodyFontStyle);
-      });
-
-      it("Should have width prop", function() {
-        expect(wrapper.find(Horizontal).props().width).to.equal(width);
-      });
-
-      it("Should have height prop", function() {
-        expect(wrapper.find(Horizontal).props().height).to.equal(height);
-      });
-    });
 });

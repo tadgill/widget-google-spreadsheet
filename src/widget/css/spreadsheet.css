@@ -34,7 +34,7 @@ body {
   background-color: transparent;
 }
 
-html, body, #app, #main, #scroll, #scroller, #table {
+html, body, #app, #main, #scroll, #table {
   height: 100%;
 }
 
