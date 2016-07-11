@@ -264,21 +264,6 @@
       });
     });
 
-    describe("Scrolling Selection", function () {
-
-      it("Should hide element when selecting left direction", function () {
-
-        element(by.cssContainingText('option', 'scroll.by.continuous')).click().then(function () {
-          element(by.cssContainingText('option', 'transition.direction.left')).click().then(function () {
-            expect(element(by.model("settings.additionalParams.spreadsheet.hasHeader")).isPresent()).to.eventually.be.false;
-            expect(element(by.id("formatSection")).isPresent()).to.eventually.be.false;
-            expect(element(by.id("headerFormat")).isPresent()).to.eventually.be.false;
-            expect(element(by.id("columnFormat")).isPresent()).to.eventually.be.false;
-          });
-        });
-      });
-    });
-
     describe("Saving", function () {
 
       it("Should correctly save settings", function () {

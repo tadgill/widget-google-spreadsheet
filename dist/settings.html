@@ -104,7 +104,7 @@
           </div>
 
 
-          <div class="checkbox" ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <div class="checkbox">
             <label class="control-label">
               <input type="checkbox" name="hasHeader" ng-model="settings.additionalParams.spreadsheet.hasHeader"><strong>{{ "widget-google-spreadsheet.spreadsheet.first-row-as-header" | translate }}</strong></input>
             </label>
@@ -167,11 +167,11 @@
 
           <hr>
 
-          <h4 ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">{{ "widget-google-spreadsheet.format.heading" | translate}}</h4>
+          <h4>{{ "widget-google-spreadsheet.format.heading" | translate}}</h4>
 
-          <h5 ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">{{ "widget-google-spreadsheet.format.spreadsheet" | translate}}</h5>
+          <h5>{{ "widget-google-spreadsheet.format.spreadsheet" | translate}}</h5>
 
-          <div id="formatSection" class="section" ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <div class="section">
             <div class="row">
               <div class="col-sm-3">
                 <div class="form-group">
@@ -237,9 +237,9 @@
 
           </div>
 
-          <hr ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <hr>
 
-          <div id="headerFormat" class="row" ng-if="settings.additionalParams.spreadsheet.hasHeader && settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <div class="row" ng-if="settings.additionalParams.spreadsheet.hasHeader">
             <div class="col-md-12">
               <h5>{{ "widget-google-spreadsheet.format.header.label" | translate}}</h5>
               <font-setting id="header-font" font-data="settings.additionalParams.format.header.fontStyle"
@@ -249,7 +249,7 @@
             </div>
           </div>
 
-          <hr ng-if="settings.additionalParams.spreadsheet.hasHeader && settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <hr ng-if="settings.additionalParams.spreadsheet.hasHeader">
 
           <div class="row">
             <div class="col-md-12">
@@ -261,9 +261,9 @@
             </div>
           </div>
 
-          <hr ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <hr>
 
-          <div id="columnFormat" class="row" ng-if="settings.additionalParams.scroll.by != 'continuous' || settings.additionalParams.scroll.direction != 'left' ">
+          <div class="row">
             <div class="col-md-12">
               <column-selector columns="settings.additionalParams.format.columns" column-names="columns">
               </column-selector>
