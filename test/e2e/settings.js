@@ -60,8 +60,12 @@
         expect(element(by.model("settings.additionalParams.spreadsheet.hasHeader")).isSelected()).to.eventually.be.false;
       });
 
-      it("Should show refresh interval input default to 5 minutes", function () {
-        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).getAttribute('value')).to.eventually.equal("5");
+      it("Should show refresh interval input default to 60 minutes", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).getAttribute('value')).to.eventually.equal("60");
+      });
+
+      it("Should show refresh interval input be disabled", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.false;
       });
 
       it("Should apply form as invalid due to no spreadsheet doc name", function () {
@@ -264,6 +268,15 @@
       });
     });
 
+    describe("Api Key", function () {
+
+      it("Should enable refresh interval field if api key is entered", function () {
+        element(by.model("settings.additionalParams.spreadsheet.apiKey")).sendKeys('dn303d2d-edn20audsaa09x');
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.true;
+      });
+    });
+
     describe("Saving", function () {
 
       it("Should correctly save settings", function () {
@@ -336,7 +349,8 @@
               },
               tabId: 1,
               hasHeader: false,
-              refresh: 5
+              refresh: 60,
+              "apiKey": ""
             }
           }
         };

@@ -13568,6 +13568,12 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         $scope.settings.additionalParams.spreadsheet.fileId = "";
       };
 
+      $scope.$watch("settings.additionalParams.spreadsheet.apiKey", function (apiKey) {
+        if (typeof apiKey === "undefined" || !apiKey) {
+          $scope.settings.additionalParams.spreadsheet.refresh = 60;
+        }
+      });
+
     }])
   .value("defaultSettings", {
     params: {},
@@ -13632,7 +13638,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         },
         tabId: 1,
         hasHeader: false,
-        refresh: 5
+        refresh: 60,
+        apiKey: ""
       }
     }
   });
