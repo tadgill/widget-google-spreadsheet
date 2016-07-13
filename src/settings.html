@@ -152,17 +152,34 @@
 
           <div class="form-group">
             <div class="row">
-              <div class="col-sm-3">
+              <div class="col-sm-12">
                 <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.refresh" | translate }}</label>
-                <div class="input-group">
-                  <input type="number" class="form-control" ng-model="settings.additionalParams.spreadsheet.refresh">
-                  <span class="input-group-addon">{{ "common.units.minutes" | translate }}</span>
+                <div>
+                  <span>{{ "widget-google-spreadsheet.spreadsheet.apiKeyDescription" | translate }} <a href="">{{ "widget-google-spreadsheet.spreadsheet.apiKeyDescriptionLink" | translate }}</a></span>
                 </div>
               </div>
             </div><!--row-->
           </div><!--form-group-->
-
           <!-- END REFRESH INTERVAL -->
+          <div class="form-group">
+            <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.apiKey" | translate }}</label>
+            <div class="row">
+              <div class="col-sm-6">
+                <input type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.apiKey">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.refreshInterval" | translate }}</label>
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="input-group">
+                  <input type="number" class="form-control" ng-model="settings.additionalParams.spreadsheet.refresh" ng-disabled="!settings.additionalParams.spreadsheet.apiKey">
+                  <span class="input-group-addon">{{ "common.units.minutes" | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <hr>
 
