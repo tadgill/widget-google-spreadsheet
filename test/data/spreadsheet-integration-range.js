@@ -67,7 +67,8 @@
         },
         tabId: 1,
         hasHeader: false,
-        refresh: 5
+        refresh: 60,
+        apiKey: ""
       }
     }
   };

@@ -306,6 +306,7 @@ describe("<Spreadsheet />", function() {
     });
   });
 
+
   describe("Column formatting", function() {
 
     afterEach(function() {

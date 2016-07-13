@@ -25,6 +25,8 @@ const Spreadsheet = React.createClass({
   dataColumnIds: [],
   totalCols: 0,
 
+  API_KEY_DEFAULT: "AIzaSyBXxVK_IOV7LNQMuVVo_l7ZvN53ejN86zY",
+
   getInitialState: function() {
     return {
       data: null
@@ -193,6 +195,8 @@ const Spreadsheet = React.createClass({
     sheet.addEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
     sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
 
+
+
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("tab-id", params.spreadsheet.tabId);
     sheet.setAttribute("refresh", params.spreadsheet.refresh * 60);
@@ -209,7 +213,24 @@ const Spreadsheet = React.createClass({
       }
     }
 
-    sheet.go();
+    var stop = false;
+    if (params.spreadsheet.apiKey) {
+      sheet.setAttribute("apikey", params.spreadsheet.apiKey);
+    } else if (params.spreadsheet.refresh >= 60) {
+      sheet.setAttribute("apikey", this.API_KEY_DEFAULT);
+    } else {
+      stop = true;
+      this.showError("Missing API Key.");
+      this.logEvent({
+            "event": "error",
+            "event_details": "missing API Key",
+            "url": params.spreadsheet.url
+          }, true);
+    }
+
+    if (!stop) {
+      sheet.go();
+    }
   },
 
   onGoogleSheetResponse: function(e) {

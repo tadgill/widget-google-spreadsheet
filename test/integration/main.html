@@ -68,6 +68,10 @@
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
       });
 
+      test("should set the API Key of the default one", function() {
+        assert.equal(document.getElementById("rise-google-sheet").getAttribute("apikey"), "AIzaSyBXxVK_IOV7LNQMuVVo_l7ZvN53ejN86zY");
+      });
+
       test("should set the tabId of the sheets component", function() {
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("tab-id"), 1);
       });
