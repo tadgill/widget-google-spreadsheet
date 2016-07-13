@@ -13570,7 +13570,9 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
       $scope.$watch("settings.additionalParams.spreadsheet.apiKey", function (apiKey) {
         if (typeof apiKey === "undefined" || !apiKey) {
-          $scope.settings.additionalParams.spreadsheet.refresh = 60;
+          if ($scope.settings.additionalParams.spreadsheet) {
+            $scope.settings.additionalParams.spreadsheet.refresh = 60;
+          }
         }
       });
 
