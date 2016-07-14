@@ -35,11 +35,11 @@
           return SHEETS_API + key + "?key=" + API_KEY;
         }
 
-        $httpBackend.whenGET(getHTTP("published")).respond(function () {
+        $httpBackend.whenGET(getHTTP("public")).respond(function () {
           return [200, successData, {}];
         });
 
-        $httpBackend.whenGET(getHTTP("not-published")).respond(function () {
+        $httpBackend.whenGET(getHTTP("not-public")).respond(function () {
           return [302, {}, {}];
         });
       }]);

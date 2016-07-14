@@ -21,12 +21,12 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         googleSheet.getWorkSheets(fileId)
           .then(function (sheets) {
             $log.debug("Worksheets", sheets);
-            $scope.published = true;
+            $scope.public = true;
             $scope.sheets = sheets;
             $scope.currentSheet = sheets[$scope.settings.additionalParams.spreadsheet.tabId - 1];
           })
           .then(null, function () {
-            $scope.published = false;
+            $scope.public = false;
             $scope.sheets = [];
             $scope.currentSheet = null;
             $scope.settings.additionalParams.spreadsheet.tabId = 1;
@@ -39,7 +39,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         }
       });
 
-      $scope.published = true;
+      $scope.public = true;
 
       $scope.$watch("settings.additionalParams.spreadsheet.fileId", function (fileId) {
         if (typeof fileId === "undefined" || !fileId) {
@@ -75,7 +75,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         }
       });
 
-      $scope.$watch("published", function (value) {
+      $scope.$watch("public", function (value) {
         if (typeof value !== "undefined" && $scope.settings.additionalParams.spreadsheet &&
           $scope.settings.additionalParams.spreadsheet.fileId &&
           $scope.settings.additionalParams.spreadsheet.fileId !== "") {
@@ -103,13 +103,13 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.retryFile = function () {
         if ($scope.settings.additionalParams.spreadsheet.fileId &&
           $scope.settings.additionalParams.spreadsheet.fileId !== "") {
-          $scope.published = true;
+          $scope.public = true;
           getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
         }
       };
 
       $scope.clearSelection = function () {
-        $scope.published = true;
+        $scope.public = true;
 
         if ($scope.settings.additionalParams.spreadsheet.selection === "drive") {
           $scope.settings.additionalParams.spreadsheet.docName = "";

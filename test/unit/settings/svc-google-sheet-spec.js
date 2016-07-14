@@ -39,11 +39,11 @@ describe("getWorkSheets", function() {
       return base + key + "?key=" + apiKey;
     }
 
-    httpBackend.whenGET(getHTTP("published")).respond(function () {
+    httpBackend.whenGET(getHTTP("public")).respond(function () {
       return [200, successData, {}];
     });
 
-    googleSheetService.getWorkSheets("published").then(function (results) {
+    googleSheetService.getWorkSheets("public").then(function (results) {
       expect(results).be.defined;
       expect(results.length).to.equal(2);
 
