@@ -3,30 +3,29 @@
 
 describe("getWorkSheets", function() {
 
-  var googleSheetService, base, suffix, httpBackend;
+  var googleSheetService, base, apiKey, httpBackend;
 
   var successData = {
-    feed: {
-      entry: [
-        {
-          title: {
-            $t: "Worksheet 1"
-          }
-        },{
-          title: {
-            $t: "Worksheet 2"
-          }
+    sheets: [
+      {
+        properties: {
+          title: "Worksheet 1"
         }
-      ]
-    }
+      },
+      {
+        properties: {
+          title: "Worksheet 2"
+        }
+      }
+    ]
   };
 
   beforeEach(module("risevision.widget.googleSpreadsheet.settings"));
 
-  beforeEach(inject(function (_googleSheet_, _SPREADSHEET_API_WORKSHEETS_, _SPREADSHEET_API_SUFFIX_, $httpBackend) {
+  beforeEach(inject(function (_googleSheet_, _SHEETS_API_, _API_KEY_, $httpBackend) {
     googleSheetService = _googleSheet_;
-    base = _SPREADSHEET_API_WORKSHEETS_;
-    suffix = _SPREADSHEET_API_SUFFIX_;
+    base = _SHEETS_API_;
+    apiKey = _API_KEY_;
     httpBackend = $httpBackend;
 
   }));
@@ -37,7 +36,7 @@ describe("getWorkSheets", function() {
 
   it("should successfully provide work sheets as select field options", function () {
     function getHTTP(key) {
-      return base + key + suffix + "?alt=json";
+      return base + key + "?key=" + apiKey;
     }
 
     httpBackend.whenGET(getHTTP("published")).respond(function () {
