@@ -2,29 +2,28 @@
 "use strict";
 
 describe("Google Spreadsheet Settings", function () {
-  var googleSheetService, base, suffix, httpBackend, defaultSettings, scope, rootScope, ctrl,
+  var googleSheetService, base, apiKey, httpBackend, defaultSettings, scope, rootScope, ctrl,
     successData = {
-      feed: {
-        entry: [
-          {
-            title: {
-              $t: "Worksheet 1"
-            }
-          },{
-            title: {
-              $t: "Worksheet 2"
-            }
+      sheets: [
+        {
+          properties: {
+            title: "Worksheet 1"
           }
-        ]
-      }
+        },
+        {
+          properties: {
+            title: "Worksheet 2"
+          }
+        }
+      ]
     };
 
   beforeEach(module("risevision.widget.googleSpreadsheet.settings"));
 
-  beforeEach(inject(function (_googleSheet_, _SPREADSHEET_API_WORKSHEETS_, _SPREADSHEET_API_SUFFIX_, $httpBackend) {
+  beforeEach(inject(function (_googleSheet_, _SHEETS_API_, _API_KEY_, $httpBackend) {
     googleSheetService = _googleSheet_;
-    base = _SPREADSHEET_API_WORKSHEETS_;
-    suffix = _SPREADSHEET_API_SUFFIX_;
+    base = _SHEETS_API_;
+    apiKey = _API_KEY_;
     httpBackend = $httpBackend;
   }));
 
@@ -87,7 +86,7 @@ describe("Google Spreadsheet Settings", function () {
   });
 
   it("should update url when fileId is changed", function () {
-    httpBackend.when("GET", "https://spreadsheets.google.com/feeds/worksheets/testId/public/basic?alt=json")
+    httpBackend.when("GET", "https://sheets.googleapis.com/v4/spreadsheets/testId?key=" + apiKey)
       .respond(function () {
         return [200, successData, {}];
       });

@@ -1,38 +1,35 @@
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .constant("SPREADSHEET_API_WORKSHEETS", "https://spreadsheets.google.com/feeds/worksheets/")
-  .constant("SPREADSHEET_API_SUFFIX", "/public/basic")
+  .constant("SHEETS_API", "https://sheets.googleapis.com/v4/spreadsheets/")
 
-  .factory("googleSheet", ["$http", "$log", "SPREADSHEET_API_WORKSHEETS", "SPREADSHEET_API_SUFFIX",
-    function ($http, $log, SPREADSHEET_API_WORKSHEETS, SPREADSHEET_API_SUFFIX) {
+  .factory("googleSheet", ["$http", "$log", "SHEETS_API", "API_KEY",
+    function ($http, $log, SHEETS_API, API_KEY) {
 
       var factory = {},
-        filterSheets = function (data) {
-          var option, sheets;
+        filterSheets = function (sheets) {
+          var option;
 
-          sheets = data.feed.entry.map(function (value, index) {
+          return sheets.map(function (sheet, index) {
             option = {};
 
             // Worksheet tab name
-            option.label = value.title.$t;
+            option.label = sheet.properties.title;
 
             // Worksheet tab number
             option.value = (index + 1);
 
             return option;
           });
-
-          return sheets;
         };
 
       factory.getWorkSheets = function(fileId) {
-        var api = SPREADSHEET_API_WORKSHEETS + fileId + SPREADSHEET_API_SUFFIX;
+        var api = SHEETS_API + fileId + "?key=" + API_KEY;
 
-        return $http.get(encodeURI(api + "?alt=json"))
+        return $http.get(encodeURI(api))
           .then(function (response) {
-            return response.data;
+            return response.data.sheets;
           })
-          .then(function (data) {
-            return filterSheets(data);
+          .then(function (sheets) {
+            return filterSheets(sheets);
           });
       };
 

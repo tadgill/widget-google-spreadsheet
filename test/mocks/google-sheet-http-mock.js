@@ -3,44 +3,43 @@
 
   angular.module("google-sheet-http-mock", ["ngMockE2E"])
 
-    .run(["$httpBackend", "$log", "SPREADSHEET_API_WORKSHEETS", "SPREADSHEET_API_SUFFIX",
-      function($httpBackend, $log, SPREADSHEET_API_WORKSHEETS, SPREADSHEET_API_SUFFIX) {
+    .run(["$httpBackend", "$log", "SHEETS_API", "API_KEY",
+      function($httpBackend, $log, SHEETS_API, API_KEY) {
 
         var successData = {
-          version: "1.0",
-          encoding: "UTF-8",
-          feed: {
-            entry: [
-              {
-                title: {
-                  $t: "Worksheet 1"
-                }
-              },{
-                title: {
-                  $t: "Worksheet 2"
-                }
-              },{
-                title: {
-                  $t: "Worksheet 3"
-                }
-              },{
-                title: {
-                  $t: "Worksheet 4"
-                }
+          sheets: [
+            {
+              properties: {
+                title: "Worksheet 1"
               }
-            ]
-          }
+            },
+            {
+              properties: {
+                title: "Worksheet 2"
+              }
+            },
+            {
+              properties: {
+                title: "Worksheet 3"
+              }
+            },
+            {
+              properties: {
+                title: "Worksheet 4"
+              }
+            }
+          ]
         };
 
         function getHTTP(key) {
-          return SPREADSHEET_API_WORKSHEETS + key + SPREADSHEET_API_SUFFIX + "?alt=json";
+          return SHEETS_API + key + "?key=" + API_KEY;
         }
 
-        $httpBackend.whenGET(getHTTP("published")).respond(function () {
+        $httpBackend.whenGET(getHTTP("public")).respond(function () {
           return [200, successData, {}];
         });
 
-        $httpBackend.whenGET(getHTTP("not-published")).respond(function () {
+        $httpBackend.whenGET(getHTTP("not-public")).respond(function () {
           return [302, {}, {}];
         });
       }]);

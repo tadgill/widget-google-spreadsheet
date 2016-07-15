@@ -91,9 +91,13 @@
           </div>
           <!-- END FILE SELECTOR -->
 
-          <div ng-if="!published">
+          <div ng-if="!public">
             <div class="content-box add-bottom">
-              <div class="bg-danger add-padding"> <a class="btn btn-default pull-right" ng-click="retryFile()">{{"widget-google-spreadsheet.spreadsheet.retry" | translate}}</a> {{"widget-google-spreadsheet.spreadsheet.publish.text1" | translate}} '<b>{{"widget-google-spreadsheet.spreadsheet.publish.text2" | translate}}</b>', {{"widget-google-spreadsheet.spreadsheet.publish.text3" | translate}} '<b>{{"widget-google-spreadsheet.spreadsheet.publish.text4" | translate}}</b>'.
+              <div class="bg-danger add-padding">
+                <a class="btn btn-default pull-right" ng-click="retryFile()">
+                  {{"widget-google-spreadsheet.spreadsheet.retry" | translate}}
+                </a>
+                <span translate="{{'widget-google-spreadsheet.spreadsheet.public.message'}}"></span>
               </div>
             </div>
           </div>

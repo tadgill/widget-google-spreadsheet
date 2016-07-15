@@ -76,7 +76,7 @@
         expect(element(by.css("button#save[disabled=disabled")).isPresent()).to.eventually.be.true;
       });
 
-      it("Should not show publishing instructions", function () {
+      it("Should not show instructions to make spreadsheet public", function () {
         expect(element(by.css("div.content-box div.bg-danger")).isPresent()).to.eventually.be.false;
         expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
       });
@@ -133,9 +133,9 @@
 
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "not-published",
+            id: "not-public",
             name: "Test File",
-            url: "https://test-not-published"
+            url: "https://test-not-public"
           }]);
         });
 
@@ -147,9 +147,9 @@
 
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "not-published",
+            id: "not-public",
             name: "Test File",
-            url: "https://test-not-published"
+            url: "https://test-not-public"
           }]);
         });
 
@@ -184,16 +184,16 @@
 
     describe("Spreadsheet Publishing", function () {
 
-      it("Should show instructions, retry button, and disable Save when spreadsheet not published", function () {
+      it("Should show instructions, retry button, and disable Save when spreadsheet not public", function () {
         // open dialog
         element(by.css(".google-drive-picker button")).click();
 
         // simulate picking a file
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "not-published",
+            id: "not-public",
             name: "Test File",
-            url: "https://test-not-published"
+            url: "https://test-not-public"
           }]);
         });
 
@@ -210,9 +210,9 @@
         // simulate picking a file
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "not-published",
+            id: "not-public",
             name: "Test File",
-            url: "https://test-not-published"
+            url: "https://test-not-public"
           }]);
         });
 
@@ -225,16 +225,16 @@
         expect(element(by.css("div.bg-danger a.btn")).isPresent()).to.eventually.be.false;
       });
 
-      it("Should not show instructions and enable Save when spreadsheet is published", function () {
+      it("Should not show instructions and enable Save when spreadsheet is public", function () {
         // open dialog
         element(by.css(".google-drive-picker button")).click();
 
         // simulate picking a file
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "published",
+            id: "public",
             name: "Test File",
-            url: "https://test-published"
+            url: "https://test-public"
           }]);
         });
 
@@ -257,9 +257,9 @@
         // simulate picking a file
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "published",
+            id: "public",
             name: "Test File",
-            url: "https://test-published"
+            url: "https://test-public"
           }]);
         });
 
@@ -340,8 +340,8 @@
             spreadsheet: {
               selection: "drive",
               docName: "Test File",
-              url: "https://test-published",
-              fileId: "published",
+              url: "https://test-public",
+              fileId: "public",
               cells: "sheet",
               range: {
                 startCell: "",
@@ -361,9 +361,9 @@
         // simulate picking a file
         browser.executeScript(function () {
           window.pickFiles([{
-            id: "published",
+            id: "public",
             name: "Test File",
-            url: "https://test-published"
+            url: "https://test-public"
           }]);
         });
 
