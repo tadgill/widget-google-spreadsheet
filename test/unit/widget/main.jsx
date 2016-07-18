@@ -7,6 +7,7 @@ import MessageContainer from "../../../src/widget/containers/MessageContainer";
 import "widget-tester/mocks/gadget-mocks";
 import "../../data/spreadsheet";
 
+
 describe("<Main />", function() {
 
   var wrapper;

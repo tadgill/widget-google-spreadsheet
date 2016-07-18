@@ -8,6 +8,7 @@ import Scroll from "../../../src/widget/components/scroll";
 import LoggerUtils from "../../../src/components/widget-common/dist/logger";
 import "../../data/spreadsheet";
 
+
 describe("<Spreadsheet />", function() {
   var wrapper;
   const cols = [
@@ -305,6 +306,7 @@ describe("<Spreadsheet />", function() {
       expect(stub.withArgs(table,params).called).to.equal(true);
     });
   });
+
 
   describe("Column formatting", function() {
 

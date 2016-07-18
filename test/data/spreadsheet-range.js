@@ -91,7 +91,8 @@ window.gadget.settings = {
       },
       tabId: 1,
       hasHeader: true,
-      refresh: 5
+      refresh: 60,
+      apiKey: ""
     }
   }
 };

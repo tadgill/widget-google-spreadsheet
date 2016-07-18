@@ -60,6 +60,10 @@ module.exports = {
         loader: ExtractTextPlugin.extract("style-loader", "css-loader")
       },
       {
+        test: require.resolve(__dirname + "/src/config/config"),
+        loader: "exports?config"
+      },
+      {
         test: require.resolve(__dirname + "/src/components/widget-common/dist/logger"),
         loader: "imports?WIDGET_COMMON_CONFIG=./config"
       },

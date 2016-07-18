@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spreadsheet Widget</title>
+
+  <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../src/components/web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
+  <link href="../../dist/css/spreadsheet.css" rel="stylesheet"></head>
+
+</head>
+<body>
+
+<div id="mainContainer"></div>
+
+<rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
+
+<script src="../data/spreadsheet-integration-api-key-error.js"></script>
+
+
+
+<script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
+
+<script>
+
+
+  var googleSheet = document.querySelector("rise-google-sheet");
+
+  suite("Spreadsheet Content", function() {
+
+      test("should  not set the api key", function() {
+        assert.equal(googleSheet.getAttribute("apikey"), null);
+      });
+
+      test("should not call sheet go", function() {
+        var goSpy = sinon.spy(googleSheet, "go");
+        assert.equal(goSpy.called, false);
+      });
+
+      test("should show error message", function() {
+        var message = document.querySelector(".message");
+        assert.equal(message.innerHTML, "Missing API Key.");
+      });
+  });
+
+</script>
+
+</body>
+</html>
