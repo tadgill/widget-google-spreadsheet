@@ -12951,6 +12951,11 @@ module.run(["$templateCache", function($templateCache) {
 })();
 
 /* exported config */
+
+var config = {
+  apiKey: "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc"
+};
+
 if (typeof angular !== "undefined") {
   angular.module("risevision.widget.googleSpreadsheet.config", [])
     .value("API_KEY", "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc");

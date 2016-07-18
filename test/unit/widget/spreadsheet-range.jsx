@@ -6,6 +6,7 @@ import TableHeaderContainer from "../../../src/widget/containers/TableHeaderCont
 import Table from "../../../src/widget/components/table";
 import "../../data/spreadsheet-range";
 
+
 describe("<Spreadsheet />", function() {
 
   var wrapper;

@@ -1,4 +1,4 @@
-/* global gadgets */
+/* global gadgets, config */
 
 require("fixed-data-table/dist/fixed-data-table.css");
 require("../css/fixed-data-table-overrides.css");
@@ -8,6 +8,7 @@ import Scroll from "./scroll";
 import TableHeaderContainer from "../containers/TableHeaderContainer";
 import Logger from "../../components/widget-common/dist/logger";
 import Common from "../../components/widget-common/dist/common";
+import config from "../../config/config";
 
 const prefs = new gadgets.Prefs();
 const sheet = document.querySelector("rise-google-sheet");
@@ -25,7 +26,8 @@ const Spreadsheet = React.createClass({
   dataColumnIds: [],
   totalCols: 0,
 
-  API_KEY_DEFAULT: "AIzaSyBXxVK_IOV7LNQMuVVo_l7ZvN53ejN86zY",
+
+  API_KEY_DEFAULT: config.apiKey,
 
   getInitialState: function() {
     return {

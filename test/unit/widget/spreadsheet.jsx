@@ -8,6 +8,7 @@ import Scroll from "../../../src/widget/components/scroll";
 import LoggerUtils from "../../../src/components/widget-common/dist/logger";
 import "../../data/spreadsheet";
 
+
 describe("<Spreadsheet />", function() {
   var wrapper;
   const cols = [
