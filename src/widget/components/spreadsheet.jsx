@@ -259,7 +259,8 @@ const Spreadsheet = React.createClass({
       "event": "error",
       "event_details": "spreadsheet not published",
       "error_details": e.detail,
-      "url": params.spreadsheet.url
+      "url": params.spreadsheet.url,
+      "api_key": (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
     }, true);
 
     this.setState({ data: null });
@@ -313,7 +314,8 @@ const Spreadsheet = React.createClass({
 
     this.logEvent({
       "event": "done",
-      "url": params.spreadsheet.url
+      "url": params.spreadsheet.url,
+      "api_key": (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
     });
   },
 
@@ -322,7 +324,8 @@ const Spreadsheet = React.createClass({
 
     this.logEvent({
       "event": "play",
-      "url": params.spreadsheet.url
+      "url": params.spreadsheet.url,
+      "api_key": (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
     });
 
     if (this.errorFlag) {
