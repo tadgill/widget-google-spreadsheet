@@ -7,6 +7,7 @@ import Table from "../../../src/widget/components/table";
 import Scroll from "../../../src/widget/components/scroll";
 import LoggerUtils from "../../../src/components/widget-common/dist/logger";
 import "../../data/spreadsheet";
+import config from "../../../src/config/config";
 
 
 describe("<Spreadsheet />", function() {
@@ -259,7 +260,8 @@ describe("<Spreadsheet />", function() {
       table = "spreadsheet_events",
       params = {
         "event": "play",
-        "url": additionalParams.spreadsheet.url
+        "url": additionalParams.spreadsheet.url,
+        "api_key": config.apiKey
       };
 
     beforeEach(function() {
@@ -296,7 +298,8 @@ describe("<Spreadsheet />", function() {
         "event": "error",
         "event_details": "spreadsheet not published",
         "error_details": "error",
-        "url": additionalParams.spreadsheet.url
+        "url": additionalParams.spreadsheet.url,
+        "api_key": config.apiKey
       };
 
       event.initEvent("rise-google-sheet-error", true, true);
