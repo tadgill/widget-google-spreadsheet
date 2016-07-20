@@ -27,6 +27,12 @@
 
 <script>
 
+  let server = sinon.fakeServer.create();
+
+  server.respondImmediately = true;
+  server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=API_KEY_BY_USER",
+      [200, { "Content-Type": "application/json" },
+        '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
 
   suite("Spreadsheet Content", function() {
 
