@@ -19,31 +19,31 @@
 <rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
 
 <script src="../data/spreadsheet-integration.js"></script>
-<script src="../data/cells.js"></script>
 <script src="../data/sheets.js"></script>
-
-
-
 <script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
 <script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
 
 <script>
 
-  var clock, paramsStub, server;
+  let server, paramsStub, clock,
+    googleSheet = document.querySelector("rise-google-sheet");
 
-  var googleSheet = document.querySelector("rise-google-sheet");
+  server = sinon.fakeServer.create();
+  server.respondImmediately = true;
+  server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc",
+      [200, { "Content-Type": "application/json" },
+        '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
+  server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1!B2:C3?key=AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
+      [200, { "Content-Type": "application/json" },
+        JSON.stringify(sheetData)]);
 
   paramsStub = sinon.stub(googleSheet, "go", function () {
     // need to set the fake timer clock before any of the code within setAdditionalParams is executed
     clock = sinon.useFakeTimers();
-    server = sinon.fakeServer.create();
-    server.respondImmediately = true;
-    server.respondWith("GET", "https://spreadsheets.google.com/feeds/cells/xxxxxxxxxx/1/public/full?alt=json",
-      [200, { "Content-Type": "application/json" },
-        JSON.stringify(sheetData)])
 
     // restore the function
     paramsStub.restore();
+
     // call it again with the params
     googleSheet.go();
   });
@@ -64,16 +64,20 @@
         assert.equal(document.getElementById("mainContainer").style.height, window.innerHeight + "px");
       });
 
-      test("should set the key of the sheets component", function() {
+      test("should set the key attribute of the sheets component", function() {
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
       });
 
-      test("should set the API Key of the default one", function() {
+      test("should set the apikey attribute of the sheets component", function() {
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("apikey"), "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc");
       });
 
-      test("should set the tabId of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("tab-id"), 1);
+      test("should set the sheet attribute of the sheets component", function() {
+        assert.equal(document.getElementById("rise-google-sheet").getAttribute("sheet"), "Sheet1");
+      });
+
+      test("should set the range attribute of the sheets component", function() {
+        assert.equal(document.getElementById("rise-google-sheet").getAttribute("range"), "B2:C3");
       });
     });
 

@@ -6,55 +6,10 @@ import TableHeaderContainer from "../../../src/widget/containers/TableHeaderCont
 import Table from "../../../src/widget/components/table";
 import "../../data/spreadsheet-range";
 
+describe("Spreadsheet Range", function() {
 
-describe("<Spreadsheet />", function() {
-
-  var wrapper;
-  const cols = [
-    {
-      "content": {
-        "$t": "Cell B2"
-      },
-      "gs$cell": {
-        "col": "2",
-        "row": "2"
-      },
-      "title": {
-        "$t": "B2"
-      }
-    },
-    {
-      "content": {
-        "$t": "Cell C2"
-      },
-      "gs$cell": {
-        "col": "3",
-        "row": "2"
-      },
-      "title": {
-        "$t": "C2"
-      }
-    }],
-    data = [
-      {
-        "content": {
-          "$t": "Cell B3"
-        },
-        "gs$cell": {
-          "col": "2",
-          "row": "3"
-        }
-      },
-      {
-        "content": {
-          "$t": "Cell C3"
-        },
-        "gs$cell": {
-          "col": "3",
-          "row": "3"
-        }
-      }],
-    cells = cols.concat(data);
+  let server, wrapper;
+  const data = [["Column 1", "Column 2", "Column 3"], ["A2", "B2", "C2"]];
 
   var propHandlers = {
     initSize: function(width, height) {},
@@ -62,15 +17,27 @@ describe("<Spreadsheet />", function() {
     hideMessage: function() {}
   };
 
+  before(function() {
+    server = sinon.fakeServer.create();
+    server.respondImmediately = true;
+    server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
+      [200, { "Content-Type": "application/json" },
+        '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
+  });
+
   beforeEach(function () {
     wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                  showMessage={propHandlers.showMessage}
                                  hideMessage={propHandlers.hideMessage} />);
   });
 
+  after(function() {
+    server.restore();
+  });
+
   describe("<TableHeaderContainer />", function() {
     beforeEach(function () {
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     it("Should contain a TableHeaderContainer component", function() {
@@ -78,7 +45,8 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [ "Cell B2", "Cell C2" ];
+      var expected = ["Custom Header", "Column 2", "Column 3"];
+
       expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
     });
 
@@ -86,7 +54,7 @@ describe("<Spreadsheet />", function() {
 
   describe("<Table />", function() {
     beforeEach(function () {
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     it("Should contain a Table component", function() {
@@ -94,12 +62,11 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [["Cell B3", "Cell C3"]];
-      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
+      expect(wrapper.find(Table).props().data).to.deep.equal([data[1]]);
     });
 
     it("Should have totalCols prop", function() {
-      expect(wrapper.find(Table).props().totalCols).to.equal(2);
+      expect(wrapper.find(Table).props().totalCols).to.equal(3);
     });
   });
 
@@ -109,7 +76,7 @@ describe("<Spreadsheet />", function() {
       wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                    showMessage={propHandlers.showMessage}
                                    hideMessage={propHandlers.hideMessage} />);
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     afterEach(function() {
@@ -121,8 +88,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [["Cell B2", "Cell C2"], ["Cell B3", "Cell C3"]];
-      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
+      expect(wrapper.find(Table).props().data).to.deep.equal(data);
     });
   });
 
@@ -132,19 +98,7 @@ describe("<Spreadsheet />", function() {
       wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                    showMessage={propHandlers.showMessage}
                                    hideMessage={propHandlers.hideMessage} />);
-      wrapper.setState({ data: [{
-          "content": {
-            "$t": "Cell B3"
-          },
-          "gs$cell": {
-            "col": "2",
-            "row": "3"
-          },
-          "title": {
-            "$t": "B3"
-          }
-        }]
-      });
+      wrapper.setState({ data: [["Cell B3"]] });
     });
 
     it("Should contain a TableHeaderContainer component", function() {
@@ -152,8 +106,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [ "Cell B3" ];
-      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
+      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(["Cell B3"]);
     });
 
     it("Should not contain a Table component", function() {
@@ -168,19 +121,7 @@ describe("<Spreadsheet />", function() {
       wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                    showMessage={propHandlers.showMessage}
                                    hideMessage={propHandlers.hideMessage} />);
-      wrapper.setState({ data: [{
-        "content": {
-          "$t": "Cell B3"
-        },
-        "gs$cell": {
-          "col": "2",
-          "row": "3"
-        },
-        "title": {
-          "$t": "B3"
-        }
-      }]
-      });
+      wrapper.setState({ data: [["B3"]] });
     });
 
     afterEach(function() {
@@ -196,8 +137,7 @@ describe("<Spreadsheet />", function() {
     });
 
     it("Should have data prop", function() {
-      var expected = [ ["Cell B3"] ];
-      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
+      expect(wrapper.find(Table).props().data).to.deep.equal([["B3"]]);
     });
 
   });

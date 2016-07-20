@@ -4,7 +4,7 @@
   "description": "Rise Vision Google Spreadsheet Widget",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "gulp test",
+    "test": "npm run build && gulp test",
     "build": "gulp build"
   },
   "repository": {
@@ -50,6 +50,7 @@
     "gulp-watch": "^0.6.8",
     "html-webpack-plugin": "^2.16.0",
     "imports-loader": "^0.6.5",
+    "jquery": "2.2.4",
     "jshint-stylish": "^2.1.0",
     "react-addons-test-utils": "^0.14.8",
     "run-sequence": "^0.3.2",
@@ -58,8 +59,7 @@
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1",
     "webpack-stream": "^3.2.0",
-    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.6.7",
-    "jquery": "2.2.4"
+    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.6.7"
   },
   "dependencies": {
     "fixed-data-table": "^0.6.0",

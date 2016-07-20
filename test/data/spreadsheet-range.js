@@ -81,9 +81,9 @@ window.gadget.settings = {
     scroll: {},
     spreadsheet: {
       selection: "drive",
-      docName: "",
-      url: "",
-      fileId: "",
+      docName: "Test",
+      url: "https://docs.google.com/a/risevision.com/spreadsheets/d/xxxxxxxxxx/edit?usp=drive_web",
+      fileId: "xxxxxxxxxx",
       cells: "range",
       range: {
         startCell: "B2",
@@ -92,7 +92,7 @@ window.gadget.settings = {
       tabId: 1,
       hasHeader: true,
       refresh: 60,
-      apiKey: ""
+      apiKey: "abc123"
     }
   }
 };

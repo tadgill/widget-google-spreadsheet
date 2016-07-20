@@ -68,7 +68,7 @@
         tabId: 1,
         hasHeader: true,
         refresh: 60,
-        apiKey: ""
+        apiKey: "abc123"
       }
     }
   };

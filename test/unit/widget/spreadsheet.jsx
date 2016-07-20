@@ -11,73 +11,8 @@ import config from "../../../src/config/config";
 
 
 describe("<Spreadsheet />", function() {
-  var wrapper;
-  const cols = [
-    {
-      "content": {
-        "$t": "Column 1"
-      },
-      "gs$cell": {
-        "col": "1",
-        "row": "1"
-      },
-      "title": {
-        "$t": "A1"
-      }
-    },
-    {
-      "content": {
-        "$t": "Column 2"
-      },
-      "gs$cell": {
-        "col": "2",
-        "row": "1"
-      },
-      "title": {
-        "$t": "B1"
-      }
-    },
-    {
-      "content": {
-        "$t": "Column 3"
-      },
-      "gs$cell": {
-        "col": "3",
-        "row": "1"
-      },
-      "title": {
-        "$t": "C1"
-      }
-    }],
-    data = [
-    {
-      "content": {
-        "$t": "I am the walrus!"
-      },
-      "gs$cell": {
-        "col": "1",
-        "row": "2"
-      }
-    },
-    {
-      "content": {
-        "$t": "1"
-      },
-      "gs$cell": {
-        "col": "2",
-        "row": "2"
-      }
-    },
-    {
-      "content": {
-        "$t": "3"
-      },
-      "gs$cell": {
-        "col": "3",
-        "row": "2"
-      }
-    }],
-    cells = cols.concat(data),
+  let server, wrapper;
+  const data = [["Column 1", "Column 2", "Column 3"], ["A2", "B2", "C2"]],
     additionalParams = window.gadget.settings.additionalParams,
     columnsParam = additionalParams.format.columns;
 
@@ -87,10 +22,22 @@ describe("<Spreadsheet />", function() {
     hideMessage: function() {}
   };
 
+  before(function() {
+    server = sinon.fakeServer.create();
+    server.respondImmediately = true;
+    server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
+      [200, { "Content-Type": "application/json" },
+        '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
+  });
+
   beforeEach(function () {
     wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
                                  showMessage={propHandlers.showMessage}
                                  hideMessage={propHandlers.hideMessage} />);
+  });
+
+  after(function() {
+    server.restore();
   });
 
   it("Should have an initial data state", function () {
@@ -99,7 +46,7 @@ describe("<Spreadsheet />", function() {
 
   describe("<TableHeaderContainer />", function() {
     beforeEach(function () {
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     it("Should contain a TableHeaderContainer component", function() {
@@ -152,7 +99,7 @@ describe("<Spreadsheet />", function() {
                                    showMessage={propHandlers.showMessage}
                                    hideMessage={propHandlers.hideMessage} />);
 
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     afterEach(function() {
@@ -170,7 +117,7 @@ describe("<Spreadsheet />", function() {
 
   describe("<Scroll />", function() {
     beforeEach(function () {
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     it("Should have columnFormats prop", function() {
@@ -196,39 +143,17 @@ describe("<Spreadsheet />", function() {
 
   describe("Refreshing", function() {
     beforeEach(function () {
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     it("should update the state", function() {
       const event = document.createEvent("Event"),
         sheet = document.getElementById("rise-google-sheet"),
-        newData = [
-          {
-            "content": {
-              "$t": "Column 1"
-            },
-            "gs$cell": {
-              "col": "1",
-              "row": "1"
-            },
-            "title": {
-              "$t": "A1"
-            }
-          },
-          {
-            "content": {
-              "$t": "Test data"
-            },
-            "gs$cell": {
-              "col": "1",
-              "row": "2"
-            }
-          }
-        ];
+        newData = [["Column 1"], ["Test data"]];
 
       event.initEvent("rise-google-sheet-response", true, true);
       event.detail = {};
-      event.detail.cells = newData;
+      event.detail.results = newData;
 
       sheet.dispatchEvent(event);
 
@@ -238,7 +163,7 @@ describe("<Spreadsheet />", function() {
 
   describe("Handling error", function () {
     beforeEach(function () {
-      wrapper.setState({ data: cells });
+      wrapper.setState({ data: data });
     });
 
     it("should revert state back to initial value", function () {
@@ -261,7 +186,7 @@ describe("<Spreadsheet />", function() {
       params = {
         "event": "play",
         "url": additionalParams.spreadsheet.url,
-        "api_key": config.apiKey
+        "api_key": "abc123"
       };
 
     beforeEach(function() {
@@ -278,7 +203,7 @@ describe("<Spreadsheet />", function() {
 
       event.initEvent("rise-google-sheet-response", true, true);
       event.detail = {
-        cells: cells
+        results: data
       };
 
       sheet.dispatchEvent(event);
@@ -299,7 +224,7 @@ describe("<Spreadsheet />", function() {
         "event_details": "spreadsheet not published",
         "error_details": "error",
         "url": additionalParams.spreadsheet.url,
-        "api_key": config.apiKey
+        "api_key": "abc123"
       };
 
       event.initEvent("rise-google-sheet-error", true, true);
@@ -326,7 +251,7 @@ describe("<Spreadsheet />", function() {
                                      showMessage={propHandlers.showMessage}
                                      hideMessage={propHandlers.hideMessage} />);
 
-        wrapper.setState({ data: cells });
+        wrapper.setState({ data: data });
 
         expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
       });
@@ -339,7 +264,7 @@ describe("<Spreadsheet />", function() {
                                      showMessage={propHandlers.showMessage}
                                      hideMessage={propHandlers.hideMessage} />);
 
-        wrapper.setState({ data: cells });
+        wrapper.setState({ data: data });
 
         expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
       });
@@ -368,7 +293,7 @@ describe("<Spreadsheet />", function() {
                                      showMessage={propHandlers.showMessage}
                                      hideMessage={propHandlers.hideMessage} />);
 
-        wrapper.setState({ data: cells });
+        wrapper.setState({ data: data });
 
         expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
         expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
@@ -384,7 +309,7 @@ describe("<Spreadsheet />", function() {
                                      showMessage={propHandlers.showMessage}
                                      hideMessage={propHandlers.hideMessage} />);
 
-        wrapper.setState({ data: cells });
+        wrapper.setState({ data: data });
 
         expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
         expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
@@ -413,7 +338,7 @@ describe("<Spreadsheet />", function() {
                                      showMessage={propHandlers.showMessage}
                                      hideMessage={propHandlers.hideMessage} />);
 
-        wrapper.setState({ data: cells });
+        wrapper.setState({ data: data });
 
         expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
         expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
