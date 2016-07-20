@@ -215,24 +215,16 @@ const Spreadsheet = React.createClass({
       }
     }
 
-    var stop = false;
+    // set the API key to the default first
+    sheet.setAttribute("apikey", this.API_KEY_DEFAULT);
+
     if (params.spreadsheet.apiKey) {
       sheet.setAttribute("apikey", params.spreadsheet.apiKey);
-    } else if (params.spreadsheet.refresh >= 60) {
-      sheet.setAttribute("apikey", this.API_KEY_DEFAULT);
-    } else {
-      stop = true;
-      this.showError("Missing API Key.");
-      this.logEvent({
-            "event": "error",
-            "event_details": "missing API Key",
-            "url": params.spreadsheet.url
-          }, true);
+    } else if (params.spreadsheet.refresh < 60) {
+      sheet.setAttribute("refresh", 60 * 60);
     }
 
-    if (!stop) {
-      sheet.go();
-    }
+    sheet.go();
   },
 
   onGoogleSheetResponse: function(e) {
