@@ -221,7 +221,8 @@ const Spreadsheet = React.createClass({
     if (params.spreadsheet.apiKey) {
       sheet.setAttribute("apikey", params.spreadsheet.apiKey);
     } else if (params.spreadsheet.refresh < 60) {
-      sheet.setAttribute("refresh", 60 * 60);
+      var oneHour = 60 * 60;
+      sheet.setAttribute("refresh", oneHour);
     }
 
     sheet.go();
