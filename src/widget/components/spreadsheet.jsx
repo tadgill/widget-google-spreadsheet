@@ -216,14 +216,12 @@ const Spreadsheet = React.createClass({
   },
 
   initRiseGoogleSheet: function(sheetName) {
-    let stop = false;
-
     sheet.addEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
     sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("sheet", sheetName);
-    sheet.setAttribute("refresh", params.spreadsheet.refresh * 60);
+    sheet.setAttribute("refresh", params.spreadsheet.refresh);
 
     if (params.spreadsheet.cells === "range") {
       if (params.spreadsheet.range.startCell && params.spreadsheet.range.endCell) {
@@ -238,7 +236,7 @@ const Spreadsheet = React.createClass({
     if (params.spreadsheet.apiKey) {
       sheet.setAttribute("apikey", params.spreadsheet.apiKey);
     } else if (params.spreadsheet.refresh < 60) {
-      sheet.setAttribute("refresh", 60 * 60);
+      sheet.setAttribute("refresh", 60);
     }
 
     sheet.go();

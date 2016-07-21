@@ -16,7 +16,7 @@
 
 <div id="mainContainer"></div>
 
-<rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
+<rise-google-sheet id="rise-google-sheet"></rise-google-sheet>
 
 <script src="../data/spreadsheet-integration.js"></script>
 <script src="../data/sheets.js"></script>
@@ -68,16 +68,20 @@
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
       });
 
-      test("should set the apikey attribute of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("apikey"), "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc");
-      });
-
       test("should set the sheet attribute of the sheets component", function() {
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("sheet"), "Sheet1");
       });
 
+      test("should set the refresh rate of the sheets component", function() {
+        assert.equal(googleSheet.getAttribute("refresh"), window.gadget.settings.additionalParams.spreadsheet.refresh);
+      });
+
       test("should set the range attribute of the sheets component", function() {
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("range"), "B2:C3");
+      });
+
+      test("should set the apikey attribute of the sheets component", function() {
+        assert.equal(document.getElementById("rise-google-sheet").getAttribute("apikey"), "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc");
       });
     });
 
