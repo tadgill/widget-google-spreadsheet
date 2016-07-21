@@ -18,19 +18,28 @@ describe("<Scroll />", function() {
       ["John is dead!", "500", "32"]],
     columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }];
 
-  var wrapper, renderedComponent;
+  var wrapper;
 
   beforeEach(function () {
-    var component = <Scroll onDone={onDone} scroll={scroll} data={data} align={align} class={className} totalCols={totalCols} rowHeight={rowHeight} width={width} height={height} columnFormats={columnFormats} />;
+    var component =
+      <Scroll
+        onDone={onDone}
+        scroll={scroll}
+        data={data}
+        align={align}
+        class={className}
+        totalCols={totalCols}
+        rowHeight={rowHeight}
+        width={width}
+        height={height}
+        columnFormats={columnFormats} />;
 
     wrapper = shallow(component);
-    renderedComponent = TestUtils.renderIntoDocument(component);
-
   });
 
   describe("Page", function() {
     it("Should set the page class to the section element", function() {
-      expect(renderedComponent.refs.page.className).to.equal("page");
+      expect(wrapper.find("section").props().className).to.equal("page");
     });
   });
 

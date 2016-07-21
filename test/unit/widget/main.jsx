@@ -10,7 +10,7 @@ import "../../data/spreadsheet";
 
 describe("<Main />", function() {
 
-  var wrapper;
+  let wrapper;
 
   describe("Initialization", function() {
     beforeEach(function () {
@@ -42,7 +42,7 @@ describe("<Main />", function() {
   });
 
   describe("<Spreadsheet />", function() {
-    beforeEach(function () {
+    beforeEach(function() {
       wrapper = shallow(<Main />);
     });
 
@@ -86,8 +86,22 @@ describe("<Main />", function() {
   });
 
   describe("Messaging", function() {
+    let server;
+
+    before(function() {
+      server = sinon.fakeServer.create();
+      server.respondImmediately = true;
+      server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
+        [200, { "Content-Type": "application/json" },
+          '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
+    });
+
     beforeEach(function() {
       wrapper = mount(<Main />);
+    });
+
+    after(function() {
+      server.restore();
     });
 
     it("Should show waiting message", function() {

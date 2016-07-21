@@ -23,7 +23,6 @@ const Spreadsheet = React.createClass({
   errorFlag: false,
   errorTimer: null,
   errorLog: null,
-  dataColumnIds: [],
   totalCols: 0,
 
 
@@ -110,7 +109,10 @@ const Spreadsheet = React.createClass({
 
       this.loadFonts();
       this.setVerticalAlignment();
-      this.initRiseGoogleSheet();
+
+      this.fetchSheetName(sheetName => {
+        this.initRiseGoogleSheet(sheetName);
+      });
     }
 
   },
@@ -169,49 +171,62 @@ const Spreadsheet = React.createClass({
     Common.addCSSRules(rules);
   },
 
-  initRiseGoogleSheet: function() {
-    var mapStartRange, mapEndRange;
+  fetchSheetName: function(cb) {
+    let sheetName = "",
+      xhr = new XMLHttpRequest(),
+      apiKey = (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT,
+      url = "https://sheets.googleapis.com/v4/spreadsheets/" + params.spreadsheet.fileId +
+        "?key=" + apiKey;
 
-    function mapCell(cell) {
-      var obj = {},
-        column, row;
-
-      column = cell.substr(0, 1);
-      row = cell.substr(1);
-
-      if (!isNaN(parseInt(column, 10))) {
-        return null;
-      }
-
-      if (isNaN(parseInt(row, 10))) {
-        return null;
-      }
-
-      // code for lowercase 'a' is 97 so subtract
-      obj.column = (column.toLowerCase().charCodeAt(0) - 97 ) + 1;
-      obj.row = parseInt(row, 10);
-
-      return obj;
+    if (!cb || (typeof cb !== "function")) {
+      return;
     }
 
+    xhr.onload = function() {
+      let response = JSON.parse(xhr.responseText),
+        tabId = parseInt(params.spreadsheet.tabId);
+
+      if (!isNaN(tabId)) {
+        // tabId is one more than the array index.
+        tabId--;
+
+        if (response.sheets && (tabId < response.sheets.length)) {
+          if (response.sheets[tabId].properties && response.sheets[tabId].properties.title) {
+            sheetName = response.sheets[tabId].properties.title;
+          }
+        }
+      }
+
+      cb(sheetName);
+    };
+
+    xhr.onerror = (() => {
+      this.logEvent({
+        "event": "error",
+        "event_details": "error fetching sheet name",
+        "error_details": "The request failed with status code: " + xhr.status,
+        "url": url
+      }, true);
+
+      cb(sheetName);
+    });
+
+    xhr.open("GET", url);
+    xhr.send();
+  },
+
+  initRiseGoogleSheet: function(sheetName) {
     sheet.addEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
     sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
 
-
-
     sheet.setAttribute("key", params.spreadsheet.fileId);
-    sheet.setAttribute("tab-id", params.spreadsheet.tabId);
-    sheet.setAttribute("refresh", params.spreadsheet.refresh * 60);
+    sheet.setAttribute("sheet", sheetName);
+    sheet.setAttribute("refresh", params.spreadsheet.refresh);
 
     if (params.spreadsheet.cells === "range") {
-      mapStartRange = mapCell(params.spreadsheet.range.startCell);
-      mapEndRange = mapCell(params.spreadsheet.range.endCell);
-
-      if (mapStartRange && mapEndRange) {
-        sheet.setAttribute("min-column", mapStartRange.column);
-        sheet.setAttribute("max-column", mapEndRange.column);
-        sheet.setAttribute("min-row", mapStartRange.row);
-        sheet.setAttribute("max-row", mapEndRange.row);
+      if (params.spreadsheet.range.startCell && params.spreadsheet.range.endCell) {
+        sheet.setAttribute("range", params.spreadsheet.range.startCell + ":" +
+          params.spreadsheet.range.endCell);
       }
     }
 
@@ -221,8 +236,7 @@ const Spreadsheet = React.createClass({
     if (params.spreadsheet.apiKey) {
       sheet.setAttribute("apikey", params.spreadsheet.apiKey);
     } else if (params.spreadsheet.refresh < 60) {
-      var oneHour = 60 * 60;
-      sheet.setAttribute("refresh", oneHour);
+      sheet.setAttribute("refresh", 60);
     }
 
     sheet.go();
@@ -231,8 +245,8 @@ const Spreadsheet = React.createClass({
   onGoogleSheetResponse: function(e) {
     this.props.hideMessage();
 
-    if (e.detail && e.detail.cells) {
-      this.setState({ data: e.detail.cells });
+    if (e.detail && e.detail.results) {
+      this.setState({ data: e.detail.results });
     }
 
     if (this.isLoading) {
@@ -389,18 +403,6 @@ const Spreadsheet = React.createClass({
     }
   },
 
-  setDataColumnIds: function() {
-    var matchFound = false;
-
-    this.dataColumnIds = [];
-
-    // For every column...
-    for (let i = 0; i < this.totalCols; i++) {
-      // title.$t = A1, B1, etc. Remove the trailing number so that ids can be compared.
-      this.dataColumnIds.push(this.state.data[i].title.$t.replace(/\d+/g, ""));
-    }
-  },
-
   // Calculate the width that is taken up by rendering columns with an explicit width.
   getColumnWidthObj: function() {
     const { columns } = params.format;
@@ -482,7 +484,7 @@ const Spreadsheet = React.createClass({
         for (let j = 0; j < columns.length; j++) {
           column = columns[j];
 
-          if (column.id === this.dataColumnIds[i]) {
+          if (column.name === this.state.data[0][i]) {
             const columnFormat = columnFormats[i];
 
             columnFormat.id = column.id;
@@ -514,56 +516,6 @@ const Spreadsheet = React.createClass({
     return columnFormats;
   },
 
-  setColumnCount: function() {
-    var columns = [],
-      found, row, val;
-
-    for (var i = 0; i < this.state.data.length; i += 1) {
-      if (row && parseInt(this.state.data[i].gs$cell.row, 10) !== row) {
-        // no need to go further than first row
-        break;
-      } else {
-        row = parseInt(this.state.data[i].gs$cell.row, 10);
-      }
-
-      val = parseInt(this.state.data[i].gs$cell.col, 10);
-      found = columns.some(function (col) {
-        return col === val;
-      });
-
-      if (!found) {
-        columns.push(val);
-      }
-    }
-
-    this.totalCols = columns.length;
-  },
-
-  getRowCount: function() {
-    var rows = [],
-      found, col, val;
-
-    for (var i = 0; i < this.state.data.length; i += 1) {
-      if (col && parseInt(this.state.data[i].gs$cell.col, 10) === col) {
-        // skip to next cell
-        continue;
-      } else {
-        col = parseInt(this.state.data[i].gs$cell.col, 10);
-      }
-
-      val = parseInt(this.state.data[i].gs$cell.row, 10);
-      found = rows.some(function (row) {
-        return row === val;
-      });
-
-      if (!found) {
-        rows.push(val);
-      }
-    }
-
-    return rows.length;
-  },
-
   getHeaders: function() {
     var matchFound = false,
       column = null,
@@ -579,7 +531,7 @@ const Spreadsheet = React.createClass({
         for (let j = 0; j < columns.length; j++) {
           column = columns[j];
 
-          if (column.id === this.dataColumnIds[i]) {
+          if (column.name === this.state.data[0][i]) {
             if ((column.headerText !== undefined) && (column.headerText !== "")) {
               headers.push(column.headerText);
               matchFound = true;
@@ -592,35 +544,20 @@ const Spreadsheet = React.createClass({
 
       // Use the header from the spreadsheet.
       if (!matchFound) {
-        headers.push(this.state.data[i].content.$t);
+        headers.push(this.state.data[0][i]);
       }
     }
 
     return headers;
   },
 
-  // Convert data to a two-dimensional array of rows.
   getRows: function() {
-    var rows = [],
-      row = null,
-      startingCol = parseInt(this.state.data[0].gs$cell.col,10),
-      startingIndex = (params.spreadsheet.hasHeader) ? this.totalCols : 0;
-
-    for (var i = startingIndex; i < this.state.data.length; i += 1) {
-      if (parseInt(this.state.data[i].gs$cell.col, 10) === startingCol) {
-        if (row !== null) {
-          rows.push(row);
-        }
-
-        row = [];
-      }
-
-      row.push(this.state.data[i].content.$t);
+    if (params.spreadsheet.hasHeader) {
+      return this.state.data.slice(1);
     }
-
-    rows.push(row);
-
-    return rows;
+    else {
+      return this.state.data;
+    }
   },
 
   canRenderBody: function() {
@@ -628,13 +565,12 @@ const Spreadsheet = React.createClass({
       return true;
     }
 
-    return this.getRowCount() > 1;
+    return this.state.data.length > 1;
   },
 
   render: function() {
     if (this.state.data) {
-      this.setColumnCount();
-      this.setDataColumnIds();
+      this.totalCols = this.state.data[0].length;
 
       return(
         <div id="table">

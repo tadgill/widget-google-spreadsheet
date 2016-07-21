@@ -60,10 +60,10 @@
         docName: "",
         url: "",
         fileId: "xxxxxxxxxx",
-        cells: "sheet",
+        cells: "range",
         range: {
-          startCell: "",
-          endCell: ""
+          startCell: "B2",
+          endCell: "C3"
         },
         tabId: 1,
         hasHeader: true,
