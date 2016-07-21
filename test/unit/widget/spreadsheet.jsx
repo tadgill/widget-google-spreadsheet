@@ -178,6 +178,30 @@ describe("<Spreadsheet />", function() {
       expect(wrapper.state().data).to.be.null;
     });
 
+    it("should ensure state is initial value when quota error and no cached data provided", function () {
+      var event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet");
+
+      event.initEvent("rise-google-sheet-quota", true, true);
+      event.detail = {};
+
+      sheet.dispatchEvent(event);
+
+      expect(wrapper.state().data).to.be.null;
+    });
+
+    it("should ensure state is updated when quota error and cached data is provided", function () {
+      var event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet");
+
+      event.initEvent("rise-google-sheet-quota", true, true);
+      event.detail = {results: [["1", "2", "3"]]};
+
+      sheet.dispatchEvent(event);
+
+      expect(wrapper.state().data).to.deep.equal([["1", "2", "3"]]);
+    });
+
   });
 
   describe("Logging", function() {
@@ -229,6 +253,24 @@ describe("<Spreadsheet />", function() {
 
       event.initEvent("rise-google-sheet-error", true, true);
       event.detail = "error";
+      sheet.dispatchEvent(event);
+
+      expect(stub.withArgs(table,params).called).to.equal(true);
+    });
+
+    it("should log the quota error event", function() {
+      var event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet"),
+
+        params = {
+          "event": "error",
+          "event_details": "api quota exceeded",
+          "url": additionalParams.spreadsheet.url,
+          "api_key": "abc123"
+        };
+
+      event.initEvent("rise-google-sheet-quota", true, true);
+      event.detail = {};
       sheet.dispatchEvent(event);
 
       expect(stub.withArgs(table,params).called).to.equal(true);
