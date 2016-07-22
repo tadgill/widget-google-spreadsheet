@@ -218,6 +218,7 @@ const Spreadsheet = React.createClass({
   initRiseGoogleSheet: function(sheetName) {
     sheet.addEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
     sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
+    sheet.addEventListener("rise-google-sheet-quota", this.onGoogleSheetQuota);
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("sheet", sheetName);
@@ -276,6 +277,32 @@ const Spreadsheet = React.createClass({
       this.isLoading = false;
       this.ready();
     }
+  },
+
+  onGoogleSheetQuota: function(e) {
+    // log the event
+    this.logEvent({
+      "event": "error",
+      "event_details": "api quota exceeded",
+      "url": params.spreadsheet.url,
+      "api_key": (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
+    }, true);
+
+    if (e.detail && e.detail.results) {
+      // cached data provided, process as normal response
+      this.onGoogleSheetResponse(e);
+    }
+    else {
+      this.showError("The API Key used to retrieve data from the Spreadsheet has exceeded the daily quota. Please use a different API Key.");
+
+      this.setState({ data: null });
+
+      if (this.isLoading) {
+        this.isLoading = false;
+        this.ready();
+      }
+    }
+
   },
 
   loadFonts: function() {
