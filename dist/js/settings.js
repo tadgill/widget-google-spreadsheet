@@ -13478,7 +13478,6 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
           .then(function (sheets) {
-            $log.debug("Worksheets", sheets);
             $scope.public = true;
             $scope.sheets = sheets;
             $scope.currentSheet = sheets[$scope.settings.additionalParams.spreadsheet.tabId - 1];

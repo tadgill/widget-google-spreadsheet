@@ -131,7 +131,8 @@
         "src/components/promise-polyfill/Promise.js",
         "src/components/iron-ajax/iron-ajax.html",
         "src/components/iron-ajax/iron-request.html",
-        "src/components/webfontloader/webfontloader.js"
+        "src/components/webfontloader/webfontloader.js",
+        "src/components/moment/moment.js"
       ], {base: "./src/"})
       .pipe(gulp.dest("dist/"));
   });
@@ -241,7 +242,7 @@
     console.log("  gulp bump: bump the release version".yellow);
     console.log("  gulp test: run e2e, integration, and unit tests".yellow);
     console.log("********************************************************************".yellow);
-    
+
     return true;
   });
 
