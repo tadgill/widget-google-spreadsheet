@@ -90,7 +90,7 @@ window.gadget.settings = {
         endCell: "C3"
       },
       tabId: 1,
-      sheetName: "Test",
+      sheetName: "Sheet1",
       hasHeader: true,
       refresh: 60,
       apiKey: "abc123"

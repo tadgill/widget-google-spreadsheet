@@ -110,9 +110,7 @@ const Spreadsheet = React.createClass({
       this.loadFonts();
       this.setVerticalAlignment();
 
-      this.fetchSheetName(sheetName => {
-        this.initRiseGoogleSheet(sheetName);
-      });
+      this.initRiseGoogleSheet();
     }
 
   },
@@ -171,57 +169,13 @@ const Spreadsheet = React.createClass({
     Common.addCSSRules(rules);
   },
 
-  fetchSheetName: function(cb) {
-    let sheetName = "",
-      xhr = new XMLHttpRequest(),
-      apiKey = (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT,
-      url = "https://sheets.googleapis.com/v4/spreadsheets/" + params.spreadsheet.fileId +
-        "?key=" + apiKey;
-
-    if (!cb || (typeof cb !== "function")) {
-      return;
-    }
-
-    xhr.onload = function() {
-      let response = JSON.parse(xhr.responseText),
-        tabId = parseInt(params.spreadsheet.tabId);
-
-      if (!isNaN(tabId)) {
-        // tabId is one more than the array index.
-        tabId--;
-
-        if (response.sheets && (tabId < response.sheets.length)) {
-          if (response.sheets[tabId].properties && response.sheets[tabId].properties.title) {
-            sheetName = response.sheets[tabId].properties.title;
-          }
-        }
-      }
-
-      cb(sheetName);
-    };
-
-    xhr.onerror = (() => {
-      this.logEvent({
-        "event": "error",
-        "event_details": "error fetching sheet name",
-        "error_details": "The request failed with status code: " + xhr.status,
-        "url": url
-      }, true);
-
-      cb(sheetName);
-    });
-
-    xhr.open("GET", url);
-    xhr.send();
-  },
-
-  initRiseGoogleSheet: function(sheetName) {
+  initRiseGoogleSheet: function() {
     sheet.addEventListener("rise-google-sheet-response", this.onGoogleSheetResponse);
     sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
     sheet.addEventListener("rise-google-sheet-quota", this.onGoogleSheetQuota);
 
     sheet.setAttribute("key", params.spreadsheet.fileId);
-    sheet.setAttribute("sheet", sheetName);
+    sheet.setAttribute("sheet", params.spreadsheet.sheetName);
     sheet.setAttribute("refresh", params.spreadsheet.refresh);
 
     if (params.spreadsheet.cells === "range") {
