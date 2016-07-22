@@ -211,7 +211,8 @@ describe("<Spreadsheet />", function() {
         "event": "play",
         "url": additionalParams.spreadsheet.url,
         "api_key": "abc123"
-      };
+      },
+      sheet = document.getElementById("rise-google-sheet");
 
     beforeEach(function() {
       stub = sinon.stub(LoggerUtils, "logEvent");
@@ -239,20 +240,64 @@ describe("<Spreadsheet />", function() {
       // TODO: Needs auto-scroll first.
     });
 
-    it("should log the error event", function() {
+    it("should log the default error event", function() {
       var event = document.createEvent("Event"),
-          sheet = document.getElementById("rise-google-sheet"),
-
       params = {
         "event": "error",
-        "event_details": "spreadsheet not published",
-        "error_details": "error",
+        "event_details": "spreadsheet not reachable",
+        "error_details": "The request failed with status code: 400",
         "url": additionalParams.spreadsheet.url,
         "api_key": "abc123"
       };
 
       event.initEvent("rise-google-sheet-error", true, true);
-      event.detail = "error";
+      event.detail = {
+                       "error": {
+                         "message": "The request failed with status code: 400"
+                       }
+                     };
+      sheet.dispatchEvent(event);
+
+      expect(stub.withArgs(table,params).called).to.equal(true);
+    });
+
+    it("should log the error event when spreadsheet is not public ", function() {
+      var event = document.createEvent("Event"),
+      params = {
+        "event": "error",
+        "event_details": "spreadsheet not public",
+        "error_details": "The request failed with status code: 403",
+        "url": additionalParams.spreadsheet.url,
+        "api_key": "abc123"
+      };
+
+      event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = {
+                       "error": {
+                         "message": "The request failed with status code: 403"
+                       }
+                     };
+      sheet.dispatchEvent(event);
+
+      expect(stub.withArgs(table,params).called).to.equal(true);
+    });
+
+    it("should log the error event when spreadsheet is not found ", function() {
+      var event = document.createEvent("Event"),
+      params = {
+        "event": "error",
+        "event_details": "spreadsheet not found",
+        "error_details": "The request failed with status code: 404",
+        "url": additionalParams.spreadsheet.url,
+        "api_key": "abc123"
+      };
+
+      event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = {
+                       "error": {
+                         "message": "The request failed with status code: 404"
+                       }
+                     };
       sheet.dispatchEvent(event);
 
       expect(stub.withArgs(table,params).called).to.equal(true);
@@ -260,8 +305,6 @@ describe("<Spreadsheet />", function() {
 
     it("should log the quota error event", function() {
       var event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet"),
-
         params = {
           "event": "error",
           "event_details": "api quota exceeded",

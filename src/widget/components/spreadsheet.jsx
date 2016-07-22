@@ -215,12 +215,31 @@ const Spreadsheet = React.createClass({
   },
 
   onGoogleSheetError: function(e) {
-    this.showError("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select 'File > Publish to the web', then click 'Publish'.");
+
+    // Show a different message if there is a 403 or 404
+    var statusCode = 0;
+    var errorMessage = "";
+    if (e.detail.error && e.detail.error.message) {
+      errorMessage = e.detail.error.message;
+      statusCode = +e.detail.error.message.substring(errorMessage.indexOf(":")+2);
+    }
+
+    var message = "Error when accessing Spreadsheet.";
+    var event_details = "spreadsheet not reachable";
+    if (statusCode == "403") {
+      message = "To use this Google Spreadsheet it must be publicly accessible. To do this, open the Google Spreadsheet and select File > Share > Advanced, then select On - Anyone with the link."
+      event_details = "spreadsheet not public";
+    } else if (statusCode == "404") {
+      message = "Spreadsheet does not exists."
+      event_details = "spreadsheet not found";
+    }
+
+    this.showError(message);
 
     this.logEvent({
       "event": "error",
-      "event_details": "spreadsheet not published",
-      "error_details": e.detail,
+      "event_details": event_details,
+      "error_details": errorMessage,
       "url": params.spreadsheet.url,
       "api_key": (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
     }, true);

@@ -87,6 +87,8 @@ describe("<Main />", function() {
 
   describe("Messaging", function() {
     let server;
+    const event = document.createEvent("Event"),
+          sheet = document.getElementById("rise-google-sheet");
 
     before(function() {
       server = sinon.fakeServer.create();
@@ -108,15 +110,44 @@ describe("<Main />", function() {
       expect(wrapper.find(".message").text()).to.equal("Please wait while your google sheet is loaded.");
     });
 
-    it("Should show google sheet error message", function() {
-      const event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet");
+    it("Should show google sheet error message when spreadsheet is not public", function() {
 
       event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = {
+                      "error": {
+                        "message": "The request failed with status code: 403"
+                      }
+                    };
       sheet.dispatchEvent(event);
 
-      expect(wrapper.find(".message").text()).to.equal("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select \'File > Publish to the web\', then click \'Publish\'.");
+      expect(wrapper.find(".message").text()).to.equal("To use this Google Spreadsheet it must be publicly accessible. To do this, open the Google Spreadsheet and select File > Share > Advanced, then select On - Anyone with the link.");
     });
+
+    it("Should show google sheet error message when spreadsheet is not found", function() {
+
+      event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = {
+                      "error": {
+                        "message": "The request failed with status code: 404"
+                      }
+                    };
+      sheet.dispatchEvent(event);
+
+      expect(wrapper.find(".message").text()).to.equal("Spreadsheet does not exists.");
+    });
+
+    it("Should show google sheet error message when spreadsheet is not reachable", function() {
+
+        event.initEvent("rise-google-sheet-error", true, true);
+        event.detail = {
+                         "error": {
+                           "message": "The request failed with status code: 400"
+                         }
+                       };
+        sheet.dispatchEvent(event);
+
+        expect(wrapper.find(".message").text()).to.equal("Error when accessing Spreadsheet.");
+      });
 
     it("Should show google sheet api quota exceeded message", function() {
       const event = document.createEvent("Event"),
