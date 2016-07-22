@@ -117,6 +117,17 @@ describe("<Main />", function() {
 
       expect(wrapper.find(".message").text()).to.equal("To use this Google Spreadsheet it must be published to the web. To publish, open the Google Spreadsheet and select \'File > Publish to the web\', then click \'Publish\'.");
     });
+
+    it("Should show google sheet api quota exceeded message", function() {
+      const event = document.createEvent("Event"),
+        sheet = document.getElementById("rise-google-sheet");
+
+      event.details = {};
+      event.initEvent("rise-google-sheet-quota", true, true);
+      sheet.dispatchEvent(event);
+
+      expect(wrapper.find(".message").text()).to.equal("The API Key used to retrieve data from the Spreadsheet has exceeded the daily quota. Please use a different API Key.");
+    });
   });
 
 });

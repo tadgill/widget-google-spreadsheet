@@ -66,7 +66,7 @@
           endCell: ""
         },
         tabId: 1,
-        sheetName: "Test",
+        sheetName: "Sheet1",
         hasHeader: true,
         refresh: 5,
         apiKey: ""
