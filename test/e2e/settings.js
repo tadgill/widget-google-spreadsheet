@@ -348,6 +348,7 @@
                 endCell: ""
               },
               tabId: 1,
+              sheetName: "Worksheet 1",
               hasHeader: false,
               refresh: 60,
               "apiKey": ""
