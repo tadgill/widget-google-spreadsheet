@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 
+<script src="../moment/moment.js"></script>
+
 <!--
 `rise-google-sheet` is a web component that retrieves values from a Google Sheet specified by key and sheet name.
 
@@ -71,7 +73,7 @@ the values that can be provided in this attribute and their impact, see [Google 
 
 <script>
   (function() {
-    /* global Polymer */
+    /* global Polymer, moment */
     /* jshint newcap: false */
 
     "use strict";
@@ -164,13 +166,17 @@ the values that can be provided in this attribute and their impact, see [Google 
 
       _requestPending: false,
 
+      _refreshPending: false,
+
+      _initialGo: true,
+
       // Element Behavior
 
       /**
        * Fired when a response is received.
        *
        * @param {Object} detail
-       * @param {Object} detail.data The data returned by the Google Sheets API
+       * @param {Object} detail.results The array of sheet values returned by the Google Sheets API
        * @event rise-google-sheet-response
        */
 
@@ -178,6 +184,14 @@ the values that can be provided in this attribute and their impact, see [Google 
        * Fired when an error is received.
        *
        * @event rise-google-sheet-error
+       */
+
+      /**
+       * Fired when the API key has exceeded its quota for daily requests.
+       *
+       * @param {Object} detail
+       * @param {Object} detail.results The cached array of sheet values if data has been cached
+       * @event rise-google-sheet-quota
        */
 
       _getLocalStorageKey: function () {
@@ -194,9 +208,13 @@ the values that can be provided in this attribute and their impact, see [Google 
       },
 
       _setCachedData: function (data) {
+        var cacheObj = {};
+
         if (supportsLocalStorage()) {
+          cacheObj.data = data;
+          cacheObj.timestamp = moment().format();
           try {
-            localStorage.setItem(this._getLocalStorageKey(), JSON.stringify(data));
+            localStorage.setItem(this._getLocalStorageKey(), JSON.stringify(cacheObj));
           } catch(e) {
             console.warn(e.message);
           }
@@ -211,6 +229,7 @@ the values that can be provided in this attribute and their impact, see [Google 
 
         if (!isNaN(this.refresh) && this.refresh !== 0) {
           this.debounce("refresh", function () {
+            self._refreshPending = true;
             refreshFn.call(self);
           }, this.refresh * 60000);
         }
@@ -228,13 +247,27 @@ the values that can be provided in this attribute and their impact, see [Google 
         return response;
       },
 
+      _handleQuotaExceeded: function () {
+        var cachedData = this._getCachedData();
+
+        if (cachedData) {
+          this._setResults(cachedData.data.results);
+        }
+
+        this.fire("rise-google-sheet-quota", (cachedData) ? cachedData.data : null);
+
+        this._requestPending = false;
+        this._startTimer();
+
+      },
+
       _handleNoNetwork: function (resp) {
         var cachedData = this._getCachedData();
 
         if (cachedData) {
-          this._setResults(cachedData.results);
+          this._setResults(cachedData.data.results);
 
-          this.fire("rise-google-sheet-response", cachedData);
+          this.fire("rise-google-sheet-response", cachedData.data);
         }
         else {
           this.fire("rise-google-sheet-error", resp);
@@ -248,26 +281,34 @@ the values that can be provided in this attribute and their impact, see [Google 
         // in case there are other instances of rise-google-sheet
         e.stopPropagation();
 
-        if (resp.request && resp.request.status === 0) {
-          this._handleNoNetwork(resp);
-        }
-        else {
-          // reset the value of cells
-          this._setResults([]);
+        if (resp.request) {
+          switch (resp.request.status) {
+            case 0:
+              this._handleNoNetwork(resp);
+              break;
+            case 429:
+              this._handleQuotaExceeded();
+              break;
+            default:
+              // reset the value of cells
+              this._setResults([]);
 
-          // if cached data exists, remove it
-          if (this._getCachedData()) {
-            try {
-              localStorage.removeItem(this._getLocalStorageKey());
-            } catch (ex) {
-              console.warn(ex.message);
-            }
+              // if cached data exists, remove it
+              if (this._getCachedData()) {
+                try {
+                  localStorage.removeItem(this._getLocalStorageKey());
+                } catch (ex) {
+                  console.warn(ex.message);
+                }
+              }
+
+              this.fire("rise-google-sheet-error", resp);
+
+              this._requestPending = false;
+              this._startTimer();
+
+              break;
           }
-
-          this.fire("rise-google-sheet-error", resp);
-
-          this._requestPending = false;
-          this._startTimer();
         }
 
       },
@@ -316,16 +357,7 @@ the values that can be provided in this attribute and their impact, see [Google 
         return API_BASE_URL + this.key + "/values/" + this.sheet + this._getRange();
       },
 
-      /**
-       * Performs a request to obtain the Google Sheet data
-       *
-       */
-      go: function() {
-        // key, apikey, and sheet are required, don't make request if any are missing or if a previous request is pending
-        if (this.key === "" || this.apikey === "" || this.sheet === "" || this._requestPending) {
-          return;
-        }
-
+      _makeRequest: function() {
         // set flag to prevent further requests in case go() function is called before prior request responds
         this._requestPending = true;
 
@@ -334,6 +366,62 @@ the values that can be provided in this attribute and their impact, see [Google 
         this.$.sheet.params = this._getParams();
 
         this.$.sheet.generateRequest();
+      },
+
+      /**
+       * Performs a request to obtain the Google Sheet data
+       *
+       */
+      go: function() {
+        var cachedData = this._getCachedData(),
+          refreshVal = parseInt(this.refresh, 10),
+          makeRequestFn = this._makeRequest,
+          self = this,
+          then, now, diff;
+
+        // key, apikey, and sheet are required, don't make request if any are missing or if a previous request is pending
+        if (this.key === "" || this.apikey === "" || this.sheet === "" || this._requestPending) {
+          return;
+        }
+
+        if (this._refreshPending || !cachedData) {
+          // refresh timer completed or there is no cached data available, make the request
+          this._refreshPending = false;
+          this._makeRequest();
+        }
+        else {
+          if (this._initialGo) {
+            this._initialGo = false;
+
+            // first time component is executing go()
+
+            if (!isNaN(refreshVal) && refreshVal !== 0) {
+              then = moment(cachedData.timestamp);
+              now = moment();
+              diff = now.diff(then, "minutes");
+
+              // compare refresh value to amount of time that has passed since last timestamp in cached data
+
+              if (diff >= refreshVal) {
+                // more time has gone by than the assigned refresh value, make the request
+                this._makeRequest();
+                return;
+              }
+              else {
+                // start a refresh timer with the remaining refresh time left as the interval
+                this.debounce("refresh", function () {
+                  makeRequestFn.call(self);
+                }, (refreshVal - diff) * 60000);
+              }
+            }
+          }
+
+          this._setResults(cachedData.data.results);
+
+          // provide cached data for the response
+          this.fire("rise-google-sheet-response", cachedData.data);
+        }
+
       }
 
     });

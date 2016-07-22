@@ -13488,12 +13488,14 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             $scope.sheets = [];
             $scope.currentSheet = null;
             $scope.settings.additionalParams.spreadsheet.tabId = 1;
+            $scope.settings.additionalParams.spreadsheet.sheetName = "";
           });
       }
 
       $scope.$watch("currentSheet", function (currentSheet) {
         if (currentSheet) {
           $scope.settings.additionalParams.spreadsheet.tabId = currentSheet.value;
+          $scope.settings.additionalParams.spreadsheet.sheetName = currentSheet.label;
         }
       });
 
@@ -13648,6 +13650,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           endCell: ""
         },
         tabId: 1,
+        sheetName: "",
         hasHeader: false,
         refresh: 60,
         apiKey: ""
