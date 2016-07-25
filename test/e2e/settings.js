@@ -60,12 +60,12 @@
         expect(element(by.model("settings.additionalParams.spreadsheet.hasHeader")).isSelected()).to.eventually.be.false;
       });
 
-      it("Should show refresh interval input default to 60 minutes", function () {
-        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).getAttribute('value')).to.eventually.equal("60");
+      it("Should show refresh interval input disabled", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.false;
       });
 
-      it("Should show refresh interval input be disabled", function () {
-        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.false;
+      it("Should show api key input disabled", function () {
+        expect(element(by.model("settings.additionalParams.spreadsheet.apiKey")).isEnabled()).to.eventually.be.false;
       });
 
       it("Should apply form as invalid due to no spreadsheet doc name", function () {
@@ -270,11 +270,36 @@
 
     describe("Api Key", function () {
 
-      it("Should enable refresh interval field if api key is entered", function () {
-        element(by.model("settings.additionalParams.spreadsheet.apiKey")).sendKeys('dn303d2d-edn20audsaa09x');
+      beforeEach(function () {
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
 
-        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.true;
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "public",
+            name: "Test File",
+            url: "https://test-public"
+          }]);
+        });
       });
+
+      it("Should disable refresh interval field if a non valid api key is entered", function () {
+        element(by.model("settings.additionalParams.spreadsheet.apiKey")).sendKeys('non valid key');
+        element(by.model("settings.additionalParams.spreadsheet.refresh")).click();
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.false;
+        expect(element(by.css("button#save[disabled=disabled")).isPresent()).to.eventually.be.true;
+
+      });
+
+      it("Should disable API Key when clearing out the file selection", function () {
+        element(by.css(".fa-times-circle")).click();
+
+        expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.false;
+        expect(element(by.model("settings.additionalParams.spreadsheet.apiKey")).isEnabled()).to.eventually.be.false;
+      });
+
     });
 
     describe("Saving", function () {

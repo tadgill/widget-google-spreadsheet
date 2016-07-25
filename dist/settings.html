@@ -150,41 +150,52 @@
           <hr>
 
           <!--  REFRESH INTERVAL -->
-
-          <div class="form-group">
-            <div class="row">
-              <div class="col-sm-12">
-                <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.refresh" | translate }}</label>
-                <div>
-                  <span>{{ "widget-google-spreadsheet.spreadsheet.apiKeyDescription" | translate }} <a href="https://community.risevision.com/rise_vision_inc/topics/how-to-generate-an-api-key-for-the-google-spreadsheet-widget" target="_blank">{{ "widget-google-spreadsheet.spreadsheet.apiKeyDescriptionLink" | translate }}</a></span>
+          <div>
+            <div class="form-group" >
+              <div class="row">
+                <div class="col-sm-12">
+                  <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.refresh" | translate }}</label>
+                  <div>
+                    <span>{{ "widget-google-spreadsheet.spreadsheet.apiKeyDescription" | translate }} <a href="https://community.risevision.com/rise_vision_inc/topics/how-to-generate-an-api-key-for-the-google-spreadsheet-widget" target="_blank">{{ "widget-google-spreadsheet.spreadsheet.apiKeyDescriptionLink" | translate }}</a></span>
+                  </div>
                 </div>
-              </div>
-            </div><!--row-->
-          </div><!--form-group-->
-          <!-- END REFRESH INTERVAL -->
-          <div class="form-group">
-            <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.apiKey" | translate }}</label>
-            <div class="row">
-              <div class="col-sm-6">
-                <input type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.apiKey">
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.refreshInterval" | translate }}</label>
-            <div class="row">
-              <div class="col-sm-3">
-                <div class="input-group">
-                  <input type="number" class="form-control" ng-model="settings.additionalParams.spreadsheet.refresh" ng-disabled="!settings.additionalParams.spreadsheet.apiKey">
-                  <span class="input-group-addon">{{ "common.units.minutes" | translate }}</span>
+              </div><!--row-->
+            </div><!--form-group-->
+            <div class="form-group">
+              <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.apiKey" | translate }}</label>
+              <div class="row">
+                <div class="col-sm-6">
+                  <input type="text" class="form-control" ng-blur="apiKeyBlur()" ng-model="settings.additionalParams.spreadsheet.apiKey" ng-disabled="!settings.additionalParams.spreadsheet.url || !public"  valid>
                 </div>
               </div>
             </div>
+
+            <div ng-if="!validApiKey">
+              <div class="content-box add-bottom">
+                <div class="bg-danger add-padding">
+                  <span translate="{{'widget-google-spreadsheet.spreadsheet.apiKeyNotValid'}}"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label">{{ "widget-google-spreadsheet.spreadsheet.refreshInterval" | translate }}</label>
+              <div class="row">
+                <div class="col-sm-3">
+                  <div class="input-group">
+                    <input type="number" class="form-control" ng-model="settings.additionalParams.spreadsheet.refresh" ng-disabled="!settings.additionalParams.spreadsheet.apiKey || !validApiKey">
+                    <span class="input-group-addon">{{ "common.units.minutes" | translate }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <hr>
           </div>
+    <!-- END REFRESH INTERVAL -->
 
-          <hr>
 
-          <scroll-setting hide-direction="true" scroll="settings.additionalParams.scroll"></scroll-setting>
+    <scroll-setting hide-direction="true" scroll="settings.additionalParams.scroll"></scroll-setting>
 
           <hr>
 
