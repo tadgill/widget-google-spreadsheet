@@ -21,8 +21,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           });
         };
 
-      factory.getWorkSheets = function(fileId) {
-        var api = SHEETS_API + fileId + "?key=" + API_KEY;
+      factory.getWorkSheets = function(fileId, apiKey) {
+        var api = SHEETS_API + fileId + "?key=" + ( (apiKey)? apiKey: API_KEY);
 
         return $http.get(encodeURI(api))
           .then(function (response) {

@@ -13457,13 +13457,14 @@ angular.module("risevision.widget.common")
 })(angular);
 
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "$window", "$log", "googleSheet", "columns",
-    function ($scope, $window, $log, googleSheet, columns) {
+  .controller("spreadsheetSettingsController", ["$scope", "googleSheet", "$window", "$log", "columns",
+    function ($scope, googleSheet, $window, $log, columns) {
 
       $scope.showPreview = false;
       $scope.sheets = [];
       $scope.currentSheet = null;
       $scope.columns = [];
+      $scope.validApiKey = true;
 
       $scope.getColumns = function (url) {
         columns.getColumns(url)
@@ -13580,11 +13581,26 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
       $scope.$watch("settings.additionalParams.spreadsheet.apiKey", function (apiKey) {
         if (typeof apiKey === "undefined" || !apiKey) {
+          $scope.settingsForm.$setValidity("apiKey", true);
+          $scope.validApiKey = true;
           if ($scope.settings.additionalParams.spreadsheet) {
             $scope.settings.additionalParams.spreadsheet.refresh = 60;
           }
         }
       });
+
+      $scope.apiKeyBlur = function () {
+        $scope.settingsForm.$setValidity("apiKey", true);
+        googleSheet.getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId, $scope.settings.additionalParams.spreadsheet.apiKey)
+          .then(function () {
+            $scope.validApiKey = true;
+            $scope.settingsForm.$setValidity("apiKey", true);
+          })
+          .then(null, function () {
+            $scope.validApiKey = false;
+            $scope.settingsForm.$setValidity("apiKey", false);
+          });
+      };
 
     }])
   .value("defaultSettings", {
@@ -13680,8 +13696,8 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           });
         };
 
-      factory.getWorkSheets = function(fileId) {
-        var api = SHEETS_API + fileId + "?key=" + API_KEY;
+      factory.getWorkSheets = function(fileId, apiKey) {
+        var api = SHEETS_API + fileId + "?key=" + ( (apiKey)? apiKey: API_KEY);
 
         return $http.get(encodeURI(api))
           .then(function (response) {
