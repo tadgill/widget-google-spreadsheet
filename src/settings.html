@@ -76,7 +76,7 @@
 
                   <!-- Spreadsheet Key -->
                   <input type="text" class="form-control" placeholder="{{'widget-google-spreadsheet.spreadsheet.key.placeholder' | translate }}"
-                    ng-model="settings.additionalParams.spreadsheet.fileId" ng-if="settings.additionalParams.spreadsheet.selection === 'key'" valid>
+                    ng-model="settings.additionalParams.spreadsheet.fileId" ng-blur="fileIdBlur()" ng-if="settings.additionalParams.spreadsheet.selection === 'key'" valid>
 
                   <span ng-click="clearSelection()">
                     <i class="fa fa-times-circle" aria-hidden="true"></i>

@@ -47,18 +47,22 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         if (typeof fileId === "undefined" || !fileId) {
           $scope.settingsForm.$setValidity("fileId", false);
         }
-        else {
+      });
+
+      $scope.fileIdBlur = function () {
+
+        if ($scope.settings.additionalParams.spreadsheet.fileId) {
           $scope.showPreview = true;
           $scope.settingsForm.$setValidity("fileId", true);
 
           if ($scope.settings.additionalParams.spreadsheet.selection === "key") {
             $scope.settings.additionalParams.spreadsheet.url =
-              "https://docs.google.com/spreadsheets/d/" + fileId + "/edit#gid=0";
+              "https://docs.google.com/spreadsheets/d/" + $scope.settings.additionalParams.spreadsheet.fileId + "/edit#gid=0";
           }
 
-          getWorkSheets(fileId);
+          getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
         }
-      });
+      };
 
       $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
         if (typeof newUrl !== "undefined") {
@@ -91,6 +95,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         $scope.settings.additionalParams.spreadsheet.docName = data[0].name;
         $scope.settings.additionalParams.spreadsheet.url = encodeURI(data[0].url);
         $scope.settings.additionalParams.spreadsheet.fileId = data[0].id;
+        $scope.fileIdBlur();
       });
 
       $scope.setSelection = function() {
@@ -132,16 +137,18 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       });
 
       $scope.apiKeyBlur = function () {
-        $scope.settingsForm.$setValidity("apiKey", true);
-        googleSheet.getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId, $scope.settings.additionalParams.spreadsheet.apiKey)
-          .then(function () {
-            $scope.validApiKey = true;
-            $scope.settingsForm.$setValidity("apiKey", true);
-          })
-          .then(null, function () {
-            $scope.validApiKey = false;
-            $scope.settingsForm.$setValidity("apiKey", false);
-          });
+        if ($scope.settings.additionalParams.spreadsheet.apiKey) {
+          $scope.settingsForm.$setValidity("apiKey", true);
+          googleSheet.getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId, $scope.settings.additionalParams.spreadsheet.apiKey)
+            .then(function () {
+              $scope.validApiKey = true;
+              $scope.settingsForm.$setValidity("apiKey", true);
+            })
+            .then(null, function () {
+              $scope.validApiKey = false;
+              $scope.settingsForm.$setValidity("apiKey", false);
+            });
+        }
       };
 
     }])

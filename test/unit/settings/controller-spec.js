@@ -107,7 +107,9 @@ describe("Google Spreadsheet Settings", function () {
   it("should update url when fileId is changed", function () {
 
     scope.settings.additionalParams.spreadsheet.selection = "key";
-    scope.$apply('settings.additionalParams.spreadsheet.fileId="testId"');
+    scope.settings.additionalParams.spreadsheet.fileId="testId";
+    scope.fileIdBlur();
+    scope.$apply();
 
     expect(scope.settings.additionalParams.spreadsheet.url).to.be.equal("https://docs.google.com/spreadsheets/d/testId/edit#gid=0");
   });
