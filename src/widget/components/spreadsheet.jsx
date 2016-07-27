@@ -22,6 +22,7 @@ const Spreadsheet = React.createClass({
   viewerPaused: true,
   errorFlag: false,
   errorTimer: null,
+  pudTimer: null,
   errorLog: null,
   totalCols: 0,
 
@@ -230,7 +231,7 @@ const Spreadsheet = React.createClass({
       message = "To use this Google Spreadsheet it must be publicly accessible. To do this, open the Google Spreadsheet and select File > Share > Advanced, then select On - Anyone with the link."
       event_details = "spreadsheet not public";
     } else if (statusCode == "404") {
-      message = "Spreadsheet does not exists."
+      message = "Spreadsheet does not exist."
       event_details = "spreadsheet not found";
     }
 
@@ -308,6 +309,19 @@ const Spreadsheet = React.createClass({
     Common.loadFonts(fontSettings);
   },
 
+  startPUDTimer: function() {
+    let delay;
+
+    if ((params.scroll.pud === undefined) || (params.scroll.pud < 1)) {
+      delay = 10000;
+    }
+    else {
+      delay = params.scroll.pud * 1000;
+    }
+
+    this.pudTimer = setTimeout(() => this.done(), delay);
+  },
+
   ready: function() {
     gadgets.rpc.call("", "rsevent_ready", null, prefs.getString("id"), true, true, true, true, true);
   },
@@ -339,15 +353,23 @@ const Spreadsheet = React.createClass({
       this.startErrorTimer();
     }
 
-    if (this.refs.scrollComponent) {
+    if (this.refs.scrollComponent && this.refs.scrollComponent.canScroll()) {
       this.refs.scrollComponent.play();
+    }
+    else {
+      this.startPUDTimer();
     }
   },
 
   pause: function() {
     this.viewerPaused = true;
+
     if (this.refs.scrollComponent) {
       this.refs.scrollComponent.pause();
+    }
+
+    if (this.pudTimer) {
+      clearTimeout(this.pudTimer);
     }
   },
 

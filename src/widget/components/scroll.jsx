@@ -17,20 +17,22 @@ const Scroll = React.createClass({
 
   componentDidMount: function() {
     this.scroll = $(this.refs.scroll);
+
     $(this.refs.page).height(this.props.data.length * this.props.rowHeight);
+
+    this.scroll.autoScroll(this.props.scroll).on("done", () => {
+      this.props.onDone();
+    });
+  },
+
+  canScroll: function() {
+    return this.props.scroll.by !== "none" && this.scroll && this.scroll.data("plugin_autoScroll") &&
+      this.scroll.data("plugin_autoScroll").canScroll();
   },
 
   play: function() {
-    if (this.scroll) {
-      if (this.scroll.data("plugin_autoScroll") === undefined) {
-        var self = this;
-        this.scroll.autoScroll(this.props.scroll).on("done", function () {
-          self.props.onDone();
-        });
-        this.scroll.data("plugin_autoScroll").play();
-      } else {
-        this.scroll.data("plugin_autoScroll").play();
-      }
+    if (this.scroll && this.scroll.data("plugin_autoScroll")) {
+      this.scroll.data("plugin_autoScroll").play();
     }
   },
 
