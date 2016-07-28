@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spreadsheet Widget</title>
+
+  <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../src/components/web-component-tester/browser.js"></script>
+
+  <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
+  <link href="../../dist/css/spreadsheet.css" rel="stylesheet"></head>
+
+</head>
+<body>
+
+<div id="mainContainer"></div>
+
+<rise-google-sheet id="rise-google-sheet" refresh="60"></rise-google-sheet>
+
+<script src="../data/spreadsheet-integration-pud.js"></script>
+<script src="../data/sheets.js"></script>
+<script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
+
+<script>
+
+  let server, paramsStub, clock,
+    googleSheet = document.querySelector("rise-google-sheet");
+
+  server = sinon.fakeServer.create();
+  server.respondImmediately = true;
+  server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
+    [200, { "Content-Type": "application/json" },
+      JSON.stringify(sheetData)]);
+
+  paramsStub = sinon.stub(googleSheet, "go", function () {
+    clock = sinon.useFakeTimers();
+
+    paramsStub.restore();
+    googleSheet.go();
+  });
+
+  suite("PUD timer", function () {
+    let rpcSpy = null;
+
+    suiteSetup(function() {
+      rpcSpy = sinon.spy(gadgets.rpc, "call");
+    });
+
+    suiteTeardown(function() {
+      clock.restore();
+      server.restore();
+      rpcSpy.restore();
+    });
+
+    test("should send Done after seconds specified by PUD Failover", function() {
+      clock.tick(4000);
+      assert.equal(rpcSpy.callCount, 0);
+
+      clock.tick(1000);
+      assert.equal(rpcSpy.callCount, 1);
+    });
+  });
+
+</script>
+
+</body>
+</html>

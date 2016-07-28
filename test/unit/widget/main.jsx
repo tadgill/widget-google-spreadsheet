@@ -133,7 +133,7 @@ describe("<Main />", function() {
                     };
       sheet.dispatchEvent(event);
 
-      expect(wrapper.find(".message").text()).to.equal("Spreadsheet does not exists.");
+      expect(wrapper.find(".message").text()).to.equal("Spreadsheet does not exist.");
     });
 
     it("Should show google sheet error message when spreadsheet is not reachable", function() {
