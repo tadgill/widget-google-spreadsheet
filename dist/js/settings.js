@@ -13510,15 +13510,10 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.fileIdBlur = function () {
 
         if ($scope.settings.additionalParams.spreadsheet.fileId) {
-          $scope.showPreview = true;
-          $scope.settingsForm.$setValidity("fileId", true);
-
           if ($scope.settings.additionalParams.spreadsheet.selection === "key") {
             $scope.settings.additionalParams.spreadsheet.url =
               "https://docs.google.com/spreadsheets/d/" + $scope.settings.additionalParams.spreadsheet.fileId + "/edit#gid=0";
           }
-
-          getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
         }
       };
 
@@ -13533,6 +13528,9 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             }
 
             if (newUrl !== "") {
+              $scope.showPreview = true;
+              $scope.settingsForm.$setValidity("fileId", true);
+              getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
               $scope.getColumns(newUrl);
             }
           }
@@ -13548,12 +13546,10 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       });
 
       $scope.$on("picked", function (event, data) {
-        $scope.showPreview = true;
         $scope.settings.additionalParams.spreadsheet.selection = "drive";
         $scope.settings.additionalParams.spreadsheet.docName = data[0].name;
-        $scope.settings.additionalParams.spreadsheet.url = encodeURI(data[0].url);
         $scope.settings.additionalParams.spreadsheet.fileId = data[0].id;
-        $scope.fileIdBlur();
+        $scope.settings.additionalParams.spreadsheet.url = encodeURI(data[0].url);
       });
 
       $scope.setSelection = function() {
@@ -13608,7 +13604,6 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
             });
         }
       };
-
     }])
   .value("defaultSettings", {
     params: {},
