@@ -60,25 +60,13 @@ describe("<TableHeaderContainer />", function() {
         expect(wrapper.props().children[0].props.align).to.equal(align);
       });
 
-      it("Should use default alignment if neither align nor columnFormats.alignment props exist", function() {
+      it("Should use default alignment if align props doesn't exist", function() {
         wrapper = shallow(<TableHeaderContainer data={data} width={width} height={height}
           columnFormats={columnFormats} />);
 
         expect(wrapper.props().children[0].props.align).to.equal("left");
       });
 
-      it("Should use alignment from columnFormats prop", function() {
-        columnFormats = [
-          { "alignment": "right", "width": 100 },
-          { "width": 200 },
-          { "width": 300 }
-        ];
-
-        wrapper = shallow(<TableHeaderContainer align={align} data={data} width={width} height={height}
-          columnFormats={columnFormats} />);
-
-        expect(wrapper.props().children[0].props.align).to.equal(columnFormats[0].alignment);
-      });
     });
   });
 
@@ -99,19 +87,6 @@ describe("<TableHeaderContainer />", function() {
 
     it("Should have className prop", function() {
      expect(wrapper.find(Cell).first().props().className).to.equal("header_font-style");
-    });
-
-    it("Should use className from columnFormats prop", function() {
-      columnFormats = [
-        { "id": "A", "width": 100 },
-        { "width": 200 },
-        { "width": 300 }
-      ];
-
-      wrapper = mount(<TableHeaderContainer align={align} data={data} width={width} height={height}
-        columnFormats={columnFormats} />);
-
-      expect(wrapper.find(Cell).first().props().className).to.equal(columnFormats[0].id);
     });
 
   });
