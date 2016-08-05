@@ -180,6 +180,15 @@
         expect(element(by.model("settings.additionalParams.format.separator.color")).isPresent()).to.eventually.be.false;
       });
 
+      it("Should disable column format settings", function () {
+        expect(element(by.css("column-selector[disabled=disabled]")).isPresent()).to.eventually.be.true;
+      });
+
+      it("Should enable column format settings if 'Use First Row as Header' is checked", function () {
+        element(by.model("settings.additionalParams.spreadsheet.hasHeader")).click();
+        expect(element(by.css("column-selector[disabled=disabled]")).isPresent()).to.eventually.be.false;
+      });
+
     });
 
     describe("Spreadsheet Publishing", function () {

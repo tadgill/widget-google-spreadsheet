@@ -295,7 +295,7 @@
 
           <hr>
 
-          <div class="row">
+          <div class="row" ng-if="settings.additionalParams.spreadsheet.hasHeader">
             <div class="col-md-12">
               <column-selector columns="settings.additionalParams.format.columns" column-names="columns">
               </column-selector>
