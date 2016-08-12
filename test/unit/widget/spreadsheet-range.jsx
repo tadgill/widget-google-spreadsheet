@@ -106,7 +106,7 @@ describe("Spreadsheet Range", function() {
     });
 
     it("Should have data prop", function() {
-      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(["Cell B3"]);
+      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(["Custom Header"]);
     });
 
     it("Should not contain a Table component", function() {

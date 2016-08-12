@@ -92,8 +92,6 @@ const Spreadsheet = React.createClass({
 
   init: function() {
     this.props.initSize(params.width, params.height);
-
-    this.convertColumnFormatIds();
     this.setRowStyle();
     this.setSeparator();
 
@@ -301,7 +299,7 @@ const Spreadsheet = React.createClass({
 
     columns.forEach(function (column, index, array) {
       fontSettings.push({
-        "class": column.id,
+        "class": "_" + column.id, // CSS class can't start with a number.
         "fontStyle": column.fontStyle
       });
     });
@@ -415,16 +413,6 @@ const Spreadsheet = React.createClass({
     }
   },
 
-  convertColumnFormatIds: function() {
-    const { columns } = params.format;
-
-    if (columns !== undefined) {
-      for (let i = 0; i < columns.length; i++) {
-        columns[i].id = columns[i].id.slice(0, (columns[i].id.indexOf("_")));
-      }
-    }
-  },
-
   // Calculate the width that is taken up by rendering columns with an explicit width.
   getColumnWidthObj: function() {
     const { columns } = params.format;
@@ -486,7 +474,7 @@ const Spreadsheet = React.createClass({
   },
 
   /* Get per column formatting as an object.
-   * Object format: [{id: "A", alignment: "left", width: 100}]
+   * Object format: [{id: 0, alignment: "left", width: 100}]
    * 'width' is always returned; 'id' and 'alignment' are optionally returned.
    */
   getColumnFormats: function() {
@@ -506,10 +494,11 @@ const Spreadsheet = React.createClass({
         for (let j = 0; j < columns.length; j++) {
           column = columns[j];
 
-          if (column.name === this.state.data[0][i]) {
+          // Map column to formatted column using column id (i.e. column index).
+          if (i == column.id) {
             const columnFormat = columnFormats[i];
 
-            columnFormat.id = column.id;
+            columnFormat.id = parseInt(column.id, 10);
             columnFormat.numeric = column.numeric ? column.numeric : false;
             columnFormat.alignment = this.getColumnAlignment(column);
             columnFormat.width = this.getColumnWidth(column);
@@ -553,7 +542,8 @@ const Spreadsheet = React.createClass({
         for (let j = 0; j < columns.length; j++) {
           column = columns[j];
 
-          if (column.name === this.state.data[0][i]) {
+          // Map column to formatted column using column id (i.e. column index).
+          if (i == column.id) {
             if ((column.headerText !== undefined) && (column.headerText !== "")) {
               headers.push(column.headerText);
               matchFound = true;

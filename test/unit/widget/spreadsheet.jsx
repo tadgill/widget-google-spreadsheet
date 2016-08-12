@@ -66,7 +66,7 @@ describe("<Spreadsheet />", function() {
     it("Should have columnFormats prop", function() {
       var expected = [
         {
-          id: "A",
+          id: additionalParams.format.columns[0].id,
           numeric: false,
           alignment: "left",
           width: additionalParams.format.columns[0].width,
@@ -123,7 +123,7 @@ describe("<Spreadsheet />", function() {
     it("Should have columnFormats prop", function() {
       var expected = [
         {
-          id: "A",
+          id: additionalParams.format.columns[0].id,
           numeric: false,
           alignment: "left",
           width: additionalParams.format.columns[0].width,
@@ -360,7 +360,7 @@ describe("<Spreadsheet />", function() {
         "width of all other columns", function() {
         var expected = [
           {
-            id: "A",
+            id: additionalParams.format.columns[0].id,
             numeric: false,
             alignment: "left",
             width: 100,
@@ -403,7 +403,7 @@ describe("<Spreadsheet />", function() {
       it("Should return numeric property as defined by params", function() {
         var expected = [
           {
-            id: "A",
+            id: additionalParams.format.columns[0].id,
             numeric: true,
             alignment: "left",
             width: 100,
