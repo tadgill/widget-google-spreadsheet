@@ -219,7 +219,7 @@ const Spreadsheet = React.createClass({
 
     // Show a different message if there is a 403 or 404
     var statusCode = 0;
-    var errorMessage = "";
+    var errorMessage = "The request failed with status code: 0";
     if (e.detail.error && e.detail.error.message) {
       errorMessage = e.detail.error.message;
       statusCode = +e.detail.error.message.substring(errorMessage.indexOf(":")+2);
