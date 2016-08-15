@@ -245,7 +245,7 @@ describe("<Spreadsheet />", function() {
       params = {
         "event": "error",
         "event_details": "spreadsheet not reachable",
-        "error_details": "The request failed with status code: 400",
+        "error_details": "The request failed with status code: 0",
         "url": additionalParams.spreadsheet.url,
         "api_key": "abc123"
       };
@@ -253,7 +253,7 @@ describe("<Spreadsheet />", function() {
       event.initEvent("rise-google-sheet-error", true, true);
       event.detail = {
                        "error": {
-                         "message": "The request failed with status code: 400"
+                         "message": ""
                        }
                      };
       sheet.dispatchEvent(event);
