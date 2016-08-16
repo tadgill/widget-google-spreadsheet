@@ -26,7 +26,7 @@ window.gadget.settings = {
       },
       columns: [
         {
-          id: "A_string_Column 1",
+          id: 0,
           name: "Column 1",
           type: "string",
           show: true,

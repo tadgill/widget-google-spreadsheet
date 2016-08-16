@@ -76,8 +76,8 @@ const CellContainer = React.createClass({
       columnFormat = columnFormats[columnKey];
 
     // Column formatting overrides header formatting.
-    if (columnFormat.id) {
-      classes = columnFormats[columnKey].id;
+    if (columnFormat.id !== undefined) {
+      classes = "_" + columnFormat.id;
     }
     else {
       classes = mainClass;
