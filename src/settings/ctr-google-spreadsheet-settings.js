@@ -1,22 +1,30 @@
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "googleSheet", "$window", "$log", "columns",
-    function ($scope, googleSheet, $window, $log, columns) {
+  .controller("spreadsheetSettingsController", ["$scope", "googleSheet", "$window",
+    function ($scope, googleSheet, $window) {
 
       $scope.showPreview = false;
       $scope.sheets = [];
       $scope.currentSheet = null;
       $scope.columns = [];
       $scope.validApiKey = true;
+      $scope.public = true;
+      $scope.validData = true;
 
-      $scope.getColumns = function (url) {
-        columns.getColumns(url)
-          .then(function (columns) {
-            if (columns.length > 0) {
-              $scope.columns = columns;
-            }
-          })
-          .then(null, $log.error);
-      };
+      function resetWorkSheets() {
+        $scope.sheets = [];
+        $scope.currentSheet = null;
+        $scope.settings.additionalParams.spreadsheet.tabId = 1;
+        $scope.settings.additionalParams.spreadsheet.sheetName = "";
+      }
+
+      function resetColumns(resetService) {
+        $scope.columns = [];
+        $scope.settings.additionalParams.format.columns = [];
+
+        if (resetService) {
+          googleSheet.resetColumns();
+        }
+      }
 
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
@@ -27,10 +35,47 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           })
           .then(null, function () {
             $scope.public = false;
-            $scope.sheets = [];
-            $scope.currentSheet = null;
-            $scope.settings.additionalParams.spreadsheet.tabId = 1;
-            $scope.settings.additionalParams.spreadsheet.sheetName = "";
+
+            resetWorkSheets();
+            resetColumns(true);
+          });
+      }
+
+      function getColumnsData(preserveFormats) {
+        var range = "";
+
+        if (!$scope.settings.additionalParams.spreadsheet.sheetName || !$scope.validApiKey) {
+          return;
+        }
+
+        if ($scope.settings.additionalParams.spreadsheet.cells === "range") {
+          if ($scope.settings.additionalParams.spreadsheet.range.startCell &&
+            $scope.settings.additionalParams.spreadsheet.range.endCell) {
+
+            range = $scope.settings.additionalParams.spreadsheet.range.startCell + ":" +
+              $scope.settings.additionalParams.spreadsheet.range.endCell;
+          }
+        }
+
+        googleSheet.getColumnsData($scope.settings.additionalParams.spreadsheet.fileId,
+          $scope.settings.additionalParams.spreadsheet.apiKey,
+          $scope.settings.additionalParams.spreadsheet.sheetName,
+          range)
+          .then(function (columns) {
+            $scope.validData = true;
+
+            if (columns) {
+              if (!preserveFormats) {
+                $scope.settings.additionalParams.format.columns = [];
+              }
+              $scope.columns = columns;
+            }
+
+          })
+          .then(null, function () {
+            $scope.validData = false;
+
+            resetColumns();
           });
       }
 
@@ -41,7 +86,34 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         }
       });
 
-      $scope.public = true;
+      $scope.$watch("settings.additionalParams.spreadsheet.sheetName", function (newVal, oldVal) {
+        if (typeof oldVal === "undefined" && newVal && newVal !== "") {
+          // previously saved settings are being shown, populate columns but preserve saved formats
+          getColumnsData(true);
+        }
+        else {
+          if (typeof newVal !== "undefined" && newVal !== "") {
+            // new sheet chosen, populate columns
+            getColumnsData();
+          }
+        }
+
+      });
+
+      $scope.$watch("settings.additionalParams.spreadsheet.cells", function (newVal, oldVal) {
+        if (typeof newVal !== "undefined" && typeof oldVal !== "undefined") {
+          // user has manually changed value
+          getColumnsData();
+        }
+      });
+
+      $scope.startCellBlur = function () {
+        getColumnsData();
+      };
+
+      $scope.endCellBlur = function () {
+        getColumnsData();
+      };
 
       $scope.$watch("settings.additionalParams.spreadsheet.fileId", function (fileId) {
         if (typeof fileId === "undefined" || !fileId) {
@@ -62,18 +134,10 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
         if (typeof newUrl !== "undefined") {
           if (newUrl !== oldUrl) {
-            $scope.columns = [];
-
-            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
-              // Widget settings have already gone through initialization. Safe to reset columns array.
-              $scope.settings.additionalParams.format.columns = [];
-            }
-
             if (newUrl !== "") {
               $scope.showPreview = true;
               $scope.settingsForm.$setValidity("fileId", true);
               getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
-              $scope.getColumns(newUrl);
             }
           }
         }
@@ -120,6 +184,9 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
         $scope.settings.additionalParams.spreadsheet.url = "";
         $scope.settings.additionalParams.spreadsheet.fileId = "";
+
+        resetWorkSheets();
+        resetColumns(true);
       };
 
       $scope.$watch("settings.additionalParams.spreadsheet.apiKey", function (apiKey) {
@@ -129,6 +196,13 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           if ($scope.settings.additionalParams.spreadsheet) {
             $scope.settings.additionalParams.spreadsheet.refresh = 60;
           }
+        }
+      });
+
+      $scope.$watch("validApiKey", function (newVal, oldVal) {
+        if (newVal !== oldVal && newVal) {
+          // a previously invalid API key has been corrected, ensure correct columns are populated
+          getColumnsData();
         }
       });
 
