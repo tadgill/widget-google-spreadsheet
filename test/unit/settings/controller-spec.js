@@ -2,23 +2,7 @@
 "use strict";
 
 describe("Google Spreadsheet Settings", function () {
-  var googleSheetService, base, apiKey, httpBackend, defaultSettings, scope, rootScope, ctrl,requestToSheet,
-    successData = {
-      sheets: [
-        {
-          properties: {
-            title: "Worksheet 1"
-          }
-        },
-        {
-          properties: {
-            title: "Worksheet 2"
-          }
-        }
-      ]
-    };
-
-
+  var googleSheetService, base, apiKey, httpBackend, defaultSettings, scope, rootScope, ctrl,requestToSheet, requestToColumns;
 
   beforeEach(module("risevision.widget.googleSpreadsheet.settings"));
 
@@ -33,7 +17,21 @@ describe("Google Spreadsheet Settings", function () {
             deferred.reject();
           }
           return deferred.promise;
-        }
+        },
+        getColumnsData: function() {
+          var deferred = Q.defer();
+          if(requestToColumns){
+            deferred.resolve([
+              {id: 0, name: "A"},
+              {id: 1, name: "B"},
+              {id: 2, name: "C"}
+            ]);
+          }else{
+            deferred.reject();
+          }
+          return deferred.promise;
+        },
+        resetColumns: function() {}
       }
     });
   }));
@@ -147,5 +145,65 @@ describe("Google Spreadsheet Settings", function () {
         done();
       },10);
     });
+  });
+
+  describe("Columns", function () {
+
+    it("should set columns when sheetName has a value or changes", function (done) {
+      requestToColumns = true;
+
+      scope.settings.additionalParams.spreadsheet.fileId = "testId";
+      scope.settings.additionalParams.spreadsheet.sheetName = "Sheet1";
+
+      scope.$digest();
+
+      setTimeout(function(){
+        expect(scope.columns.length).to.equal(3);
+        done();
+      },10);
+    });
+
+    it("should reset columns and formats when a columns data response error occurs", function (done) {
+      scope.settings.additionalParams.spreadsheet.fileId = "testId";
+      scope.columns = [
+        {id: 0, name: "A"},
+        {id: 1, name: "B", show: true},
+        {id: 2, name: "C"}
+      ];
+      scope.settings.additionalParams.format.columns = [{
+        id: 1, name: "B", show: true, fontStyle: {}
+      }];
+
+      requestToColumns = false;
+
+      scope.settings.additionalParams.spreadsheet.sheetName = "Sheet1";
+
+      scope.$digest();
+
+      setTimeout(function(){
+        expect(scope.columns.length).to.equal(0);
+        expect(scope.settings.additionalParams.format.columns.length).to.equal(0);
+        done();
+      },10);
+    });
+
+    it("should reset columns when spreadsheet selection cleared", function () {
+      scope.settings.additionalParams.spreadsheet.fileId = "testId";
+      scope.settings.additionalParams.spreadsheet.sheetName = "Sheet1";
+      scope.columns = [
+        {id: 0, name: "A"},
+        {id: 1, name: "B", show: true},
+        {id: 2, name: "C"}
+      ];
+      scope.settings.additionalParams.format.columns = [{
+        id: 1, name: "B", show: true, fontStyle: {}
+      }];
+
+      scope.clearSelection();
+
+      expect(scope.columns.length).to.equal(0);
+      expect(scope.settings.additionalParams.format.columns.length).to.equal(0);
+    });
+
   });
 });

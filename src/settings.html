@@ -138,13 +138,25 @@
                   <label class="control-label-secondary">
                     {{ "widget-google-spreadsheet.spreadsheet.range.start" | translate }}
                   </label>
-                  <input name="startCell" type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.range.startCell" />
+                  <input name="startCell" type="text" class="form-control"
+                         ng-blur="startCellBlur()"
+                         ng-model="settings.additionalParams.spreadsheet.range.startCell" />
                 </div>
                 <div class="col-sm-3">
                   <label class="control-label-secondary">
                     {{ "widget-google-spreadsheet.spreadsheet.range.end" | translate }}
                   </label>
-                  <input name="endCell" type="text" class="form-control" ng-model="settings.additionalParams.spreadsheet.range.endCell" />
+                  <input name="endCell" type="text" class="form-control"
+                         ng-blur="endCellBlur()"
+                         ng-model="settings.additionalParams.spreadsheet.range.endCell" />
+                </div>
+              </div>
+            </div>
+            <div ng-if="!validData">
+              <div class="content-box add-bottom">
+                <div class="bg-danger add-padding">
+                  {{"widget-google-spreadsheet.spreadsheet.data.error" | translate}}
+                  {{"widget-google-spreadsheet.spreadsheet.range.invalid" | translate}}
                 </div>
               </div>
             </div>
@@ -300,8 +312,7 @@
 
           <div class="row">
             <div class="col-md-12">
-              <column-selector columns="settings.additionalParams.format.columns" column-names="columns"
-                ng-disabled="!settings.additionalParams.spreadsheet.hasHeader">
+              <column-selector columns="settings.additionalParams.format.columns" column-names="columns">
               </column-selector>
             </div>
           </div>
@@ -359,13 +370,9 @@
 <script src="components/widget-settings-ui-core/dist/widget-settings-ui-core.js"></script>
 <script src="settings/ctr-google-spreadsheet-settings.js"></script>
 <script src="settings/svc-google-sheet.js"></script>
-<script src="settings/svc-columns.js"></script>
 <!-- endbuild -->
 
 <script src="//www.google.com/jsapi"></script>
-<script>
-  google.load("visualization", "1");
-</script>
 
 <!-- build:e2eTestApp -->
 <!-- endbuild -->

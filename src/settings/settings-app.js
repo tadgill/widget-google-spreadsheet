@@ -7,7 +7,6 @@ angular.module("risevision.widget.googleSpreadsheet.settings", [
   "risevision.widget.common.font-setting",
   "risevision.widget.common.scroll-setting",
   "risevision.widget.common.google-drive-picker",
-  "risevision.widget.common.visualization",
   "risevision.widget.googleSpreadsheet.config",
   "colorpicker.module"
 ]);

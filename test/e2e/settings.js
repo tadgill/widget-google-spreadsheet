@@ -180,15 +180,6 @@
         expect(element(by.model("settings.additionalParams.format.separator.color")).isPresent()).to.eventually.be.false;
       });
 
-      it("Should disable column format settings", function () {
-        expect(element(by.css("column-selector[disabled=disabled]")).isPresent()).to.eventually.be.true;
-      });
-
-      it("Should enable column format settings if 'Use First Row as Header' is checked", function () {
-        element(by.model("settings.additionalParams.spreadsheet.hasHeader")).click();
-        expect(element(by.css("column-selector[disabled=disabled]")).isPresent()).to.eventually.be.false;
-      });
-
     });
 
     describe("Spreadsheet Publishing", function () {
@@ -307,6 +298,36 @@
 
         expect(element(by.model("settings.additionalParams.spreadsheet.refresh")).isEnabled()).to.eventually.be.false;
         expect(element(by.model("settings.additionalParams.spreadsheet.apiKey")).isEnabled()).to.eventually.be.false;
+      });
+
+    });
+
+    describe("Invalid Range", function () {
+
+      it("Should show message when range values resulted in a failed columns data request", function () {
+        // open dialog
+        element(by.css(".google-drive-picker button")).click();
+
+        // simulate picking a file
+        browser.executeScript(function () {
+          window.pickFiles([{
+            id: "public",
+            name: "Test File",
+            url: "https://test-public"
+          }]);
+        });
+
+        expect(element(by.css("div.content-box div.bg-danger")).isPresent()).to.eventually.be.false;
+
+        element(by.css("input[type='radio'][value='range']")).click();
+
+        element(by.css("input[name='startCell']")).sendKeys("abc");
+        element(by.css("input[name='endCell']")).sendKeys("abc");
+
+        // arbitrary click to lose focus from end cell
+        element(by.css(".modal-body > h4")).click();
+
+        expect(element(by.css("div.content-box div.bg-danger")).isDisplayed()).to.eventually.be.true;
       });
 
     });

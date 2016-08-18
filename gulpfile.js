@@ -182,7 +182,6 @@
       "src/components/rv-angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module.js",
       "src/components/angular-mocks/angular-mocks.js",
       "node_modules/widget-tester/mocks/common-mock.js",
-      "node_modules/widget-tester/mocks/visualization-api-mock.js",
       "src/components/bootstrap-sass-official/assets/javascripts/bootstrap.js",
       "src/components/angular-bootstrap/ui-bootstrap-tpls.js",
       "src/components/widget-settings-ui-components/dist/js/**/*.js",
