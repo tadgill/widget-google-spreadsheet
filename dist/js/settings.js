@@ -12592,7 +12592,8 @@ var WIDGET_SETTINGS_UI_CONFIG = {
             },
             headerText: "",
             width: 100,
-            colorCondition: "none"
+            colorCondition: "none",
+            numeric: false
           };
 
           $scope.defaults = function(obj) {
@@ -12610,20 +12611,8 @@ var WIDGET_SETTINGS_UI_CONFIG = {
             return obj;
           };
 
-          $scope.$watch("column.numeric", function(value) {
-            if (typeof value !== "undefined" && value !== "") {
-              if (value) {
-                defaultSettings.type = "int";
-              }
-              else {
-                defaultSettings.type = "string";
-              }
-            }
-            else {
-              defaultSettings.type = "string";
-            }
-
-            $scope.defaults($scope.column, defaultSettings);
+          $scope.$watch("column", function(value) {
+            $scope.defaults(value, defaultSettings);
           });
 
           $scope.remove = function() {
@@ -12754,7 +12743,6 @@ module.run(["$templateCache", function($templateCache) {
           $scope.show = function(v){return !v.show;};
 
           $scope.addColumn = function(){
-            console.log($scope.selectedColumn);
             $scope.add($scope.selectedColumn);
             $scope.selectedColumn = null;
           };
@@ -12800,7 +12788,6 @@ module.run(["$templateCache", function($templateCache) {
             for (var i = 0; i < $scope.columns.length; i++) {
               for (var j = 0; j < $scope.columnNames.length; j++) {
                 if ($scope.columns[i].id === $scope.columnNames[j].id) {
-                  $scope.columns[i].type = $scope.columnNames[j].type;
                   $scope.columns[i].name = $scope.columnNames[j].name;
                   $scope.columnNames[j].show = true;
                 }
@@ -12823,7 +12810,6 @@ module.run(["$templateCache", function($templateCache) {
     "		<div class=\"col-md-12\">\n" +
     "			<div class=\"form-group\">\n" +
     "				<label for=\"columns\" class=\"control-label\">{{'column.select-title' | translate}}</label>\n" +
-    "				<p>{{'column.description' | translate}}</p>\n" +
     "				<select class=\"column-selector form-control\" ng-model=\"selectedColumn\"\n" +
     "				ng-options=\"column.name | translate for column in columnNames | filter:show track by column.id\"\n" +
     "				ng-change=\"addColumn()\" ng-disabled=\"disabled\"></select>\n" +
@@ -12972,7 +12958,6 @@ angular.module("risevision.widget.googleSpreadsheet.settings", [
   "risevision.widget.common.font-setting",
   "risevision.widget.common.scroll-setting",
   "risevision.widget.common.google-drive-picker",
-  "risevision.widget.common.visualization",
   "risevision.widget.googleSpreadsheet.config",
   "colorpicker.module"
 ]);
@@ -13455,24 +13440,32 @@ angular.module("risevision.widget.common")
 })(angular);
 
 angular.module("risevision.widget.googleSpreadsheet.settings")
-  .controller("spreadsheetSettingsController", ["$scope", "googleSheet", "$window", "$log", "columns",
-    function ($scope, googleSheet, $window, $log, columns) {
+  .controller("spreadsheetSettingsController", ["$scope", "googleSheet", "$window",
+    function ($scope, googleSheet, $window) {
 
       $scope.showPreview = false;
       $scope.sheets = [];
       $scope.currentSheet = null;
       $scope.columns = [];
       $scope.validApiKey = true;
+      $scope.public = true;
+      $scope.validData = true;
 
-      $scope.getColumns = function (url) {
-        columns.getColumns(url)
-          .then(function (columns) {
-            if (columns.length > 0) {
-              $scope.columns = columns;
-            }
-          })
-          .then(null, $log.error);
-      };
+      function resetWorkSheets() {
+        $scope.sheets = [];
+        $scope.currentSheet = null;
+        $scope.settings.additionalParams.spreadsheet.tabId = 1;
+        $scope.settings.additionalParams.spreadsheet.sheetName = "";
+      }
+
+      function resetColumns(resetService) {
+        $scope.columns = [];
+        $scope.settings.additionalParams.format.columns = [];
+
+        if (resetService) {
+          googleSheet.resetColumns();
+        }
+      }
 
       function getWorkSheets(fileId) {
         googleSheet.getWorkSheets(fileId)
@@ -13483,10 +13476,47 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           })
           .then(null, function () {
             $scope.public = false;
-            $scope.sheets = [];
-            $scope.currentSheet = null;
-            $scope.settings.additionalParams.spreadsheet.tabId = 1;
-            $scope.settings.additionalParams.spreadsheet.sheetName = "";
+
+            resetWorkSheets();
+            resetColumns(true);
+          });
+      }
+
+      function getColumnsData(preserveFormats) {
+        var range = "";
+
+        if (!$scope.settings.additionalParams.spreadsheet.sheetName || !$scope.validApiKey) {
+          return;
+        }
+
+        if ($scope.settings.additionalParams.spreadsheet.cells === "range") {
+          if ($scope.settings.additionalParams.spreadsheet.range.startCell &&
+            $scope.settings.additionalParams.spreadsheet.range.endCell) {
+
+            range = $scope.settings.additionalParams.spreadsheet.range.startCell + ":" +
+              $scope.settings.additionalParams.spreadsheet.range.endCell;
+          }
+        }
+
+        googleSheet.getColumnsData($scope.settings.additionalParams.spreadsheet.fileId,
+          $scope.settings.additionalParams.spreadsheet.apiKey,
+          $scope.settings.additionalParams.spreadsheet.sheetName,
+          range)
+          .then(function (columns) {
+            $scope.validData = true;
+
+            if (columns) {
+              if (!preserveFormats) {
+                $scope.settings.additionalParams.format.columns = [];
+              }
+              $scope.columns = columns;
+            }
+
+          })
+          .then(null, function () {
+            $scope.validData = false;
+
+            resetColumns();
           });
       }
 
@@ -13497,7 +13527,34 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         }
       });
 
-      $scope.public = true;
+      $scope.$watch("settings.additionalParams.spreadsheet.sheetName", function (newVal, oldVal) {
+        if (typeof oldVal === "undefined" && newVal && newVal !== "") {
+          // previously saved settings are being shown, populate columns but preserve saved formats
+          getColumnsData(true);
+        }
+        else {
+          if (typeof newVal !== "undefined" && newVal !== "") {
+            // new sheet chosen, populate columns
+            getColumnsData();
+          }
+        }
+
+      });
+
+      $scope.$watch("settings.additionalParams.spreadsheet.cells", function (newVal, oldVal) {
+        if (typeof newVal !== "undefined" && typeof oldVal !== "undefined") {
+          // user has manually changed value
+          getColumnsData();
+        }
+      });
+
+      $scope.startCellBlur = function () {
+        getColumnsData();
+      };
+
+      $scope.endCellBlur = function () {
+        getColumnsData();
+      };
 
       $scope.$watch("settings.additionalParams.spreadsheet.fileId", function (fileId) {
         if (typeof fileId === "undefined" || !fileId) {
@@ -13518,18 +13575,10 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       $scope.$watch("settings.additionalParams.spreadsheet.url", function (newUrl, oldUrl) {
         if (typeof newUrl !== "undefined") {
           if (newUrl !== oldUrl) {
-            $scope.columns = [];
-
-            if (typeof oldUrl !== "undefined" && oldUrl !== "") {
-              // Widget settings have already gone through initialization. Safe to reset columns array.
-              $scope.settings.additionalParams.format.columns = [];
-            }
-
             if (newUrl !== "") {
               $scope.showPreview = true;
               $scope.settingsForm.$setValidity("fileId", true);
               getWorkSheets($scope.settings.additionalParams.spreadsheet.fileId);
-              $scope.getColumns(newUrl);
             }
           }
         }
@@ -13576,6 +13625,9 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
         $scope.settings.additionalParams.spreadsheet.url = "";
         $scope.settings.additionalParams.spreadsheet.fileId = "";
+
+        resetWorkSheets();
+        resetColumns(true);
       };
 
       $scope.$watch("settings.additionalParams.spreadsheet.apiKey", function (apiKey) {
@@ -13585,6 +13637,13 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           if ($scope.settings.additionalParams.spreadsheet) {
             $scope.settings.additionalParams.spreadsheet.refresh = 60;
           }
+        }
+      });
+
+      $scope.$watch("validApiKey", function (newVal, oldVal) {
+        if (newVal !== oldVal && newVal) {
+          // a previously invalid API key has been corrected, ensure correct columns are populated
+          getColumnsData();
         }
       });
 
@@ -13676,10 +13735,12 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 angular.module("risevision.widget.googleSpreadsheet.settings")
   .constant("SHEETS_API", "https://sheets.googleapis.com/v4/spreadsheets/")
 
-  .factory("googleSheet", ["$http", "$log", "SHEETS_API", "API_KEY",
-    function ($http, $log, SHEETS_API, API_KEY) {
+  .factory("googleSheet", ["$http", "$q", "$log", "SHEETS_API", "API_KEY",
+    function ($http, $q, $log, SHEETS_API, API_KEY) {
 
       var factory = {},
+        columnsRequest = null,
+        columnsRequestSuccess = true,
         filterSheets = function (sheets) {
           var option;
 
@@ -13694,6 +13755,43 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
 
             return option;
           });
+        },
+        getColumnName = function(index) {
+          var ordA = "a".charCodeAt(0),
+            ordZ = "z".charCodeAt(0),
+            len = ordZ - ordA + 1,
+            s = "";
+
+          while(index >= 0) {
+            s = String.fromCharCode(index % len + ordA) + s;
+            index = Math.floor(index / len) - 1;
+          }
+          return s;
+        },
+        configureColumns = function (values, range) {
+          var nameIndex = 0,
+            column;
+
+          if (values && values.length > 0) {
+            if (range) {
+              nameIndex = range.slice(0, range.indexOf(":")).toLowerCase().charCodeAt(0) - 97;
+            }
+
+            return values.map(function (val, index) {
+              column = {};
+
+              column.id = index;
+              column.name = getColumnName(nameIndex).toUpperCase();
+
+              nameIndex += 1;
+
+              return column;
+            });
+          }
+          else {
+            return [];
+          }
+
         };
 
       factory.getWorkSheets = function(fileId, apiKey) {
@@ -13708,86 +13806,43 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
           });
       };
 
-      return factory;
+      factory.getColumnsData = function(fileId, apiKey, sheet, range) {
+        var api = SHEETS_API + fileId + "/values/" + sheet + ((range) ? "!" + range : "") +
+          "?key=" + ( (apiKey)? apiKey: API_KEY) + "&majorDimension=COLUMNS",
+          deferred = $q.defer();
 
-    }]);
+        if (columnsRequest === api && columnsRequestSuccess) {
+          // resolve but pass null to indicate no new data to provide
+          deferred.resolve(null);
+          return deferred.promise;
+        }
+        else {
+          columnsRequest = api;
 
-(function() {
-  "use strict";
+          return $http.get(encodeURI(api))
+            .then(function (response) {
+              columnsRequestSuccess = true;
+              return response.data.values;
+            })
+            .then(function (values) {
+              return configureColumns(values, range);
+            })
+            .then(null, function (response) {
+              columnsRequest = null;
+              columnsRequestSuccess = false;
 
-  angular.module("risevision.widget.googleSpreadsheet.settings")
-    .factory("columns", ["visualizationApi", "$q", function (visualizationApi, $q) {
-
-      var factory = {};
-
-      function configureColumns(response) {
-        var dataTable = response.getDataTable(),
-          columnNames = [],
-          columnIndexes = [],
-          cellValue, columnLabel, columnId, i, j;
-
-        // Narrow down actual columns being used.
-        for (i = 0; i < dataTable.getNumberOfColumns(); i++) {
-          for (j = 0; j < dataTable.getNumberOfRows(); j++) {
-            cellValue = dataTable.getValue(j, i);
-
-            if (cellValue && cellValue !== "") {
-              columnIndexes.push(i);
-              break;
-            }
-          }
+              deferred.reject(response.data.error);
+              return deferred.promise;
+            });
         }
 
-        // Configure the column objects and populate columnNames array.
-        for (i = 0; i < columnIndexes.length; i++) {
-          columnLabel = dataTable.getColumnLabel(columnIndexes[i]);
+      };
 
-          if (columnLabel === "") {
-            // There's no header row or the column is untitled. Use the column id instead (eg. A).
-            columnLabel = dataTable.getColumnId(columnIndexes[i]);
-          }
-
-          // Create an id that can be referenced again when restoring saved widget settings.
-          columnId = dataTable.getColumnId(columnIndexes[i]) + "_" + dataTable.getColumnType(columnIndexes[i]) +
-            "_" + columnLabel;
-
-          columnNames.push({
-            id: columnId,
-            name: columnLabel,
-            type: dataTable.getColumnType(columnIndexes[i])
-          });
-        }
-
-        return columnNames;
-      }
-
-      factory.getColumns = function (url) {
-        var deferred = $q.defer();
-
-        visualizationApi.get().then(function (viz) {
-          var query = new viz.Query(url);
-
-          // Only need the first row.
-          query.setQuery("select * limit 1");
-          query.setTimeout(30);
-
-          query.send(function (response) {
-            if (!response) {
-              deferred.reject("No response");
-            }
-            else if (response.isError()) {
-              deferred.reject(response.getMessage());
-            }
-            else {
-              deferred.resolve(configureColumns(response));
-            }
-          });
-
-        });
-
-        return deferred.promise;
+      factory.resetColumns = function () {
+        columnsRequest = null;
+        columnsRequestSuccess = true;
       };
 
       return factory;
+
     }]);
-})();
