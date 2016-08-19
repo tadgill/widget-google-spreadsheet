@@ -63,7 +63,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       factory.getWorkSheets = function(fileId, apiKey) {
         var api = SHEETS_API + fileId + "?key=" + ( (apiKey)? apiKey: API_KEY);
 
-        return $http.get(encodeURI(api))
+        return $http.get(api)
           .then(function (response) {
             return response.data.sheets;
           })
@@ -73,7 +73,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
       };
 
       factory.getColumnsData = function(fileId, apiKey, sheet, range) {
-        var api = SHEETS_API + fileId + "/values/" + sheet + ((range) ? "!" + range : "") +
+        var api = SHEETS_API + fileId + "/values/" + encodeURIComponent(sheet) + ((range) ? "!" + range : "") +
           "?key=" + ( (apiKey)? apiKey: API_KEY) + "&majorDimension=COLUMNS",
           deferred = $q.defer();
 
@@ -85,7 +85,7 @@ angular.module("risevision.widget.googleSpreadsheet.settings")
         else {
           columnsRequest = api;
 
-          return $http.get(encodeURI(api))
+          return $http.get(api)
             .then(function (response) {
               columnsRequestSuccess = true;
               return response.data.values;
