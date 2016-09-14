@@ -18,7 +18,7 @@ const Scroll = React.createClass({
   componentDidMount: function() {
     this.scroll = $(this.refs.scroll);
 
-    $(this.refs.page).height(this.props.data.length * this.props.rowHeight);
+    $(this.refs.page).height((this.props.data.length * this.props.rowHeight) + ((this.props.hasHeader) ? this.props.rowHeight : 0));
 
     this.scroll.autoScroll(this.props.scroll).on("done", () => {
       this.props.onDone();
