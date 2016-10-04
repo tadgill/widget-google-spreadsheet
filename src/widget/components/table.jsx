@@ -60,7 +60,8 @@ const Table = React.createClass({
         width={this.props.width}
         height={this.props.height}
         headerHeight={0}
-        overflowY="hidden">
+        overflowY="hidden"
+        overflowX="hidden">
         {cols}
       </ResponsiveFixedDataTable>
     );

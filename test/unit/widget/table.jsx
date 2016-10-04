@@ -47,6 +47,10 @@ describe("<Table />", function() {
       expect(wrapper.props().overflowY).to.equal("hidden");
     });
 
+    it("Should have overflowX prop", function() {
+      expect(wrapper.props().overflowX).to.equal("hidden");
+    });
+
     it("Should have correct number of columns", function() {
       expect(wrapper.props().children.length).to.equal(3);
     });
