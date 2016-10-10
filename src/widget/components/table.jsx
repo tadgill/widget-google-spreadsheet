@@ -3,7 +3,7 @@ require("fixed-data-table/dist/fixed-data-table.min.css");
 import React from "react";
 import { Column } from "fixed-data-table";
 import CellContainer from "../containers/CellContainer";
-import ResponsiveFixedDataTable from "responsive-fixed-data-table";
+import ResponsiveFixedDataTable from "../../components/responsive-fixed-data-table/lib/responsive-fixed-data-table";
 
 const Table = React.createClass({
 
