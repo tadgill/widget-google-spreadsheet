@@ -64,10 +64,6 @@
         assert.equal(document.getElementById("mainContainer").style.height, window.innerHeight + "px");
       });
 
-      test("should set the usage attribute of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("usage"), "widget");
-      });
-
       test("should set the key attribute of the sheets component", function() {
         assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
       });
