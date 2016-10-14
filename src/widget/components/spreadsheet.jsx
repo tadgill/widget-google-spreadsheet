@@ -173,6 +173,7 @@ const Spreadsheet = React.createClass({
     sheet.addEventListener("rise-google-sheet-error", this.onGoogleSheetError);
     sheet.addEventListener("rise-google-sheet-quota", this.onGoogleSheetQuota);
 
+    sheet.setAttribute("usage", "widget");
     sheet.setAttribute("key", params.spreadsheet.fileId);
     sheet.setAttribute("sheet", params.spreadsheet.sheetName);
     sheet.setAttribute("refresh", params.spreadsheet.refresh);
