@@ -126,6 +126,8 @@
     return gulp.src([
         "src/components/webcomponentsjs/webcomponents*.js",
         "src/components/rise-google-sheet/rise-google-sheet.html",
+        "src/components/rise-logger/rise-logger.html",
+        "src/components/rise-logger/rise-logger-utils.html",
         "src/components/polymer/*.*{html,js}",
         "src/components/promise-polyfill/promise-polyfill-lite.html",
         "src/components/promise-polyfill/Promise.js",
