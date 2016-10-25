@@ -128,6 +128,7 @@
         "src/components/rise-google-sheet/rise-google-sheet.html",
         "src/components/rise-logger/rise-logger.html",
         "src/components/rise-logger/rise-logger-utils.html",
+        "src/components/rise-data/rise-data.html",
         "src/components/polymer/*.*{html,js}",
         "src/components/promise-polyfill/promise-polyfill-lite.html",
         "src/components/promise-polyfill/Promise.js",
@@ -219,6 +220,10 @@
       console.log(err);
       cb();
     });
+  });
+
+  gulp.task("build-dev", function (cb) {
+    runSequence(["clean", "config"], ["settings", "widget", "fonts", "images", "i18n", "vendor", "components"], ["unminify"], cb);
   });
 
   gulp.task("build", function (cb) {
