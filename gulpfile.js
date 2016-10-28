@@ -135,7 +135,8 @@
         "src/components/iron-ajax/iron-ajax.html",
         "src/components/iron-ajax/iron-request.html",
         "src/components/webfontloader/webfontloader.js",
-        "src/components/moment/moment.js"
+        "src/components/moment/moment.js",
+        "src/components/underscore/underscore*.js"
       ], {base: "./src/"})
       .pipe(gulp.dest("dist/"));
   });
