@@ -28,6 +28,10 @@
   let server, paramsStub, clock,
     googleSheet = document.querySelector("rise-google-sheet");
 
+  sinon.stub(googleSheet.$.data, "getItem", function(key, cb) {
+    cb(null);
+  });
+
   server = sinon.fakeServer.create();
   server.respondImmediately = true;
   server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
@@ -52,6 +56,7 @@
       clock.restore();
       server.restore();
       rpcSpy.restore();
+      googleSheet.$.data.getItem.restore();
     });
 
     test("should send Done after 10 seconds if PUD Failover < 1", function() {

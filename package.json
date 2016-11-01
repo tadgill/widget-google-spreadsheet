@@ -59,7 +59,7 @@
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1",
     "webpack-stream": "^3.2.0",
-    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.6.7"
+    "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.7.0"
   },
   "dependencies": {
     "fixed-data-table": "^0.6.0",
