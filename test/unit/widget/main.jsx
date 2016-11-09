@@ -10,7 +10,13 @@ import "../../data/spreadsheet";
 
 describe("<Main />", function() {
 
-  let wrapper;
+  let wrapper, server;
+
+  before(function() {
+    server = sinon.fakeServer.create();
+    server.respondImmediately = true;
+    server.respondWith("POST", /https://www.googleapis.com/oauth2/v3/token$/, [200, { "Content-Type": "text/html" }, "OK"] );
+  });
 
   describe("Initialization", function() {
     beforeEach(function () {

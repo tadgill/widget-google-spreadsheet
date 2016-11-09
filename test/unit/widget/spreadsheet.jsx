@@ -28,6 +28,8 @@ describe("<Spreadsheet />", function() {
     server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
       [200, { "Content-Type": "application/json" },
         '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
+    server.respondWith("POST", /https://www.googleapis.com/oauth2/v3/token$/, [200, { "Content-Type": "text/html" }, "OK"] );
+
   });
 
   beforeEach(function () {

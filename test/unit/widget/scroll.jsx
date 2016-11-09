@@ -6,6 +6,7 @@ import Scroll from "../../../src/widget/components/scroll";
 import Table from "../../../src/widget/components/table";
 
 describe("<Scroll />", function() {
+  let server;
   const onDone = function () {},
     scroll = {},
     align = "center",
@@ -19,6 +20,12 @@ describe("<Scroll />", function() {
     columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }];
 
   var wrapper;
+
+  before(function() {
+    server = sinon.fakeServer.create();
+    server.respondImmediately = true;
+    server.respondWith("POST", /https://www.googleapis.com/oauth2/v3/token$/, [200, { "Content-Type": "text/html" }, "OK"] );
+  });
 
   beforeEach(function () {
     var component =
