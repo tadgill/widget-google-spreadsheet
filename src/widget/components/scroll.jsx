@@ -14,33 +14,11 @@ import "../../components/auto-scroll/jquery.auto-scroll";
 const Scroll = React.createClass({
 
   scroll: "",
-  height: 0,
-
-  componentWillMount: function () {
-    this.height = this.props.height;
-  },
-
-  componentWillUpdate: function(nextProps, nextState) {
-    this.height = (nextProps.data.length * nextProps.rowHeight) + ((nextProps.hasHeader) ? nextProps.rowHeight : 0)
-    $(this.refs.page).height(this.height);
-
-    this.scroll.data("plugin_autoScroll").destroy();
-    this.scroll.autoScroll(nextProps.scroll).on("done", () => {
-      nextProps.onDone();
-    });
-  },
-
-  componentDidUpdate: function() {
-    if (this.canScroll()) {
-      this.play();
-    }
-  },
 
   componentDidMount: function() {
     this.scroll = $(this.refs.scroll);
-    this.height = (this.props.data.length * this.props.rowHeight) + ((this.props.hasHeader) ? this.props.rowHeight : 0)
 
-    $(this.refs.page).height(this.height);
+    $(this.refs.page).height((this.props.data.length * this.props.rowHeight) + ((this.props.hasHeader) ? this.props.rowHeight : 0));
 
     this.scroll.autoScroll(this.props.scroll).on("done", () => {
       this.props.onDone();
@@ -76,7 +54,7 @@ const Scroll = React.createClass({
               totalCols={this.props.totalCols}
               rowHeight={this.props.rowHeight}
               width={this.props.width}
-              height={this.height}
+              height={this.props.height}
               columnFormats={this.props.columnFormats} />
         </section>
       </div>
