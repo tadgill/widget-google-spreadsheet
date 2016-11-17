@@ -240,6 +240,7 @@ const Spreadsheet = React.createClass({
       "event_details": event_details,
       "error_details": errorMessage,
       "url": params.spreadsheet.url,
+      "request_url": (e.detail.request) ? e.detail.request.url : "",
       "api_key": (params.spreadsheet.apiKey) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
     }, true);
 
