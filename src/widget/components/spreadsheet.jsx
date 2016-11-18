@@ -134,34 +134,36 @@ const Spreadsheet = React.createClass({
   },
 
   setSeparator: function() {
-    var rules, columnBorderW, rowBorderW;
+    var rules = [], columnBorderW, rowBorderW;
 
     if (!params.format.separator.showRow && !params.format.separator.showColumn) {
-      // rely on default css overrides which have all borders transparent
-      return;
-    }
+      // rely on default css overrides which have all borders transparent but also remove any border that was added
+      rules.push(".fixedDataTableCellLayout_main {border: none;}");
 
-    // colors
-    rules = [
-      ".fixedDataTableCellLayout_main {border-color: " + params.format.separator.color + "; }",
-      ".public_fixedDataTableCell_main {border-color: " + params.format.separator.color + "; }"
-    ];
+    } else {
 
-    // row and column separators (border widths of either 1 or 0)
-    columnBorderW = (params.format.separator.showColumn) ? "1px" : "0";
-    rowBorderW = (params.format.separator.showRow) ? "1px" : "0";
+      // colors
+      rules = [
+        ".fixedDataTableCellLayout_main {border-color: " + params.format.separator.color + "; }",
+        ".public_fixedDataTableCell_main {border-color: " + params.format.separator.color + "; }"
+      ];
 
-    rules.push(".fixedDataTableCellLayout_main {border-style: solid; border-width: 0 " + columnBorderW +
-      " " + rowBorderW + " 0; }");
+      // row and column separators (border widths of either 1 or 0)
+      columnBorderW = (params.format.separator.showColumn) ? "1px" : "0";
+      rowBorderW = (params.format.separator.showRow) ? "1px" : "0";
 
-    if (params.spreadsheet.hasHeader) {
-      // fill in gap between header and data tables
-      rules.push(".fixedDataTableLayout_main, .public_fixedDataTable_main {margin-bottom: -2px; }");
+      rules.push(".fixedDataTableCellLayout_main {border-style: solid; border-width: 0 " + columnBorderW +
+        " " + rowBorderW + " 0; }");
 
-      if (params.format.separator.showRow) {
-        // apply border color to the border that visually shows to the top of the first row of the data table
-        rules.push(".public_fixedDataTable_header, .public_fixedDataTable_hasBottomBorder {border-color: " +
-          params.format.separator.color + "; }");
+      if (params.spreadsheet.hasHeader) {
+        // fill in gap between header and data tables
+        rules.push(".fixedDataTableLayout_main, .public_fixedDataTable_main {margin-bottom: -2px; }");
+
+        if (params.format.separator.showRow) {
+          // apply border color to the border that visually shows to the top of the first row of the data table
+          rules.push(".public_fixedDataTable_header, .public_fixedDataTable_hasBottomBorder {border-color: " +
+            params.format.separator.color + "; }");
+        }
       }
     }
 
