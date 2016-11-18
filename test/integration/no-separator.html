@@ -76,8 +76,10 @@
           if (element) {
             var val1 = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
             var val2 = window.getComputedStyle(document.querySelector(".public_fixedDataTable_header")).getPropertyValue( "border-color" );
-            assert.equal(val1, "rgba(0, 0, 0, 0)");
+            var borderValue = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border" );
+            assert.equal(val1, "rgb(0, 0, 0)");
             assert.equal(val2, "rgba(0, 0, 0, 0)");
+            assert.equal(borderValue, "0px none rgb(0, 0, 0)");
 
             done();
           }
