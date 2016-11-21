@@ -24,7 +24,7 @@ describe("<Scroll />", function() {
   before(function() {
     server = sinon.fakeServer.create();
     server.respondImmediately = true;
-    server.respondWith("POST", /https://www.googleapis.com/oauth2/v3/token$/, [200, { "Content-Type": "text/html" }, "OK"] );
+    server.respondWith("POST", "https://www.googleapis.com/oauth2/v3/token", [200, { "Content-Type": "text/html" }, "OK"] );
   });
 
   beforeEach(function () {

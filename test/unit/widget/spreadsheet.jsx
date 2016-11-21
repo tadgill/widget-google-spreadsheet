@@ -28,7 +28,7 @@ describe("<Spreadsheet />", function() {
     server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
       [200, { "Content-Type": "application/json" },
         '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
-    server.respondWith("POST", /https://www.googleapis.com/oauth2/v3/token$/, [200, { "Content-Type": "text/html" }, "OK"] );
+    server.respondWith("POST", "https://www.googleapis.com/oauth2/v3/token", [200, { "Content-Type": "text/html" }, "OK"] );
 
   });
 
@@ -249,6 +249,7 @@ describe("<Spreadsheet />", function() {
         "event_details": "spreadsheet not reachable",
         "error_details": "The request failed with status code: 0",
         "url": additionalParams.spreadsheet.url,
+        "request_url": "",
         "api_key": "abc123"
       };
 
@@ -263,6 +264,31 @@ describe("<Spreadsheet />", function() {
       expect(stub.withArgs(table,params).called).to.equal(true);
     });
 
+    it( "should log the error event when spreadsheet is not reachable", function() {
+      let event = document.createEvent("Event"),
+        params = {
+          "event": "error",
+          "event_details": "spreadsheet not reachable",
+          "error_details": "The request failed with status code: 503",
+          "url": additionalParams.spreadsheet.url,
+          "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
+          "api_key": "abc123"
+        };
+
+      event.initEvent("rise-google-sheet-error", true, true);
+      event.detail = {
+        "error": {
+          "message": "The request failed with status code: 503"
+        },
+        "request": {
+          "url": params.request_url
+        }
+      };
+      sheet.dispatchEvent(event);
+
+      expect(stub.withArgs(table,params).called).to.equal(true);
+    });
+
     it("should log the error event when spreadsheet is not public ", function() {
       var event = document.createEvent("Event"),
       params = {
@@ -270,6 +296,7 @@ describe("<Spreadsheet />", function() {
         "event_details": "spreadsheet not public",
         "error_details": "The request failed with status code: 403",
         "url": additionalParams.spreadsheet.url,
+        "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
         "api_key": "abc123"
       };
 
@@ -277,7 +304,10 @@ describe("<Spreadsheet />", function() {
       event.detail = {
                        "error": {
                          "message": "The request failed with status code: 403"
-                       }
+                       },
+        "request": {
+          "url": params.request_url
+        }
                      };
       sheet.dispatchEvent(event);
 
@@ -291,6 +321,7 @@ describe("<Spreadsheet />", function() {
         "event_details": "spreadsheet not found",
         "error_details": "The request failed with status code: 404",
         "url": additionalParams.spreadsheet.url,
+        "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
         "api_key": "abc123"
       };
 
@@ -298,7 +329,10 @@ describe("<Spreadsheet />", function() {
       event.detail = {
                        "error": {
                          "message": "The request failed with status code: 404"
-                       }
+                       },
+        "request": {
+          "url": params.request_url
+        }
                      };
       sheet.dispatchEvent(event);
 
