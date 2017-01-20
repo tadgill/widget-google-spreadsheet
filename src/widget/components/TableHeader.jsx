@@ -1,11 +1,11 @@
-require("fixed-data-table/dist/fixed-data-table.min.css");
+require( "fixed-data-table/dist/fixed-data-table.min.css" );
 
 import React from "react";
 import { Table } from "fixed-data-table";
 
-const TableHeader = React.createClass({
-  render: function () {
-    return(
+const TableHeader = React.createClass( {
+  render: function() {
+    return (
       <Table
         rowHeight={1}
         rowsCount={0}
@@ -16,6 +16,6 @@ const TableHeader = React.createClass({
       </Table>
     );
   }
-});
+} );
 
 export default TableHeader

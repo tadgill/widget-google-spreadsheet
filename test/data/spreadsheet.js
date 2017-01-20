@@ -7,21 +7,21 @@ window.gadget.settings = {
   additionalParams: {
     format: {
       body: {
-        fontStyle:{
-          font:{
-            family:"verdana,geneva,sans-serif",
-            type:"standard",
-            url:""
+        fontStyle: {
+          font: {
+            family: "verdana,geneva,sans-serif",
+            type: "standard",
+            url: ""
           },
-          size:"18px",
-          customSize:"",
-          align:"left",
+          size: "18px",
+          customSize: "",
+          align: "left",
           verticalAlign: "middle",
-          bold:false,
-          italic:false,
-          underline:false,
-          forecolor:"black",
-          backcolor:"transparent"
+          bold: false,
+          italic: false,
+          underline: false,
+          forecolor: "black",
+          backcolor: "transparent"
         }
       },
       columns: [
@@ -30,20 +30,20 @@ window.gadget.settings = {
           name: "A",
           show: true,
           fontStyle: {
-            font:{
-              family:"verdana,geneva,sans-serif",
-              type:"standard",
-              url:""
+            font: {
+              family: "verdana,geneva,sans-serif",
+              type: "standard",
+              url: ""
             },
-            size:"18px",
-            customSize:"",
-            align:"left",
+            size: "18px",
+            customSize: "",
+            align: "left",
             verticalAlign: "middle",
-            bold:false,
-            italic:false,
-            underline:false,
-            forecolor:"black",
-            backcolor:"transparent"
+            bold: false,
+            italic: false,
+            underline: false,
+            forecolor: "black",
+            backcolor: "transparent"
           },
           width: 100,
           colorCondition: "none",
@@ -52,21 +52,21 @@ window.gadget.settings = {
       ],
       evenRowColor: "rgba(255, 255, 255, 0)",
       header: {
-        fontStyle:{
-          font:{
-            family:"verdana,geneva,sans-serif",
-            type:"standard",
-            url:""
+        fontStyle: {
+          font: {
+            family: "verdana,geneva,sans-serif",
+            type: "standard",
+            url: ""
           },
-          size:"18px",
-          customSize:"",
-          align:"center",
+          size: "18px",
+          customSize: "",
+          align: "center",
           verticalAlign: "middle",
-          bold:false,
-          italic:false,
-          underline:false,
-          forecolor:"black",
-          backcolor:"transparent"
+          bold: false,
+          italic: false,
+          underline: false,
+          forecolor: "black",
+          backcolor: "transparent"
         }
       },
       oddRowColor: "rgba(255, 255, 255, 0)",
@@ -102,16 +102,16 @@ window.innerHeight = 400;
 
 window.gadget.data = {
   cols: [
-    {"id":0,"label":"A"},
-    {"id":1,"label":"B"},
-    {"id":2,"label":"C"},
-    {"id":3,"label":"D"}
+    { "id": 0, "label": "A" },
+    { "id": 1, "label": "B" },
+    { "id": 2, "label": "C" },
+    { "id": 3, "label": "D" }
   ],
   rows: [
-    ["test 1", 345453, new Date(2013, 7, 10), ""],
-    ["test 2", 6565.67, new Date(2014, 2, 24), ""],
-    ["test 3", 56, new Date(2005, 10, 29), ""],
-    ["test 4", 45454, new Date(2012, 7, 23), ""]
+    [ "test 1", 345453, new Date( 2013, 7, 10 ), "" ],
+    [ "test 2", 6565.67, new Date( 2014, 2, 24 ), "" ],
+    [ "test 3", 56, new Date( 2005, 10, 29 ), "" ],
+    [ "test 4", 45454, new Date( 2012, 7, 23 ), "" ]
   ]
 };
 

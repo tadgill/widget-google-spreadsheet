@@ -1,15 +1,16 @@
-var path = require("path");
-var webpackConfig = require('../webpack.config.js');
-webpackConfig.devtool = 'inline-source-map';
+var path = require( "path" ),
+  webpackConfig = require( "../webpack.config.js" );
 
-module.exports = function(config){
-  config.set({
+webpackConfig.devtool = "inline-source-map";
 
-    autoWatch : false,
+module.exports = function( config ) {
+  config.set( {
 
-    frameworks: ["mocha", "chai", "chai-as-promised", "sinon-chai"],
+    autoWatch: false,
 
-    browsers : ["PhantomJS"],
+    frameworks: [ "mocha", "chai", "chai-as-promised", "sinon-chai" ],
+
+    browsers: [ "PhantomJS" ],
 
     files: [
       "unit/widget/mocks/container-mock.js",
@@ -17,33 +18,33 @@ module.exports = function(config){
       "unit/widget/test_index.js"
     ],
 
-    preprocessors : {
-      "unit/widget/test_index.js": [ 'webpack']   
+    preprocessors: {
+      "unit/widget/test_index.js": [ "webpack" ]
     },
 
     webpack: webpackConfig,
 
-    reporters: ["progress", "junit", "coverage"],
+    reporters: [ "progress", "junit", "coverage" ],
 
-    plugins : [
-            "karma-mocha",
-            "karma-chai",
-            "sinon-chai",
-            "karma-junit-reporter",
-            "karma-coverage",
-            "karma-chai-plugins",
-            "karma-phantomjs-launcher",
-            "karma-webpack"
-            ],
+    plugins: [
+      "karma-mocha",
+      "karma-chai",
+      "sinon-chai",
+      "karma-junit-reporter",
+      "karma-coverage",
+      "karma-chai-plugins",
+      "karma-phantomjs-launcher",
+      "karma-webpack"
+    ],
 
-    junitReporter : {
-      outputFile: path.join(__dirname, "../reports/react-karma-xunit.xml")
+    junitReporter: {
+      outputFile: path.join( __dirname, "../reports/react-karma-xunit.xml" )
     },
 
     // optionally, configure the reporter
     coverageReporter: {
-      type : "cobertura",
-      dir : path.join(__dirname, "../reports/react-coverage")
+      type: "cobertura",
+      dir: path.join( __dirname, "../reports/react-coverage" )
     },
 
     // web server port
@@ -53,5 +54,5 @@ module.exports = function(config){
     // enable / disable colors in the output (reporters and logs)
     colors: true
 
-  });
+  } );
 };

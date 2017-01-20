@@ -1,4 +1,4 @@
-(function(window) {
+( function( window ) {
 
   "use strict";
 
@@ -9,41 +9,41 @@
     additionalParams: {
       format: {
         body: {
-          fontStyle:{
-            font:{
-              family:"verdana,geneva,sans-serif",
-              type:"standard",
-              url:""
+          fontStyle: {
+            font: {
+              family: "verdana,geneva,sans-serif",
+              type: "standard",
+              url: ""
             },
-            size:"18px",
-            customSize:"",
-            align:"left",
+            size: "18px",
+            customSize: "",
+            align: "left",
             verticalAlign: "bottom",
-            bold:false,
-            italic:false,
-            underline:false,
-            forecolor:"black",
-            backcolor:"transparent"
+            bold: false,
+            italic: false,
+            underline: false,
+            forecolor: "black",
+            backcolor: "transparent"
           }
         },
         columns: [],
         evenRowColor: "rgba(255, 255, 255, 0)",
         header: {
-          fontStyle:{
-            font:{
-              family:"verdana,geneva,sans-serif",
-              type:"standard",
-              url:""
+          fontStyle: {
+            font: {
+              family: "verdana,geneva,sans-serif",
+              type: "standard",
+              url: ""
             },
-            size:"18px",
-            customSize:"",
-            align:"left",
+            size: "18px",
+            customSize: "",
+            align: "left",
             verticalAlign: "top",
-            bold:false,
-            italic:false,
-            underline:false,
-            forecolor:"black",
-            backcolor:"transparent"
+            bold: false,
+            italic: false,
+            underline: false,
+            forecolor: "black",
+            backcolor: "transparent"
           }
         },
         oddRowColor: "rgba(255, 255, 255, 0)",
@@ -82,4 +82,4 @@
   window.innerWidth = 600;
   window.innerHeight = 400;
 
-})(window);
+} )( window );

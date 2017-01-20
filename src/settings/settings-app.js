@@ -1,4 +1,4 @@
-angular.module("risevision.widget.googleSpreadsheet.settings", [
+angular.module( "risevision.widget.googleSpreadsheet.settings", [
   "risevision.common.i18n",
   "risevision.widget.common",
   "risevision.widget.common.tooltip",
@@ -9,5 +9,5 @@ angular.module("risevision.widget.googleSpreadsheet.settings", [
   "risevision.widget.common.google-drive-picker",
   "risevision.widget.googleSpreadsheet.config",
   "colorpicker.module"
-]);
+] );
 

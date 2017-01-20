@@ -2,28 +2,28 @@ import React from "react";
 import { Column, Cell } from "fixed-data-table";
 import TableHeader from "../components/TableHeader";
 
-const TableHeaderContainer = React.createClass({
+const TableHeaderContainer = React.createClass( {
   getAlignment: function() {
     var { align } = this.props;
 
-    if (align) {
+    if ( align ) {
       return align;
-    }
-    else {
+    } else {
       return "left";
     }
   },
 
   getColumns: function() {
-    var cols = [];
+    var cols = [],
+      i;
 
-    for (var i = 0; i < this.props.data.length; i++) {
+    for ( i = 0; i < this.props.data.length; i++ ) {
       cols.push(
         <Column
           key={i}
-          header={<Cell className={"header_font-style"}>{this.props.data[i]}</Cell>}
-          width={this.props.columnFormats[i].width}
-          align={this.getAlignment(i)}
+          header={<Cell className={"header_font-style"}>{this.props.data[ i ]}</Cell>}
+          width={this.props.columnFormats[ i ].width}
+          align={this.getAlignment( i )}
         />
       );
     }
@@ -31,10 +31,10 @@ const TableHeaderContainer = React.createClass({
     return cols;
   },
 
-  render: function () {
+  render: function() {
     const { height, width } = this.props;
 
-    return(
+    return (
       <TableHeader
         width={width}
         height={height}>
@@ -42,6 +42,6 @@ const TableHeaderContainer = React.createClass({
       </TableHeader>
     );
   }
-});
+} );
 
 export default TableHeaderContainer

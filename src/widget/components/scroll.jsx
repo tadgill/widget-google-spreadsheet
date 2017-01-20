@@ -1,9 +1,11 @@
-require("fixed-data-table/dist/fixed-data-table.min.css");
+var $ = require( "jquery" );
+
+require( "fixed-data-table/dist/fixed-data-table.min.css" );
 
 import React from "react";
 import Table from "./table";
 
-var $ = require("jquery");
+
 import "../../components/gsap/src/uncompressed/TweenLite"
 import "../../components/gsap/src/uncompressed/plugins/CSSPlugin";
 import "../../components/gsap/src/uncompressed/utils/Draggable";
@@ -11,40 +13,40 @@ import "../../components/gsap/src/uncompressed/plugins/ScrollToPlugin";
 
 import "../../components/auto-scroll/jquery.auto-scroll";
 
-const Scroll = React.createClass({
+const Scroll = React.createClass( {
 
   scroll: "",
 
   componentDidMount: function() {
-    this.scroll = $(this.refs.scroll);
+    this.scroll = $( this.refs.scroll );
 
-    $(this.refs.page).height((this.props.data.length * this.props.rowHeight) + ((this.props.hasHeader) ? this.props.rowHeight : 0));
+    $( this.refs.page ).height( ( this.props.data.length * this.props.rowHeight ) + ( ( this.props.hasHeader ) ? this.props.rowHeight : 0 ) );
 
-    this.scroll.autoScroll(this.props.scroll).on("done", () => {
+    this.scroll.autoScroll( this.props.scroll ).on( "done", () => {
       this.props.onDone();
-    });
+    } );
   },
 
   canScroll: function() {
-    return this.props.scroll.by !== "none" && this.scroll && this.scroll.data("plugin_autoScroll") &&
-      this.scroll.data("plugin_autoScroll").canScroll();
+    return this.props.scroll.by !== "none" && this.scroll && this.scroll.data( "plugin_autoScroll" ) &&
+      this.scroll.data( "plugin_autoScroll" ).canScroll();
   },
 
   play: function() {
-    if (this.scroll && this.scroll.data("plugin_autoScroll")) {
-      this.scroll.data("plugin_autoScroll").play();
+    if ( this.scroll && this.scroll.data( "plugin_autoScroll" ) ) {
+      this.scroll.data( "plugin_autoScroll" ).play();
     }
   },
 
   pause: function() {
-    if (this.scroll && this.scroll.data("plugin_autoScroll")) {
-      this.scroll.data("plugin_autoScroll").pause();
+    if ( this.scroll && this.scroll.data( "plugin_autoScroll" ) ) {
+      this.scroll.data( "plugin_autoScroll" ).pause();
     }
   },
 
   render: function() {
 
-    return(
+    return (
       <div id="scroll" ref="scroll">
         <section className="page" ref="page">
             <Table
@@ -60,6 +62,6 @@ const Scroll = React.createClass({
       </div>
     );
   }
-});
+} );
 
 export default Scroll;
