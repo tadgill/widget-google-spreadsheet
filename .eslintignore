@@ -1,4 +1,5 @@
 dist/
 node_modules/
 src/components/
-test/
+src/config/
+src/widget/analytics.js
