@@ -59,3 +59,10 @@
 .fixedDataTableLayout_bottomShadow {
   visibility: hidden;
 }
+
+/* Remove Cell Padding */
+/************************/
+
+.public_fixedDataTableCell_cellContent {
+  padding: 0;
+}
