@@ -16,7 +16,7 @@ describe( "Google Spreadsheet Settings", function() {
   beforeEach( module( function( $provide ) {
     $provide.service( "googleSheet", function() {
       return {
-        getWorkSheets: function() {
+        getWorkSheetTitles: function() {
           var deferred = Q.defer();
 
           if ( requestToSheet ) {

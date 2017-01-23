@@ -26,7 +26,7 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
       }
 
       function getWorkSheets( fileId ) {
-        googleSheet.getWorkSheets( fileId )
+        googleSheet.getWorkSheetTitles( fileId )
           .then( function( sheets ) {
             $scope.public = true;
             $scope.sheets = sheets;
@@ -213,7 +213,7 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
       $scope.apiKeyBlur = function() {
         if ( $scope.settings.additionalParams.spreadsheet.apiKey ) {
           $scope.settingsForm.$setValidity( "apiKey", true );
-          googleSheet.getWorkSheets( $scope.settings.additionalParams.spreadsheet.fileId, $scope.settings.additionalParams.spreadsheet.apiKey )
+          googleSheet.getWorkSheetTitles( $scope.settings.additionalParams.spreadsheet.fileId, $scope.settings.additionalParams.spreadsheet.apiKey )
             .then( function() {
               $scope.validApiKey = true;
               $scope.settingsForm.$setValidity( "apiKey", true );

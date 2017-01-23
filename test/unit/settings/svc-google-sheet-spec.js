@@ -4,7 +4,7 @@
 
 "use strict";
 
-describe( "getWorkSheets", function() {
+describe( "getWorkSheetTitles", function() {
 
   var googleSheetService,
     base,
@@ -25,7 +25,7 @@ describe( "getWorkSheets", function() {
     expect( googleSheetService ).be.defined;
   } );
 
-  describe( "getWorkSheets", function() {
+  describe( "getWorkSheetTitles", function() {
     var successData = {
       sheets: [
         {
@@ -50,7 +50,7 @@ describe( "getWorkSheets", function() {
         return [ 200, successData, {} ];
       } );
 
-      googleSheetService.getWorkSheets( "public" ).then( function( results ) {
+      googleSheetService.getWorkSheetTitles( "public" ).then( function( results ) {
         expect( results ).be.defined;
         expect( results.length ).to.equal( 2 );
 
