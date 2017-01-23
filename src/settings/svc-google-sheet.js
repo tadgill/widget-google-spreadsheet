@@ -55,7 +55,7 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
 
         };
 
-      factory.getWorkSheetTitles = function( fileId, apiKey ) {
+      factory.getWorkSheets = function( fileId, apiKey ) {
         var api = SHEETS_API + fileId + "?key=" + ( ( apiKey ) ? apiKey : API_KEY );
 
         return $http.get( api )
