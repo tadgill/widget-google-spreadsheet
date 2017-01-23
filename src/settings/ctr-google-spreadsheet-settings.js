@@ -13,7 +13,6 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
       function resetWorkSheets() {
         $scope.sheets = [];
         $scope.currentSheet = null;
-        $scope.settings.additionalParams.spreadsheet.tabId = 1;
         $scope.settings.additionalParams.spreadsheet.sheetName = "";
       }
 
@@ -31,7 +30,14 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
           .then( function( sheets ) {
             $scope.public = true;
             $scope.sheets = sheets;
-            $scope.currentSheet = sheets[ $scope.settings.additionalParams.spreadsheet.tabId - 1 ];
+
+            if ( $scope.settings.additionalParams.spreadsheet.sheetName ) {
+              $scope.currentSheet = sheets.filter( function( obj ) {
+                return obj.value === $scope.settings.additionalParams.spreadsheet.sheetName;
+              } )[ 0 ];
+            } else {
+              $scope.currentSheet = sheets[ 0 ];
+            }
           } )
           .then( null, function() {
             $scope.public = false;
@@ -81,8 +87,7 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
 
       $scope.$watch( "currentSheet", function( currentSheet ) {
         if ( currentSheet ) {
-          $scope.settings.additionalParams.spreadsheet.tabId = currentSheet.value;
-          $scope.settings.additionalParams.spreadsheet.sheetName = currentSheet.label;
+          $scope.settings.additionalParams.spreadsheet.sheetName = currentSheet.value;
         }
       } );
 
@@ -281,7 +286,6 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
           startCell: "",
           endCell: ""
         },
-        tabId: 1,
         sheetName: "",
         hasHeader: false,
         refresh: 60,

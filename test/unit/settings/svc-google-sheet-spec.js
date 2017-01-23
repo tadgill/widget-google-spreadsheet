@@ -56,12 +56,12 @@ describe( "getWorkSheets", function() {
 
         expect( results[ 0 ] ).to.deep.equal( {
           "label": "Worksheet 1",
-          "value": 1
+          "value": "Worksheet 1"
         } );
 
         expect( results[ 1 ] ).to.deep.equal( {
           "label": "Worksheet 2",
-          "value": 2
+          "value": "Worksheet 2"
         } );
 
       } );

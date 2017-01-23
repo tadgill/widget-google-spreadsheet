@@ -10,14 +10,10 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
         filterSheets = function( sheets ) {
           var option;
 
-          return sheets.map( function( sheet, index ) {
+          return sheets.map( function( sheet ) {
             option = {};
 
-            // Worksheet tab name
-            option.label = sheet.properties.title;
-
-            // Worksheet tab number
-            option.value = ( index + 1 );
+            option.label = option.value = sheet.properties.title;
 
             return option;
           } );
