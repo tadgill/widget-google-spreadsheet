@@ -7,17 +7,6 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
       var factory = {},
         columnsRequest = null,
         columnsRequestSuccess = true,
-        filterSheets = function( sheets ) {
-          var option;
-
-          return sheets.map( function( sheet ) {
-            option = {};
-
-            option.label = option.value = sheet.properties.title;
-
-            return option;
-          } );
-        },
         getColumnName = function( index ) {
           var ordA = "a".charCodeAt( 0 ),
             ordZ = "z".charCodeAt( 0 ),
@@ -61,9 +50,6 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
         return $http.get( api )
           .then( function( response ) {
             return response.data.sheets;
-          } )
-          .then( function( sheets ) {
-            return filterSheets( sheets );
           } );
       };
 
