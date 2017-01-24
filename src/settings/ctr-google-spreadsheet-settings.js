@@ -29,14 +29,19 @@ angular.module( "risevision.widget.googleSpreadsheet.settings" )
         googleSheet.getWorkSheets( fileId )
           .then( function( sheets ) {
             $scope.public = true;
-            $scope.sheets = sheets;
+            $scope.sheets = sheets.map( function( sheet ) {
+              return {
+                label: sheet.properties.title,
+                value: sheet.properties.title
+              };
+            } );
 
             if ( $scope.settings.additionalParams.spreadsheet.sheetName ) {
-              $scope.currentSheet = sheets.filter( function( obj ) {
+              $scope.currentSheet = $scope.sheets.filter( function( obj ) {
                 return obj.value === $scope.settings.additionalParams.spreadsheet.sheetName;
               } )[ 0 ];
             } else {
-              $scope.currentSheet = sheets[ 0 ];
+              $scope.currentSheet = $scope.sheets[ 0 ];
             }
           } )
           .then( null, function() {

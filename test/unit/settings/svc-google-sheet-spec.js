@@ -54,16 +54,7 @@ describe( "getWorkSheets", function() {
         expect( results ).be.defined;
         expect( results.length ).to.equal( 2 );
 
-        expect( results[ 0 ] ).to.deep.equal( {
-          "label": "Worksheet 1",
-          "value": "Worksheet 1"
-        } );
-
-        expect( results[ 1 ] ).to.deep.equal( {
-          "label": "Worksheet 2",
-          "value": "Worksheet 2"
-        } );
-
+        expect( results ).to.deep.equal( successData.sheets );
       } );
 
       httpBackend.flush();

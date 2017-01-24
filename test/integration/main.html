@@ -111,6 +111,11 @@
         assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
       });
 
+      test("should enforce no padding in cells", function() {
+        var padding = window.getComputedStyle(document.querySelector(".header_font-style .fixedDataTableCellLayout_wrap3 > div")).getPropertyValue( "padding" );
+        assert.equal(padding, "0px");
+      });
+
       test("should set the even row style of the table", function(done) {
 
         var check = function(done) {
