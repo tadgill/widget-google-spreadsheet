@@ -1,13 +1,14 @@
+/* global describe, before, beforeEach, it, sinon  */
+
 import React from "react";
 import { shallow } from "enzyme";
 import { expect } from "chai";
-import TestUtils from "react-addons-test-utils";
 import Scroll from "../../../src/widget/components/scroll";
 import Table from "../../../src/widget/components/table";
 
-describe("<Scroll />", function() {
+describe( "<Scroll />", function() {
   let server;
-  const onDone = function () {},
+  const onDone = function() {},
     scroll = {},
     align = "center",
     className = "body_font-style",
@@ -15,19 +16,19 @@ describe("<Scroll />", function() {
     height = 50,
     totalCols = 3,
     rowHeight = 50,
-    data = [["I am the walrus!", "1", "3"],
-      ["John is dead!", "500", "32"]],
-    columnFormats = [{ "width": 100 }, { "width": 200 }, { "width": 300 }];
+    data = [ [ "I am the walrus!", "1", "3" ],
+      [ "John is dead!", "500", "32" ] ],
+    columnFormats = [ { "width": 100 }, { "width": 200 }, { "width": 300 } ];
 
   var wrapper;
 
-  before(function() {
+  before( function() {
     server = sinon.fakeServer.create();
     server.respondImmediately = true;
-    server.respondWith("POST", "https://www.googleapis.com/oauth2/v3/token", [200, { "Content-Type": "text/html" }, "OK"] );
-  });
+    server.respondWith( "POST", "https://www.googleapis.com/oauth2/v3/token", [ 200, { "Content-Type": "text/html" }, "OK" ] );
+  } );
 
-  beforeEach(function () {
+  beforeEach( function() {
     var component =
       <Scroll
         onDone={onDone}
@@ -41,41 +42,42 @@ describe("<Scroll />", function() {
         height={height}
         columnFormats={columnFormats} />;
 
-    wrapper = shallow(component);
-  });
+    wrapper = shallow( component );
+  } );
 
-  describe("Page", function() {
-    it("Should set the page class to the section element", function() {
-      expect(wrapper.find("section").props().className).to.equal("page");
-    });
-  });
+  describe( "Page", function() {
+    it( "Should set the page class to the section element", function() {
+      expect( wrapper.find( "section" ).props().className ).to.equal( "page" );
+    } );
+  } );
 
 
-  describe("<Table />", function() {
-    it("Should contain a Table component", function() {
-      expect(wrapper.find(Table)).to.have.length(1);
-    });
+  describe( "<Table />", function() {
+    it( "Should contain a Table component", function() {
+      expect( wrapper.find( Table ) ).to.have.length( 1 );
+    } );
 
-    it("Should have data prop", function() {
-      var expected = [["I am the walrus!", "1", "3"],
-                           ["John is dead!", "500", "32"]];
-      expect(wrapper.find(Table).props().data).to.deep.equal(expected);
-    });
+    it( "Should have data prop", function() {
+      var expected = [ [ "I am the walrus!", "1", "3" ],
+                           [ "John is dead!", "500", "32" ] ];
 
-    it("Should have columnFormats prop", function() {
-      expect(wrapper.find(Table).props().columnFormats).to.deep.equal(columnFormats);
-    });
+      expect( wrapper.find( Table ).props().data ).to.deep.equal( expected );
+    } );
 
-    it("Should have width prop", function() {
-      expect(wrapper.find(Table).props().width).to.equal(width);
-    });
+    it( "Should have columnFormats prop", function() {
+      expect( wrapper.find( Table ).props().columnFormats ).to.deep.equal( columnFormats );
+    } );
 
-    it("Should have height prop", function() {
-      expect(wrapper.find(Table).props().height).to.equal(height);
-    });
+    it( "Should have width prop", function() {
+      expect( wrapper.find( Table ).props().width ).to.equal( width );
+    } );
 
-    it("Should have totalCols prop", function() {
-      expect(wrapper.find(Table).props().totalCols).to.equal(totalCols);
-    });
-  });
-});
+    it( "Should have height prop", function() {
+      expect( wrapper.find( Table ).props().height ).to.equal( height );
+    } );
+
+    it( "Should have totalCols prop", function() {
+      expect( wrapper.find( Table ).props().totalCols ).to.equal( totalCols );
+    } );
+  } );
+} );

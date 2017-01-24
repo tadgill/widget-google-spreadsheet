@@ -1,1 +1,2 @@
-$('body').attr('ng-app', 'testSettingsE2E');
+/* global $ */
+$( "body" ).attr( "ng-app", "testSettingsE2E" );

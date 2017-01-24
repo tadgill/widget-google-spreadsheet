@@ -2,7 +2,7 @@ import React from "react";
 
 var PropTypes = React.PropTypes;
 
-function Message (props) {
+function Message( props ) {
   return (
     <p className="message">{props.text}</p>
   )

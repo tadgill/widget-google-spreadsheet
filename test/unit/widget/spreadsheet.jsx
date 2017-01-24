@@ -1,3 +1,5 @@
+/* global describe, before, beforeEach, after, afterEach, it, sinon, xit  */
+
 import React from "react";
 import { mount } from "enzyme";
 import { expect } from "chai";
@@ -7,71 +9,70 @@ import Table from "../../../src/widget/components/table";
 import Scroll from "../../../src/widget/components/scroll";
 import LoggerUtils from "../../../src/components/widget-common/dist/logger";
 import "../../data/spreadsheet";
-import config from "../../../src/config/config";
 
-
-describe("<Spreadsheet />", function() {
-  let server, wrapper;
-  const data = [["Column 1", "Column 2", "Column 3"], ["A2", "B2", "C2"]],
+describe( "<Spreadsheet />", function() {
+  let server,
+    wrapper;
+  const data = [ [ "Column 1", "Column 2", "Column 3" ], [ "A2", "B2", "C2" ] ],
     additionalParams = window.gadget.settings.additionalParams,
     columnsParam = additionalParams.format.columns;
 
   var propHandlers = {
-    initSize: function(width, height) {},
-    showMessage: function(text) {},
+    initSize: function() {},
+    showMessage: function() {},
     hideMessage: function() {}
   };
 
-  before(function() {
+  before( function() {
     server = sinon.fakeServer.create();
     server.respondImmediately = true;
-    server.respondWith("GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
-      [200, { "Content-Type": "application/json" },
-        '{ "sheets": [{ "properties": { "title": "Sheet1" } }] }']);
-    server.respondWith("POST", "https://www.googleapis.com/oauth2/v3/token", [200, { "Content-Type": "text/html" }, "OK"] );
+    server.respondWith( "GET", "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx?key=abc123",
+      [ 200, { "Content-Type": "application/json" },
+        "{ \"sheets\": [{ \"properties\": { \"title\": \"Sheet1\" } }] }" ] );
+    server.respondWith( "POST", "https://www.googleapis.com/oauth2/v3/token", [ 200, { "Content-Type": "text/html" }, "OK" ] );
 
-  });
+  } );
 
-  beforeEach(function () {
-    wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+  beforeEach( function() {
+    wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                  showMessage={propHandlers.showMessage}
-                                 hideMessage={propHandlers.hideMessage} />);
-  });
+                                 hideMessage={propHandlers.hideMessage} /> );
+  } );
 
-  after(function() {
+  after( function() {
     server.restore();
-  });
+  } );
 
-  it("Should have an initial data state", function () {
-    expect(wrapper.state().data).to.be.null;
-  });
+  it( "Should have an initial data state", function() {
+    expect( wrapper.state().data ).to.be.null;
+  } );
 
-  describe("<TableHeaderContainer />", function() {
-    beforeEach(function () {
-      wrapper.setState({ data: data });
-    });
+  describe( "<TableHeaderContainer />", function() {
+    beforeEach( function() {
+      wrapper.setState( { data: data } );
+    } );
 
-    it("Should contain a TableHeaderContainer component", function() {
-      expect(wrapper.find(TableHeaderContainer)).to.have.length(1);
-    });
+    it( "Should contain a TableHeaderContainer component", function() {
+      expect( wrapper.find( TableHeaderContainer ) ).to.have.length( 1 );
+    } );
 
-    it("Should have align prop", function() {
-      expect(wrapper.find(TableHeaderContainer).props().align).to.equal(additionalParams.format.header.fontStyle.align);
-    });
+    it( "Should have align prop", function() {
+      expect( wrapper.find( TableHeaderContainer ).props().align ).to.equal( additionalParams.format.header.fontStyle.align );
+    } );
 
-    it("Should have data prop", function() {
-      var expected = [additionalParams.format.columns[0].headerText, "Column 2", "Column 3"];
+    it( "Should have data prop", function() {
+      var expected = [ additionalParams.format.columns[ 0 ].headerText, "Column 2", "Column 3" ];
 
-      expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
-    });
+      expect( wrapper.find( TableHeaderContainer ).props().data ).to.deep.equal( expected );
+    } );
 
-    it("Should have columnFormats prop", function() {
+    it( "Should have columnFormats prop", function() {
       var expected = [
         {
-          id: additionalParams.format.columns[0].id,
+          id: additionalParams.format.columns[ 0 ].id,
           numeric: false,
           alignment: "left",
-          width: additionalParams.format.columns[0].width,
+          width: additionalParams.format.columns[ 0 ].width,
           colorCondition: "none"
         },
         {
@@ -82,53 +83,53 @@ describe("<Spreadsheet />", function() {
         }
       ];
 
-      expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
-    });
+      expect( wrapper.find( TableHeaderContainer ).props().columnFormats ).to.deep.equal( expected );
+    } );
 
-    it("Should have height prop", function() {
-      expect(wrapper.find(TableHeaderContainer).props().height).to.equal(additionalParams.format.rowHeight);
-    });
+    it( "Should have height prop", function() {
+      expect( wrapper.find( TableHeaderContainer ).props().height ).to.equal( additionalParams.format.rowHeight );
+    } );
 
-    it("Should have width prop", function() {
-      expect(wrapper.find(TableHeaderContainer).props().width).to.equal(window.innerWidth);
-    });
-  });
+    it( "Should have width prop", function() {
+      expect( wrapper.find( TableHeaderContainer ).props().width ).to.equal( window.innerWidth );
+    } );
+  } );
 
-  describe("No <TableHeaderContainer />", function() {
-    beforeEach(function () {
+  describe( "No <TableHeaderContainer />", function() {
+    beforeEach( function() {
       additionalParams.spreadsheet.hasHeader = false;
-      wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+      wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                    showMessage={propHandlers.showMessage}
-                                   hideMessage={propHandlers.hideMessage} />);
+                                   hideMessage={propHandlers.hideMessage} /> );
 
-      wrapper.setState({ data: data });
-    });
+      wrapper.setState( { data: data } );
+    } );
 
-    afterEach(function() {
+    afterEach( function() {
       additionalParams.spreadsheet.hasHeader = true;
-    });
+    } );
 
-    it("Should not contain a TableHeaderContainer component", function() {
-      expect(wrapper.find(TableHeaderContainer)).to.have.length(0);
-    });
+    it( "Should not contain a TableHeaderContainer component", function() {
+      expect( wrapper.find( TableHeaderContainer ) ).to.have.length( 0 );
+    } );
 
-    it("Should pass the correct height prop for the Table component", function() {
-      expect(wrapper.find(Table).props().height).to.equal(window.innerHeight);
-    });
-  });
+    it( "Should pass the correct height prop for the Table component", function() {
+      expect( wrapper.find( Table ).props().height ).to.equal( window.innerHeight );
+    } );
+  } );
 
-  describe("<Scroll />", function() {
-    beforeEach(function () {
-      wrapper.setState({ data: data });
-    });
+  describe( "<Scroll />", function() {
+    beforeEach( function() {
+      wrapper.setState( { data: data } );
+    } );
 
-    it("Should have columnFormats prop", function() {
+    it( "Should have columnFormats prop", function() {
       var expected = [
         {
-          id: additionalParams.format.columns[0].id,
+          id: additionalParams.format.columns[ 0 ].id,
           numeric: false,
           alignment: "left",
-          width: additionalParams.format.columns[0].width,
+          width: additionalParams.format.columns[ 0 ].width,
           colorCondition: "none"
         },
         {
@@ -139,74 +140,74 @@ describe("<Spreadsheet />", function() {
         }
       ];
 
-      expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
-    });
-  });
+      expect( wrapper.find( Scroll ).props().columnFormats ).to.deep.equal( expected );
+    } );
+  } );
 
-  describe("Refreshing", function() {
-    beforeEach(function () {
-      wrapper.setState({ data: data });
-    });
+  describe( "Refreshing", function() {
+    beforeEach( function() {
+      wrapper.setState( { data: data } );
+    } );
 
-    it("should update the state", function() {
-      const event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet"),
-        newData = [["Column 1"], ["Test data"]];
+    it( "should update the state", function() {
+      const event = document.createEvent( "Event" ),
+        sheet = document.getElementById( "rise-google-sheet" ),
+        newData = [ [ "Column 1" ], [ "Test data" ] ];
 
-      event.initEvent("rise-google-sheet-response", true, true);
+      event.initEvent( "rise-google-sheet-response", true, true );
       event.detail = {};
       event.detail.results = newData;
 
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(wrapper.state().data).to.deep.equal(newData);
-    });
-  });
+      expect( wrapper.state().data ).to.deep.equal( newData );
+    } );
+  } );
 
-  describe("Handling error", function () {
-    beforeEach(function () {
-      wrapper.setState({ data: data });
-    });
+  describe( "Handling error", function() {
+    beforeEach( function() {
+      wrapper.setState( { data: data } );
+    } );
 
-    it("should revert state back to initial value", function () {
-      var event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet");
+    it( "should revert state back to initial value", function() {
+      var event = document.createEvent( "Event" ),
+        sheet = document.getElementById( "rise-google-sheet" );
 
-      event.initEvent("rise-google-sheet-error", true, true);
+      event.initEvent( "rise-google-sheet-error", true, true );
       event.detail = {};
 
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(wrapper.state().data).to.be.null;
-    });
+      expect( wrapper.state().data ).to.be.null;
+    } );
 
-    it("should ensure state is initial value when quota error and no cached data provided", function () {
-      var event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet");
+    it( "should ensure state is initial value when quota error and no cached data provided", function() {
+      var event = document.createEvent( "Event" ),
+        sheet = document.getElementById( "rise-google-sheet" );
 
-      event.initEvent("rise-google-sheet-quota", true, true);
+      event.initEvent( "rise-google-sheet-quota", true, true );
       event.detail = {};
 
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(wrapper.state().data).to.be.null;
-    });
+      expect( wrapper.state().data ).to.be.null;
+    } );
 
-    it("should ensure state is updated when quota error and cached data is provided", function () {
-      var event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet");
+    it( "should ensure state is updated when quota error and cached data is provided", function() {
+      var event = document.createEvent( "Event" ),
+        sheet = document.getElementById( "rise-google-sheet" );
 
-      event.initEvent("rise-google-sheet-quota", true, true);
-      event.detail = {results: [["1", "2", "3"]]};
+      event.initEvent( "rise-google-sheet-quota", true, true );
+      event.detail = { results: [ [ "1", "2", "3" ] ] };
 
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(wrapper.state().data).to.deep.equal([["1", "2", "3"]]);
-    });
+      expect( wrapper.state().data ).to.deep.equal( [ [ "1", "2", "3" ] ] );
+    } );
 
-  });
+  } );
 
-  describe("Logging", function() {
+  describe( "Logging", function() {
     var stub,
       table = "spreadsheet_events",
       params = {
@@ -214,58 +215,58 @@ describe("<Spreadsheet />", function() {
         "url": additionalParams.spreadsheet.url,
         "api_key": "abc123"
       },
-      sheet = document.getElementById("rise-google-sheet");
+      sheet = document.getElementById( "rise-google-sheet" );
 
-    beforeEach(function() {
-      stub = sinon.stub(LoggerUtils, "logEvent");
-    });
+    beforeEach( function() {
+      stub = sinon.stub( LoggerUtils, "logEvent" );
+    } );
 
-    afterEach(function() {
+    afterEach( function() {
       LoggerUtils.logEvent.restore();
-    });
+    } );
 
-    it("should log the play event", function() {
-      var event = document.createEvent("Event"),
-        sheet = document.getElementById("rise-google-sheet");
+    it( "should log the play event", function() {
+      var event = document.createEvent( "Event" ),
+        sheet = document.getElementById( "rise-google-sheet" );
 
-      event.initEvent("rise-google-sheet-response", true, true);
+      event.initEvent( "rise-google-sheet-response", true, true );
       event.detail = {
         results: data
       };
 
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(stub.withArgs(table,params).called).to.equal(true);
-    });
+      expect( stub.withArgs( table, params ).called ).to.equal( true );
+    } );
 
-    xit("should log the done event", function() {
+    xit( "should log the done event", function() {
       // TODO: Needs auto-scroll first.
-    });
+    } );
 
-    it("should log the default error event", function() {
-      var event = document.createEvent("Event"),
-      params = {
-        "event": "error",
-        "event_details": "spreadsheet not reachable",
-        "error_details": "The request failed with status code: 0",
-        "url": additionalParams.spreadsheet.url,
-        "request_url": "",
-        "api_key": "abc123"
-      };
+    it( "should log the default error event", function() {
+      var event = document.createEvent( "Event" ),
+        params = {
+          "event": "error",
+          "event_details": "spreadsheet not reachable",
+          "error_details": "The request failed with status code: 0",
+          "url": additionalParams.spreadsheet.url,
+          "request_url": "",
+          "api_key": "abc123"
+        };
 
-      event.initEvent("rise-google-sheet-error", true, true);
+      event.initEvent( "rise-google-sheet-error", true, true );
       event.detail = {
-                       "error": {
-                         "message": ""
-                       }
-                     };
-      sheet.dispatchEvent(event);
+        "error": {
+          "message": ""
+        }
+      };
+      sheet.dispatchEvent( event );
 
-      expect(stub.withArgs(table,params).called).to.equal(true);
-    });
+      expect( stub.withArgs( table, params ).called ).to.equal( true );
+    } );
 
     it( "should log the error event when spreadsheet is not reachable", function() {
-      let event = document.createEvent("Event"),
+      let event = document.createEvent( "Event" ),
         params = {
           "event": "error",
           "event_details": "spreadsheet not reachable",
@@ -275,7 +276,7 @@ describe("<Spreadsheet />", function() {
           "api_key": "abc123"
         };
 
-      event.initEvent("rise-google-sheet-error", true, true);
+      event.initEvent( "rise-google-sheet-error", true, true );
       event.detail = {
         "error": {
           "message": "The request failed with status code: 503"
@@ -284,63 +285,63 @@ describe("<Spreadsheet />", function() {
           "url": params.request_url
         }
       };
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(stub.withArgs(table,params).called).to.equal(true);
-    });
+      expect( stub.withArgs( table, params ).called ).to.equal( true );
+    } );
 
-    it("should log the error event when spreadsheet is not public ", function() {
-      var event = document.createEvent("Event"),
-      params = {
-        "event": "error",
-        "event_details": "spreadsheet not public",
-        "error_details": "The request failed with status code: 403",
-        "url": additionalParams.spreadsheet.url,
-        "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
-        "api_key": "abc123"
-      };
+    it( "should log the error event when spreadsheet is not public ", function() {
+      var event = document.createEvent( "Event" ),
+        params = {
+          "event": "error",
+          "event_details": "spreadsheet not public",
+          "error_details": "The request failed with status code: 403",
+          "url": additionalParams.spreadsheet.url,
+          "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
+          "api_key": "abc123"
+        };
 
-      event.initEvent("rise-google-sheet-error", true, true);
+      event.initEvent( "rise-google-sheet-error", true, true );
       event.detail = {
-                       "error": {
-                         "message": "The request failed with status code: 403"
-                       },
+        "error": {
+          "message": "The request failed with status code: 403"
+        },
         "request": {
           "url": params.request_url
         }
-                     };
-      sheet.dispatchEvent(event);
-
-      expect(stub.withArgs(table,params).called).to.equal(true);
-    });
-
-    it("should log the error event when spreadsheet is not found ", function() {
-      var event = document.createEvent("Event"),
-      params = {
-        "event": "error",
-        "event_details": "spreadsheet not found",
-        "error_details": "The request failed with status code: 404",
-        "url": additionalParams.spreadsheet.url,
-        "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
-        "api_key": "abc123"
       };
+      sheet.dispatchEvent( event );
 
-      event.initEvent("rise-google-sheet-error", true, true);
+      expect( stub.withArgs( table, params ).called ).to.equal( true );
+    } );
+
+    it( "should log the error event when spreadsheet is not found ", function() {
+      var event = document.createEvent( "Event" ),
+        params = {
+          "event": "error",
+          "event_details": "spreadsheet not found",
+          "error_details": "The request failed with status code: 404",
+          "url": additionalParams.spreadsheet.url,
+          "request_url": "https://sheets.googleapis.com/v4/spreadsheets/xxxxxxxxxx/values/Sheet1?key=abc123&majorDimension=ROWS&valueRenderOption=FORMATTED_VALUE",
+          "api_key": "abc123"
+        };
+
+      event.initEvent( "rise-google-sheet-error", true, true );
       event.detail = {
-                       "error": {
-                         "message": "The request failed with status code: 404"
-                       },
+        "error": {
+          "message": "The request failed with status code: 404"
+        },
         "request": {
           "url": params.request_url
         }
-                     };
-      sheet.dispatchEvent(event);
+      };
+      sheet.dispatchEvent( event );
 
-      expect(stub.withArgs(table,params).called).to.equal(true);
-    });
+      expect( stub.withArgs( table, params ).called ).to.equal( true );
+    } );
 
-    it("should log the quota error event", function() {
-      var event = document.createEvent("Event"),
+    it( "should log the quota error event", function() {
+      var event = document.createEvent( "Event" ),
         params = {
           "event": "error",
           "event_details": "api quota exceeded",
@@ -348,55 +349,55 @@ describe("<Spreadsheet />", function() {
           "api_key": "abc123"
         };
 
-      event.initEvent("rise-google-sheet-quota", true, true);
+      event.initEvent( "rise-google-sheet-quota", true, true );
       event.detail = {};
-      sheet.dispatchEvent(event);
+      sheet.dispatchEvent( event );
 
-      expect(stub.withArgs(table,params).called).to.equal(true);
-    });
-  });
+      expect( stub.withArgs( table, params ).called ).to.equal( true );
+    } );
+  } );
 
 
-  describe("Column formatting", function() {
+  describe( "Column formatting", function() {
 
-    afterEach(function() {
+    afterEach( function() {
       additionalParams.format.columns = columnsParam;
-    });
+    } );
 
-    describe("Header text", function() {
-      it("Should use default header text if custom header text is empty", function() {
-        var expected = ["Column 1", "Column 2", "Column 3" ];
+    describe( "Header text", function() {
+      it( "Should use default header text if custom header text is empty", function() {
+        var expected = [ "Column 1", "Column 2", "Column 3" ];
 
-        additionalParams.format.columns[0].headerText = "";
-        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+        additionalParams.format.columns[ 0 ].headerText = "";
+        wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                      showMessage={propHandlers.showMessage}
-                                     hideMessage={propHandlers.hideMessage} />);
+                                     hideMessage={propHandlers.hideMessage} /> );
 
-        wrapper.setState({ data: data });
+        wrapper.setState( { data: data } );
 
-        expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
-      });
+        expect( wrapper.find( TableHeaderContainer ).props().data ).to.deep.equal( expected );
+      } );
 
-      it("should use default header text if column formatting is not defined", function() {
-        var expected = ["Column 1", "Column 2", "Column 3" ];
+      it( "should use default header text if column formatting is not defined", function() {
+        var expected = [ "Column 1", "Column 2", "Column 3" ];
 
         additionalParams.format.columns = [];
-        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+        wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                      showMessage={propHandlers.showMessage}
-                                     hideMessage={propHandlers.hideMessage} />);
+                                     hideMessage={propHandlers.hideMessage} /> );
 
-        wrapper.setState({ data: data });
+        wrapper.setState( { data: data } );
 
-        expect(wrapper.find(TableHeaderContainer).props().data).to.deep.equal(expected);
-      });
-    });
+        expect( wrapper.find( TableHeaderContainer ).props().data ).to.deep.equal( expected );
+      } );
+    } );
 
-    describe("columnFormats prop", function() {
-      it("Should set all properties for those columns with formatting applied and should set the " +
+    describe( "columnFormats prop", function() {
+      it( "Should set all properties for those columns with formatting applied and should set the " +
         "width of all other columns", function() {
         var expected = [
           {
-            id: additionalParams.format.columns[0].id,
+            id: additionalParams.format.columns[ 0 ].id,
             numeric: false,
             alignment: "left",
             width: 100,
@@ -410,36 +411,36 @@ describe("<Spreadsheet />", function() {
           }
         ];
 
-        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+        wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                      showMessage={propHandlers.showMessage}
-                                     hideMessage={propHandlers.hideMessage} />);
+                                     hideMessage={propHandlers.hideMessage} /> );
 
-        wrapper.setState({ data: data });
+        wrapper.setState( { data: data } );
 
-        expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
-        expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
-      });
+        expect( wrapper.find( TableHeaderContainer ).props().columnFormats ).to.deep.equal( expected );
+        expect( wrapper.find( Scroll ).props().columnFormats ).to.deep.equal( expected );
+      } );
 
-      it("Should return equal width columns if column formatting is not defined on any " +
+      it( "Should return equal width columns if column formatting is not defined on any " +
         "columns", function() {
-        var expected = [{ width: 200 }, { width: 200 }, { width: 200 }];
+        var expected = [ { width: 200 }, { width: 200 }, { width: 200 } ];
 
         additionalParams.format.columns = [];
 
-        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+        wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                      showMessage={propHandlers.showMessage}
-                                     hideMessage={propHandlers.hideMessage} />);
+                                     hideMessage={propHandlers.hideMessage} /> );
 
-        wrapper.setState({ data: data });
+        wrapper.setState( { data: data } );
 
-        expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
-        expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
-      });
+        expect( wrapper.find( TableHeaderContainer ).props().columnFormats ).to.deep.equal( expected );
+        expect( wrapper.find( Scroll ).props().columnFormats ).to.deep.equal( expected );
+      } );
 
-      it("Should return numeric property as defined by params", function() {
+      it( "Should return numeric property as defined by params", function() {
         var expected = [
           {
-            id: additionalParams.format.columns[0].id,
+            id: additionalParams.format.columns[ 0 ].id,
             numeric: true,
             alignment: "left",
             width: 100,
@@ -453,19 +454,19 @@ describe("<Spreadsheet />", function() {
           }
         ];
 
-        additionalParams.format.columns[0].numeric = true;
+        additionalParams.format.columns[ 0 ].numeric = true;
 
-        wrapper = mount(<Spreadsheet initSize={propHandlers.initSize}
+        wrapper = mount( <Spreadsheet initSize={propHandlers.initSize}
                                      showMessage={propHandlers.showMessage}
-                                     hideMessage={propHandlers.hideMessage} />);
+                                     hideMessage={propHandlers.hideMessage} /> );
 
-        wrapper.setState({ data: data });
+        wrapper.setState( { data: data } );
 
-        expect(wrapper.find(TableHeaderContainer).props().columnFormats).to.deep.equal(expected);
-        expect(wrapper.find(Scroll).props().columnFormats).to.deep.equal(expected);
-      });
+        expect( wrapper.find( TableHeaderContainer ).props().columnFormats ).to.deep.equal( expected );
+        expect( wrapper.find( Scroll ).props().columnFormats ).to.deep.equal( expected );
+      } );
 
-    });
+    } );
 
-  });
-});
+  } );
+} );

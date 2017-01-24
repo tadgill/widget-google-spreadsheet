@@ -1,16 +1,15 @@
-;(function(window) {
+( function( window ) {
 
-    var container = window.document.createElement("div");
-    container.setAttribute("id", "mainContainer");
+  var container = window.document.createElement( "div" ),
+    sheet = window.document.createElement( "rise-google-sheet" ),
+    body = document.getElementsByTagName( "BODY" )[ 0 ];
 
-    var sheet = window.document.createElement("rise-google-sheet");
+  container.setAttribute( "id", "mainContainer" );
 
-    sheet.id = "rise-google-sheet";
-    sheet.go = function() {};
+  sheet.id = "rise-google-sheet";
+  sheet.go = function() {};
 
-    var body = document.getElementsByTagName("BODY")[0];
+  body.appendChild( container );
+  body.appendChild( sheet );
 
-    body.appendChild(container);
-    body.appendChild(sheet);
-
-})(window);
+} )( window );

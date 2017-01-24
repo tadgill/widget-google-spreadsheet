@@ -7,21 +7,21 @@ window.gadget.settings = {
   additionalParams: {
     format: {
       body: {
-        fontStyle:{
-          font:{
-            family:"verdana,geneva,sans-serif",
-            type:"standard",
-            url:""
+        fontStyle: {
+          font: {
+            family: "verdana,geneva,sans-serif",
+            type: "standard",
+            url: ""
           },
-          size:"18px",
-          customSize:"",
-          align:"left",
+          size: "18px",
+          customSize: "",
+          align: "left",
           verticalAlign: "middle",
-          bold:false,
-          italic:false,
-          underline:false,
-          forecolor:"black",
-          backcolor:"transparent"
+          bold: false,
+          italic: false,
+          underline: false,
+          forecolor: "black",
+          backcolor: "transparent"
         }
       },
       columns: [
@@ -31,20 +31,20 @@ window.gadget.settings = {
           type: "string",
           show: true,
           fontStyle: {
-            font:{
-              family:"verdana,geneva,sans-serif",
-              type:"standard",
-              url:""
+            font: {
+              family: "verdana,geneva,sans-serif",
+              type: "standard",
+              url: ""
             },
-            size:"18px",
-            customSize:"",
-            align:"left",
+            size: "18px",
+            customSize: "",
+            align: "left",
             verticalAlign: "middle",
-            bold:false,
-            italic:false,
-            underline:false,
-            forecolor:"black",
-            backcolor:"transparent"
+            bold: false,
+            italic: false,
+            underline: false,
+            forecolor: "black",
+            backcolor: "transparent"
           },
           width: 100,
           colorCondition: "none",
@@ -53,21 +53,21 @@ window.gadget.settings = {
       ],
       evenRowColor: "rgba(255, 255, 255, 0)",
       header: {
-        fontStyle:{
-          font:{
-            family:"verdana,geneva,sans-serif",
-            type:"standard",
-            url:""
+        fontStyle: {
+          font: {
+            family: "verdana,geneva,sans-serif",
+            type: "standard",
+            url: ""
           },
-          size:"18px",
-          customSize:"",
-          align:"left",
+          size: "18px",
+          customSize: "",
+          align: "left",
           verticalAlign: "middle",
-          bold:false,
-          italic:false,
-          underline:false,
-          forecolor:"black",
-          backcolor:"transparent"
+          bold: false,
+          italic: false,
+          underline: false,
+          forecolor: "black",
+          backcolor: "transparent"
         }
       },
       oddRowColor: "rgba(255, 255, 255, 0)",

@@ -2,7 +2,7 @@ import React from "react";
 import Spreadsheet from "./spreadsheet";
 import MessageContainer from "../containers/MessageContainer";
 
-const Main = React.createClass({
+const Main = React.createClass( {
 
   getInitialState: function() {
     return {
@@ -11,26 +11,26 @@ const Main = React.createClass({
     }
   },
 
-  initSize: function(width, height) {
-    document.getElementById("mainContainer").style.width = width + "px";
-    document.getElementById("mainContainer").style.height = height + "px";
+  initSize: function( width, height ) {
+    document.getElementById( "mainContainer" ).style.width = width + "px";
+    document.getElementById( "mainContainer" ).style.height = height + "px";
   },
 
-  showMessage: function(messageText) {
-    this.setState({
+  showMessage: function( messageText ) {
+    this.setState( {
       showMessage: true,
       messageText: messageText
-    });
+    } );
   },
 
   hideMessage: function() {
-    this.setState({
+    this.setState( {
       showMessage: false,
       messageText: ""
-    });
+    } );
   },
 
-  render: function () {
+  render: function() {
     return (
       <div id="main">
         <div id="spreadsheetContainer" className={!this.state.showMessage ? "show" : "hide"}>
@@ -46,6 +46,6 @@ const Main = React.createClass({
     )
   }
 
-});
+} );
 
 module.exports = Main;
