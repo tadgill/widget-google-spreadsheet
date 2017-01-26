@@ -23,8 +23,12 @@
   border-color: transparent;
 }
 
+.fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main:last-of-type {
+  border-right-color: transparent !important;
+}
+
 .fixedDataTableLayout_main {
-  border-color: transparent;
+  border: none;
 }
 
 .public_fixedDataTable_header,
