@@ -134,6 +134,11 @@
         };
         check(done);
       });
+
+      test( "should apply no border to main table", function() {
+        var val = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-width" );
+        assert.equal(val, "0px");
+      } );
     });
 
     suite("Vertical Alignment", function() {
@@ -168,6 +173,14 @@
         var val = window.getComputedStyle(document.querySelector(".public_fixedDataTable_header")).getPropertyValue( "border-color" );
         assert.equal(val, "rgb(238, 238, 238)");
       });
+
+      test( "should hide the last column separator of table", function() {
+        var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main")).getPropertyValue( "border-right-color" ),
+          val2 = window.getComputedStyle(document.querySelector(".fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main:last-of-type")).getPropertyValue( "border-right-color" );
+
+        assert.equal( val1, "rgb(238, 238, 238)" );
+        assert.equal( val2, "rgba(0, 0, 0, 0)" );
+      } );
 
     });
 
