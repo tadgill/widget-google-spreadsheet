@@ -41,6 +41,14 @@ describe( "<TableHeader />", function() {
       expect( wrapper.props().headerHeight ).to.equal( height );
     } );
 
+    it("Should have overflowX prop", function() {
+      expect(wrapper.props().overflowX).to.equal("hidden");
+    });
+
+    it("Should have overflowY prop", function() {
+      expect(wrapper.props().overflowY).to.equal("hidden");
+    });
+
     it( "Should render children", function() {
       expect( wrapper.contains( <Column /> ) ).to.equal( true );
     } );

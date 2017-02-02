@@ -11,7 +11,9 @@ const TableHeader = React.createClass( {
         rowsCount={0}
         width={this.props.width}
         height={this.props.height}
-        headerHeight={this.props.height}>
+        headerHeight={this.props.height}
+        overflowY="hidden"
+        overflowX="hidden">
         {this.props.children}
       </Table>
     );
