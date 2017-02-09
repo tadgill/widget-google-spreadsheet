@@ -1,0 +1,7 @@
+div.colorpicker .dropdown-menu:before, div.colorpicker .dropdown-menu:after {
+  width: 10px !important;
+}
+
+div.colorpicker .close-colorpicker {
+  display: none !important;
+}
