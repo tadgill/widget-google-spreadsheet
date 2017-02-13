@@ -6,12 +6,17 @@
 
   <!-- build:css css/settings.min.css -->
   <link rel="stylesheet" href="components/rv-common-style/dist/css/rise.min.css">
-  <link rel="stylesheet" href="components/rv-angular-bootstrap-colorpicker/css/colorpicker.css">
+  <link rel="stylesheet" href="components/angular-bootstrap-colorpicker/css/colorpicker.css">
+  <link rel="stylesheet" href="settings/css/angular-bootstrap-colorpicker-overrides.css">
   <!-- endbuild -->
 
   <style type="text/css">
     body, html {
       background: transparent;
+    }
+
+    .colorpicker-parent {
+      position:relative;
     }
   </style>
 
@@ -232,7 +237,7 @@
               <div class="col-sm-3">
                 <div class="form-group">
                   <label>{{ "widget-google-spreadsheet.format.oddRow" | translate}}</label>
-                  <div>
+                  <div class="colorpicker-parent">
                     <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.oddRowColor">
                       <input class="form-control" type="text" ng-model="settings.additionalParams.format.oddRowColor">
                       <span class="input-group-addon color-wheel"></span>
@@ -243,7 +248,7 @@
               <div class="col-sm-3">
                 <div class="form-group">
                   <label>{{ "widget-google-spreadsheet.format.evenRow" | translate}}</label>
-                  <div>
+                  <div class="colorpicker-parent">
                     <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.evenRowColor">
                       <input class="form-control" type="text" ng-model="settings.additionalParams.format.evenRowColor">
                       <span class="input-group-addon color-wheel"></span>
@@ -275,9 +280,11 @@
 
               <!-- Color -->
               <div class="col-md-3" ng-if="settings.additionalParams.format.separator.showRow || settings.additionalParams.format.separator.showColumn">
-                <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.separator.color">
-                  <input class="form-control" type="text" ng-model="settings.additionalParams.format.separator.color">
-                  <span class="input-group-addon color-wheel"></span>
+                <div class="colorpicker-parent">
+                  <div class="input-group" colorpicker="rgba" colorpicker-parent="true" ng-model="settings.additionalParams.format.separator.color">
+                    <input class="form-control" type="text" ng-model="settings.additionalParams.format.separator.color">
+                    <span class="input-group-addon color-wheel"></span>
+                  </div>
                 </div>
               </div>
             </div>
