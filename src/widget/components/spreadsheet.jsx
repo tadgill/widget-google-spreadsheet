@@ -114,8 +114,8 @@ const prefs = new gadgets.Prefs(),
 
     setRowStyle: function() {
       Common.addCSSRules( [
-        ".even" + " div * {background-color: " + params.format.evenRowColor + " !important }",
-        ".odd" + " div * {background-color: " + params.format.oddRowColor + " !important }"
+        ".even" + " .fixedDataTableCellGroupLayout_cellGroup {background-color: " + params.format.evenRowColor + " !important }",
+        ".odd" + " .fixedDataTableCellGroupLayout_cellGroup {background-color: " + params.format.oddRowColor + " !important }"
       ] );
     },
 

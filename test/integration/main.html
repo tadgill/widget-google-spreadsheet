@@ -107,7 +107,7 @@
       });
 
       test("should set the odd row style of the table", function() {
-        var backgroundColor = window.getComputedStyle(document.querySelector(".odd .fixedDataTableCellLayout_wrap1")).getPropertyValue( "background-color" );
+        var backgroundColor = window.getComputedStyle(document.querySelector(".odd .fixedDataTableCellGroupLayout_cellGroup")).getPropertyValue( "background-color" );
         assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
       });
 
@@ -119,7 +119,7 @@
       test("should set the even row style of the table", function(done) {
 
         var check = function(done) {
-          var element = document.querySelector(".even .fixedDataTableCellLayout_wrap1");
+          var element = document.querySelector(".even .fixedDataTableCellGroupLayout_cellGroup");
 
           if (element) {
             var backgroundColor = window.getComputedStyle(element).getPropertyValue( "background-color" );
