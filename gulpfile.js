@@ -25,10 +25,10 @@
       "./src/settings.html"
     ],
     vendorFiles = [
-      "./src/components/tinymce-dist/plugins/**/*",
-      "./src/components/tinymce-dist/skins/**/*",
-      "./src/components/tinymce-dist/themes/**/*",
-      "./src/components/tinymce-dist/tinymce*.js",
+      "./src/components/tinymce/plugins/**/*",
+      "./src/components/tinymce/skins/**/*",
+      "./src/components/tinymce/themes/**/*",
+      "./src/components/tinymce/tinymce*.js",
       "./src/components/jquery/dist/**/*",
       "./src/components/angular/angular*.js",
       "./src/components/angular/*.gzip",
@@ -145,7 +145,8 @@
     e2ePicker: "../node_modules/widget-tester/mocks/gapi-picker-mock.js",
     e2eSpreadsheetHTTP: "../test/mocks/google-sheet-http-mock.js",
     e2eTestApp: "../test/e2e/settings-app.js",
-    e2eAppReplace: "../test/e2e/settings-app-replace.js"
+    e2eAppReplace: "../test/e2e/settings-app-replace.js",
+    e2eTinymce: "components/tinymce/tinymce.js"
   } ) );
 
   gulp.task( "e2e:server:settings", [ "config", "html:e2e:settings" ], factory.testServer() );
