@@ -62,7 +62,7 @@
     "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.7.1"
   },
   "dependencies": {
-    "fixed-data-table": "^0.6.0",
+    "fixed-data-table": "0.6.3",
     "react": "0.14.8",
     "react-dom": "0.14.8",
     "webfontloader": "^1.6.24"
