@@ -31,7 +31,7 @@ module.exports = {
   entry: [
     "./src/components/widget-common/dist/common.js",
     "./src/components/widget-common/dist/logger.js",
-    "./src/components/auto-scroll/jquery.auto-scroll.js",
+    "./src/components/auto-scroll/dist/jquery.auto-scroll.js",
     "./src/components/gsap/src/uncompressed/utils/Draggable.js",
     "./src/components/gsap/src/uncompressed/TweenLite.js",
     "./src/components/gsap/src/uncompressed/plugins/CSSPlugin.js",
@@ -80,7 +80,7 @@ module.exports = {
         loader: "exports?RiseVision.Common.Utilities"
       },
       {
-        test: require.resolve(__dirname + "/src/components/auto-scroll/jquery.auto-scroll"),
+        test: require.resolve(__dirname + "/src/components/auto-scroll/dist/jquery.auto-scroll"),
         loader: "imports?jQuery=jquery,$=jquery,this=>window"
       },
       {

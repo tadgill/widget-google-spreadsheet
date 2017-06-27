@@ -1,46 +1,53 @@
-require("fixed-data-table/dist/fixed-data-table.min.css");
+var $ = require( "jquery" );
 
 require( "fixed-data-table/dist/fixed-data-table.min.css" );
 
 import React from "react";
 import Table from "./table";
 
-
 import "../../components/gsap/src/uncompressed/TweenLite"
 import "../../components/gsap/src/uncompressed/plugins/CSSPlugin";
 import "../../components/gsap/src/uncompressed/utils/Draggable";
 import "../../components/gsap/src/uncompressed/plugins/ScrollToPlugin";
 
-import "../../components/auto-scroll/jquery.auto-scroll";
+import "../../components/auto-scroll/dist/jquery.auto-scroll";
 
 const Scroll = React.createClass( {
 
   scroll: "",
   height: 0,
 
-  componentWillMount: function () {
+  componentWillMount: function() {
     this.height = this.props.height;
   },
 
-  componentWillUpdate: function(nextProps, nextState) {
-    this.height = (nextProps.data.length * nextProps.rowHeight) + ((nextProps.hasHeader) ? nextProps.rowHeight : 0)
-    $(this.refs.page).height(this.height);
+  componentWillUpdate: function( nextProps ) {
+    let nextHeight = ( nextProps.data.length * nextProps.rowHeight ) + ( ( nextProps.hasHeader ) ? nextProps.rowHeight : 0 );
 
-    this.scroll.data("plugin_autoScroll").destroy();
-    this.scroll.autoScroll(nextProps.scroll).on("done", () => {
-      nextProps.onDone();
-    });
+    if ( nextHeight !== this.height ) {
+      this.scroll = $( this.refs.scroll );
+      this.scroll.data( "plugin_autoScroll" ).pause();
+      this.scroll.data( "plugin_autoScroll" ).destroy();
+
+      this.height = nextHeight;
+      $( this.refs.page ).height( this.height );
+
+      this.scroll.autoScroll( nextProps.scroll ).on( "done", () => {
+        nextProps.onDone();
+      } );
+    }
+
   },
 
   componentDidUpdate: function() {
-    if (this.canScroll()) {
+    if ( this.canScroll() ) {
       this.play();
     }
   },
 
   componentDidMount: function() {
     this.scroll = $( this.refs.scroll );
-    this.height = ( this.props.data.length * this.props.rowHeight ) + (( this.props.hasHeader ) ? this.props.rowHeight : 0 )
+    this.height = ( this.props.data.length * this.props.rowHeight ) + ( ( this.props.hasHeader ) ? this.props.rowHeight : 0 )
 
     $( this.refs.page ).height( this.height );
 
