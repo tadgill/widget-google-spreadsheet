@@ -1,8 +1,7 @@
-/* global describe, before, beforeEach, it, sinon  */
-
 import React from "react";
-import { shallow } from "enzyme";
+import { mount } from "enzyme";
 import { expect } from "chai";
+import TestUtils from "react-addons-test-utils";
 import Scroll from "../../../src/widget/components/scroll";
 import Table from "../../../src/widget/components/table";
 
@@ -42,8 +41,8 @@ describe( "<Scroll />", function() {
         height={height}
         columnFormats={columnFormats} />;
 
-    wrapper = shallow( component );
-  } );
+    wrapper = mount( component );
+  });
 
   describe( "Page", function() {
     it( "Should set the page class to the section element", function() {
@@ -80,4 +79,20 @@ describe( "<Scroll />", function() {
       expect( wrapper.find( Table ).props().totalCols ).to.equal( totalCols );
     } );
   } );
+  
+  describe("<Table /> Update data", function() {
+    it("Should update height when updating data", function() {
+
+      let updatedData = [["I am the walrus!", "1", "3"],
+                              ["John is dead!", "500", "32"],
+                              ["John is dead!", "500", "32"],
+                              ["John is dead!", "500", "32"]];
+
+      wrapper.setProps({ data: updatedData });
+
+      expect(wrapper.find(Table).props().height).to.equal(200);
+
+    });
+  
+  });
 } );
