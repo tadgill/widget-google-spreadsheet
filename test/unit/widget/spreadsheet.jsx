@@ -181,6 +181,18 @@ describe( "<Spreadsheet />", function() {
       expect( wrapper.state().data ).to.be.null;
     } );
 
+    it( "should ensure state is updated when error and cached data is provided", function() {
+        var event = document.createEvent( "Event" ),
+          sheet = document.getElementById( "rise-google-sheet" );
+
+        event.initEvent( "rise-google-sheet-error", true, true );
+        event.detail = { results: [ [ "1", "2", "3" ] ] };
+
+        sheet.dispatchEvent( event );
+
+        expect( wrapper.state().data ).to.deep.equal( [ [ "1", "2", "3" ] ] );
+      } );
+
     it( "should ensure state is initial value when quota error and no cached data provided", function() {
       var event = document.createEvent( "Event" ),
         sheet = document.getElementById( "rise-google-sheet" );

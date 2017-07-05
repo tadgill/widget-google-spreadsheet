@@ -235,7 +235,16 @@ const prefs = new gadgets.Prefs(),
         event_details = "spreadsheet not found";
       }
 
-      this.showError( message );
+      // check if there is cached data
+      if ( e.detail.results ) {
+        // cached data provided, process as normal response
+        this.onGoogleSheetResponse( e );
+      } else {
+
+        this.showError( message );
+
+        this.setState( { data: null } );
+      }
 
       this.logEvent( {
         "event": "error",
@@ -245,8 +254,6 @@ const prefs = new gadgets.Prefs(),
         "request_url": ( e.detail.request ) ? e.detail.request.url : "",
         "api_key": ( params.spreadsheet.apiKey ) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
       }, true );
-
-      this.setState( { data: null } );
 
       if ( this.isLoading ) {
         this.isLoading = false;
