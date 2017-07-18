@@ -277,7 +277,7 @@ describe( "<Spreadsheet />", function() {
       expect( stub.withArgs( table, params ).called ).to.equal( true );
     } );
 
-    it( "should log the error event when spreadsheet is not reachable", function() {
+    it( "should only log the error event when spreadsheet is not reachable for a consecutive time", function() {
       let event = document.createEvent( "Event" ),
         params = {
           "event": "error",
@@ -297,6 +297,10 @@ describe( "<Spreadsheet />", function() {
           "url": params.request_url
         }
       };
+      sheet.dispatchEvent( event );
+
+      expect( stub.withArgs( table, params ).called ).to.equal( false );
+
       sheet.dispatchEvent( event );
 
       expect( stub.withArgs( table, params ).called ).to.equal( true );
