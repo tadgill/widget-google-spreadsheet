@@ -24,7 +24,7 @@ const prefs = new gadgets.Prefs(),
     pudTimer: null,
     errorLog: null,
     totalCols: 0,
-
+    apiErrorFlag: false,
 
     API_KEY_DEFAULT: config.apiKey,
 
@@ -211,6 +211,7 @@ const prefs = new gadgets.Prefs(),
       } else {
         // in case refresh fixed previous error
         this.errorFlag = false;
+        this.apiErrorFlag = false;
       }
     },
 
@@ -246,6 +247,20 @@ const prefs = new gadgets.Prefs(),
         this.setState( { data: null } );
       }
 
+      if ( this.isLoading ) {
+        this.isLoading = false;
+        this.ready();
+      }
+
+      if ( statusCode && ( String( statusCode ).slice( 0, 2 ) === "50" ) ) {
+        if ( !this.apiErrorFlag ) {
+          this.apiErrorFlag = true;
+          return;
+        }
+      } else {
+        this.apiErrorFlag = false;
+      }
+
       this.logEvent( {
         "event": "error",
         "event_details": event_details,
@@ -254,11 +269,6 @@ const prefs = new gadgets.Prefs(),
         "request_url": ( e.detail.request ) ? e.detail.request.url : "",
         "api_key": ( params.spreadsheet.apiKey ) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
       }, true );
-
-      if ( this.isLoading ) {
-        this.isLoading = false;
-        this.ready();
-      }
     },
 
     onGoogleSheetQuota: function( e ) {
