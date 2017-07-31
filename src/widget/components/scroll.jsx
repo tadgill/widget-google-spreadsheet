@@ -22,7 +22,8 @@ const Scroll = React.createClass( {
   },
 
   componentWillUpdate: function( nextProps ) {
-    let nextHeight = ( nextProps.data.length * nextProps.rowHeight ) + ( ( nextProps.hasHeader ) ? nextProps.rowHeight : 0 );
+    let nextHeight = ( nextProps.data.length * nextProps.rowHeight ) + ( ( nextProps.hasHeader ) ? nextProps.rowHeight : 0 ),
+      params = $.extend( {}, nextProps.scroll, ( nextProps.scroll.by === "page" ) ? { duration: nextProps.scroll.pause } : {} );
 
     if ( nextHeight !== this.height ) {
       this.scroll = $( this.refs.scroll );
@@ -32,7 +33,7 @@ const Scroll = React.createClass( {
       this.height = nextHeight;
       $( this.refs.page ).height( this.height );
 
-      this.scroll.autoScroll( nextProps.scroll ).on( "done", () => {
+      this.scroll.autoScroll( params ).on( "done", () => {
         nextProps.onDone();
       } );
     }
@@ -46,12 +47,14 @@ const Scroll = React.createClass( {
   },
 
   componentDidMount: function() {
+    let params = $.extend( {}, this.props.scroll, ( this.props.scroll.by === "page" ) ? { duration: this.props.scroll.pause } : {} );
+
     this.scroll = $( this.refs.scroll );
-    this.height = ( this.props.data.length * this.props.rowHeight ) + ( ( this.props.hasHeader ) ? this.props.rowHeight : 0 )
+    this.height = ( this.props.data.length * this.props.rowHeight ) + ( ( this.props.hasHeader ) ? this.props.rowHeight : 0 );
 
     $( this.refs.page ).height( this.height );
 
-    this.scroll.autoScroll( this.props.scroll ).on( "done", () => {
+    this.scroll.autoScroll( params ).on( "done", () => {
       this.props.onDone();
     } );
   },
