@@ -36,7 +36,7 @@
     "auto-scroll": "https://github.com/Rise-Vision/auto-scroll.git#2.0.1",
     "google-drive-picker": "https://github.com/Rise-Vision/component-google-drive-picker.git#0.1.1",
     "gsap": "~1.18.5",
-    "rise-google-sheet": "https://github.com/Rise-Vision/rise-google-sheet.git#2.4.9",
+    "rise-google-sheet": "https://github.com/Rise-Vision/rise-google-sheet.git#2.4.10",
     "rv-common-i18n": "https://github.com/Rise-Vision/common-i18n.git#1.4.15",
     "rv-common-style": "https://github.com/Rise-Vision/common-style.git#v1.3.65",
     "webcomponentsjs": "^0.7.22",
