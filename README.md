@@ -37,7 +37,7 @@ git clone https://github.com/Rise-Vision/widget-google-spreadsheet.git
 cd widget-google-spreadsheet
 npm install
 bower install
-gulp build
+npm run build
 ```
 
 The source code for the Widget can be found in the `src` folder. This is where you will want to make your custom changes.
@@ -48,7 +48,7 @@ To preview Widgets locally, you'll need to use the [Widget Preview](https://gith
 ### Testing
 Execute the following command in Terminal to run both end-to-end and unit tests:
 ```
-gulp test
+npm run test
 ```
 ### Deployment
 Once you are satisifed with your changes, run `gulp build` again, which will regenerate the `dist` folder. The `dist` folder contains all of the files that need to be deployed to your server. In the Rise Vision Platform, you can then add your custom Widget via the *Gadgets* tab. Give your Widget a name, select a *Type* of *Widget*, paste the link to the `widget.html` file in the *URL* field, and the link to the `settings.html` file in the *Custom UI URL* field:
