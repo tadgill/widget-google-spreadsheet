@@ -61,6 +61,9 @@
     "webpack-stream": "^3.2.0",
     "widget-tester": "git://github.com/Rise-Vision/widget-tester.git#1.7.4"
   },
+  "optionalDependencies": {
+    "wct-local": "<2.0.16"
+  },
   "dependencies": {
     "fixed-data-table": "0.6.3",
     "react": "0.14.8",
