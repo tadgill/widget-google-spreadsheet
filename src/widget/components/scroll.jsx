@@ -29,7 +29,6 @@ const Scroll = React.createClass( {
     if ( nextHeight !== this.height ) {
       this.scroll = $( this.refs.scroll );
       this.scroll.data( "plugin_autoScroll" ).pause();
-      this.isPaused = false;
       this.scroll.data( "plugin_autoScroll" ).destroy();
 
       this.height = nextHeight;
