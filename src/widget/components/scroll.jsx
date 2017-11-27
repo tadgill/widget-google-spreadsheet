@@ -16,6 +16,7 @@ const Scroll = React.createClass( {
 
   scroll: "",
   height: 0,
+  isPaused: true,
 
   componentWillMount: function() {
     this.height = this.props.height;
@@ -41,7 +42,7 @@ const Scroll = React.createClass( {
   },
 
   componentDidUpdate: function() {
-    if ( this.canScroll() ) {
+    if ( this.canScroll() && !this.isPaused ) {
       this.play();
     }
   },
@@ -67,12 +68,14 @@ const Scroll = React.createClass( {
   play: function() {
     if ( this.scroll && this.scroll.data( "plugin_autoScroll" ) ) {
       this.scroll.data( "plugin_autoScroll" ).play();
+      this.isPaused = false;
     }
   },
 
   pause: function() {
     if ( this.scroll && this.scroll.data( "plugin_autoScroll" ) ) {
       this.scroll.data( "plugin_autoScroll" ).pause();
+      this.isPaused = true;
     }
   },
 
