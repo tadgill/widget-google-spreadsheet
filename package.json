@@ -51,7 +51,7 @@
     "gulp-watch": "^0.6.8",
     "html-webpack-plugin": "^2.16.0",
     "imports-loader": "^0.6.5",
-    "jquery": "2.2.4",
+    "jquery": "^3.0.0",
     "react-addons-test-utils": "^0.14.8",
     "run-sequence": "^0.3.2",
     "style-loader": "^0.13.1",
