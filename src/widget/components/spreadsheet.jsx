@@ -349,22 +349,10 @@ const prefs = new gadgets.Prefs(),
       if ( this.errorLog !== null ) {
         this.logEvent( this.errorLog, true );
       }
-
-      this.logEvent( {
-        "event": "done",
-        "url": params.spreadsheet.url,
-        "api_key": ( params.spreadsheet.apiKey ) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
-      } );
     },
 
     play: function() {
       this.viewerPaused = false;
-
-      this.logEvent( {
-        "event": "play",
-        "url": params.spreadsheet.url,
-        "api_key": ( params.spreadsheet.apiKey ) ? params.spreadsheet.apiKey : this.API_KEY_DEFAULT
-      } );
 
       if ( this.errorFlag ) {
         this.startErrorTimer();
