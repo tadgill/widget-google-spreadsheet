@@ -593,7 +593,7 @@ const prefs = new gadgets.Prefs(),
 
     render: function() {
       if ( this.state.data ) {
-        this.totalCols = this.state.data[ 0 ].length;
+        this.totalCols = this.state.data[ 0 ] ? this.state.data[ 0 ].length : 1;
 
         return (
           <div id="table">
