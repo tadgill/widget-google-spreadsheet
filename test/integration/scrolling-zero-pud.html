@@ -21,12 +21,36 @@
 <script src="../data/spreadsheet-integration-zero-pud.js"></script>
 <script src="../data/sheets.js"></script>
 <script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
-<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
 
 <script>
 
   let server, paramsStub, clock,
     googleSheet = document.querySelector("rise-google-sheet");
+
+  function startTests() {
+    suite("PUD timer", function () {
+      let rpcSpy = null;
+
+      suiteSetup(function() {
+        rpcSpy = sinon.spy(gadgets.rpc, "call");
+      });
+
+      suiteTeardown(function() {
+        clock.restore();
+        server.restore();
+        rpcSpy.restore();
+        googleSheet.$.data.getItem.restore();
+      });
+
+      test("should send Done after 10 seconds if PUD Failover < 1", function() {
+        clock.tick(9000);
+        assert.equal(rpcSpy.callCount, 0);
+
+        clock.tick(1000);
+        assert.equal(rpcSpy.callCount, 1);
+      });
+    });
+  }
 
   sinon.stub(googleSheet.$.data, "getItem", function(key, cb) {
     cb(null);
@@ -45,32 +69,11 @@
 
     googleSheet._onDataPingReceived();
     googleSheet.go();
-  });
-
-  suite("PUD timer", function () {
-    let rpcSpy = null;
-
-    suiteSetup(function() {
-      rpcSpy = sinon.spy(gadgets.rpc, "call");
-    });
-
-    suiteTeardown(function() {
-      clock.restore();
-      server.restore();
-      rpcSpy.restore();
-      googleSheet.$.data.getItem.restore();
-    });
-
-    test("should send Done after 10 seconds if PUD Failover < 1", function() {
-      clock.tick(9000);
-      assert.equal(rpcSpy.callCount, 0);
-
-      clock.tick(1000);
-      assert.equal(rpcSpy.callCount, 1);
-    });
+    startTests();
   });
 
 </script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script>
 
 </body>
 </html>
