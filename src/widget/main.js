@@ -12,7 +12,5 @@ const React = require( "react" ),
     return false;
   };
 
-  window.addEventListener( "WebComponentsReady", function() {
-    ReactDOM.render( <Main />, document.getElementById( "mainContainer" ) );
-  } );
+  ReactDOM.render( <Main />, document.getElementById( "mainContainer" ) );
 } )( window, document );
