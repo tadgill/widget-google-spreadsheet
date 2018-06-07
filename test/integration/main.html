@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Spreadsheet Widget</title>
 
-  <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../src/components/webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../../src/components/web-component-tester/browser.js"></script>
 
   <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
@@ -21,12 +21,145 @@
 <script src="../data/spreadsheet-integration.js"></script>
 <script src="../data/sheets.js"></script>
 <script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
-<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
 
 <script>
 
   let server, paramsStub, clock,
     googleSheet = document.querySelector("rise-google-sheet");
+
+  function startTests() {
+    suite("Spreadsheet Content", function() {
+
+      suiteTeardown(function() {
+        clock.restore();
+        server.restore();
+        googleSheet.$.data.getItem.restore();
+      });
+
+      suite("Initialization", function () {
+        test("should set the width of the container", function() {
+          assert.equal(document.getElementById("mainContainer").style.width, window.innerWidth + "px");
+        });
+
+        test("should set the height of the container", function() {
+          assert.equal(document.getElementById("mainContainer").style.height, window.innerHeight + "px");
+        });
+
+        test("should set the key attribute of the sheets component", function() {
+          assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
+        });
+
+        test("should set the sheet attribute of the sheets component", function() {
+          assert.equal(document.getElementById("rise-google-sheet").getAttribute("sheet"), "Sheet1");
+        });
+
+        test("should set the refresh rate of the sheets component", function() {
+          assert.equal(googleSheet.getAttribute("refresh"), window.gadget.settings.additionalParams.spreadsheet.refresh);
+        });
+
+        test("should set the range attribute of the sheets component", function() {
+          assert.equal(document.getElementById("rise-google-sheet").getAttribute("range"), "B2:C3");
+        });
+
+        test("should set the apikey attribute of the sheets component", function() {
+          assert.equal(document.getElementById("rise-google-sheet").getAttribute("apikey"), "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc");
+        });
+      });
+
+      suite("Table", function () {
+
+        setup(function() {
+          clock.tick(6000000);
+        });
+
+        test("should set the width of the table header", function() {
+          assert.equal(document.querySelector(".fixedDataTableLayout_main").style.width, window.innerWidth + "px");
+        });
+
+        test("should set the height of the table header", function() {
+          assert.equal(document.querySelector(".fixedDataTableLayout_main").style.height, 50 + "px");
+        });
+
+        test("should set the odd row style of the table", function() {
+          var backgroundColor = window.getComputedStyle(document.querySelector(".odd .fixedDataTableCellGroupLayout_cellGroup")).getPropertyValue( "background-color" );
+          assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
+        });
+
+        test("should enforce no padding in cells", function() {
+          var padding = window.getComputedStyle(document.querySelector(".header_font-style .fixedDataTableCellLayout_wrap3 > div")).getPropertyValue( "padding" );
+          assert.equal(padding, "0px");
+        });
+
+        test("should set the even row style of the table", function(done) {
+
+          var check = function(done) {
+            var element = document.querySelector(".even .fixedDataTableCellGroupLayout_cellGroup");
+
+            if (element) {
+              var backgroundColor = window.getComputedStyle(element).getPropertyValue( "background-color" );
+              assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
+              done();
+            }
+            else {
+              setTimeout(function() {
+                check(done)
+              }, 1000);
+            }
+          };
+          check(done);
+        });
+
+        test( "should apply no border to main table", function() {
+          var val = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-width" );
+          assert.equal(val, "0px");
+        } );
+      });
+
+      suite("Vertical Alignment", function() {
+
+        test("should set the table header vertical alignment of cells", function() {
+          var verticalAlign = window.getComputedStyle(document.querySelector(".header_font-style .fixedDataTableCellLayout_wrap3")).getPropertyValue( "vertical-align" );
+          assert.equal(verticalAlign, "top");
+        });
+
+        test("should set the table vertical alignment of cells", function() {
+          var verticalAlign = window.getComputedStyle(document.querySelector(".body_font-style .fixedDataTableCellLayout_wrap3")).getPropertyValue( "vertical-align" );
+          assert.equal(verticalAlign, "bottom");
+        });
+
+      });
+
+      suite("Separator", function () {
+
+        test("should set the separator width on table cells", function() {
+          var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-width" );
+          var val2 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-style" );
+          assert.equal(val1, "0px 1px 1px 0px");
+          assert.equal(val2, "solid");
+        });
+
+        test("should set the separator color of table cells", function() {
+          var val = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
+          assert.equal(val, "rgb(238, 238, 238)");
+        });
+
+        test("should set the diving separator betweeen header and data tables", function() {
+          var val = window.getComputedStyle(document.querySelector(".public_fixedDataTable_header")).getPropertyValue( "border-color" );
+          assert.equal(val, "rgb(238, 238, 238)");
+        });
+
+        test( "should hide the last column separator of table", function() {
+          var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main")).getPropertyValue( "border-right-color" ),
+            val2 = window.getComputedStyle(document.querySelector(".fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main:last-of-type")).getPropertyValue( "border-right-color" );
+
+          assert.equal( val1, "rgb(238, 238, 238)" );
+          assert.equal( val2, "rgba(0, 0, 0, 0)" );
+        } );
+
+      });
+
+    });
+  }
 
   sinon.stub(googleSheet.$.data, "getItem", function(key, cb) {
     cb(null);
@@ -52,141 +185,11 @@
 
     // call it again with the params
     googleSheet.go();
-  });
-
-  suite("Spreadsheet Content", function() {
-
-    suiteTeardown(function() {
-      clock.restore();
-      server.restore();
-      googleSheet.$.data.getItem.restore();
-    });
-
-    suite("Initialization", function () {
-      test("should set the width of the container", function() {
-        assert.equal(document.getElementById("mainContainer").style.width, window.innerWidth + "px");
-      });
-
-      test("should set the height of the container", function() {
-        assert.equal(document.getElementById("mainContainer").style.height, window.innerHeight + "px");
-      });
-
-      test("should set the key attribute of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("key"), "xxxxxxxxxx");
-      });
-
-      test("should set the sheet attribute of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("sheet"), "Sheet1");
-      });
-
-      test("should set the refresh rate of the sheets component", function() {
-        assert.equal(googleSheet.getAttribute("refresh"), window.gadget.settings.additionalParams.spreadsheet.refresh);
-      });
-
-      test("should set the range attribute of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("range"), "B2:C3");
-      });
-
-      test("should set the apikey attribute of the sheets component", function() {
-        assert.equal(document.getElementById("rise-google-sheet").getAttribute("apikey"), "AIzaSyAdX5yRzScPWbRm0FnNcoYxbiLeQo8owwc");
-      });
-    });
-
-    suite("Table", function () {
-
-      setup(function() {
-        clock.tick(6000000);
-      });
-
-      test("should set the width of the table header", function() {
-        assert.equal(document.querySelector(".fixedDataTableLayout_main").style.width, window.innerWidth + "px");
-      });
-
-      test("should set the height of the table header", function() {
-        assert.equal(document.querySelector(".fixedDataTableLayout_main").style.height, 50 + "px");
-      });
-
-      test("should set the odd row style of the table", function() {
-        var backgroundColor = window.getComputedStyle(document.querySelector(".odd .fixedDataTableCellGroupLayout_cellGroup")).getPropertyValue( "background-color" );
-        assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
-      });
-
-      test("should enforce no padding in cells", function() {
-        var padding = window.getComputedStyle(document.querySelector(".header_font-style .fixedDataTableCellLayout_wrap3 > div")).getPropertyValue( "padding" );
-        assert.equal(padding, "0px");
-      });
-
-      test("should set the even row style of the table", function(done) {
-
-        var check = function(done) {
-          var element = document.querySelector(".even .fixedDataTableCellGroupLayout_cellGroup");
-
-          if (element) {
-            var backgroundColor = window.getComputedStyle(element).getPropertyValue( "background-color" );
-            assert.equal(backgroundColor, "rgba(255, 255, 255, 0)");
-            done();
-          }
-          else {
-            setTimeout(function() {
-              check(done)
-            }, 1000);
-          }
-        };
-        check(done);
-      });
-
-      test( "should apply no border to main table", function() {
-        var val = window.getComputedStyle(document.querySelector(".fixedDataTableLayout_main")).getPropertyValue( "border-width" );
-        assert.equal(val, "0px");
-      } );
-    });
-
-    suite("Vertical Alignment", function() {
-
-      test("should set the table header vertical alignment of cells", function() {
-        var verticalAlign = window.getComputedStyle(document.querySelector(".header_font-style .fixedDataTableCellLayout_wrap3")).getPropertyValue( "vertical-align" );
-        assert.equal(verticalAlign, "top");
-      });
-
-      test("should set the table vertical alignment of cells", function() {
-        var verticalAlign = window.getComputedStyle(document.querySelector(".body_font-style .fixedDataTableCellLayout_wrap3")).getPropertyValue( "vertical-align" );
-        assert.equal(verticalAlign, "bottom");
-      });
-
-    });
-
-    suite("Separator", function () {
-
-      test("should set the separator width on table cells", function() {
-        var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-width" );
-        var val2 = window.getComputedStyle(document.querySelector(".fixedDataTableCellLayout_main")).getPropertyValue( "border-style" );
-        assert.equal(val1, "0px 1px 1px 0px");
-        assert.equal(val2, "solid");
-      });
-
-      test("should set the separator color of table cells", function() {
-        var val = window.getComputedStyle(document.querySelector(".public_fixedDataTableCell_main")).getPropertyValue( "border-color" );
-        assert.equal(val, "rgb(238, 238, 238)");
-      });
-
-      test("should set the diving separator betweeen header and data tables", function() {
-        var val = window.getComputedStyle(document.querySelector(".public_fixedDataTable_header")).getPropertyValue( "border-color" );
-        assert.equal(val, "rgb(238, 238, 238)");
-      });
-
-      test( "should hide the last column separator of table", function() {
-        var val1 = window.getComputedStyle(document.querySelector(".fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main")).getPropertyValue( "border-right-color" ),
-          val2 = window.getComputedStyle(document.querySelector(".fixedDataTableCellGroupLayout_cellGroup .fixedDataTableCellLayout_main:last-of-type")).getPropertyValue( "border-right-color" );
-
-        assert.equal( val1, "rgb(238, 238, 238)" );
-        assert.equal( val2, "rgba(0, 0, 0, 0)" );
-      } );
-
-    });
-
+    startTests();
   });
 
 </script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
 
 </body>
 </html>

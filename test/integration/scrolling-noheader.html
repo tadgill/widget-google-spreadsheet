@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Spreadsheet Widget</title>
 
-  <script src="../../src/components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  <script src="../../src/components/webcomponentsjs/webcomponents-loader.js"></script>
   <script src="../../src/components/web-component-tester/browser.js"></script>
 
   <link rel="import" href="../../src/components/rise-google-sheet/rise-google-sheet.html">
@@ -21,12 +21,35 @@
 <script src="../data/spreadsheet-integration-scroll-noheader.js"></script>
 <script src="../data/sheets.js"></script>
 <script src="../../node_modules/widget-tester/mocks/gadget-mocks.js"></script>
-<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
 
 <script>
 
   let server, paramsStub, clock,
     googleSheet = document.querySelector("rise-google-sheet");
+
+  function startTests() {
+    suite("Scrolling", function() {
+
+      suiteTeardown(function() {
+        clock.restore();
+        server.restore();
+        googleSheet.$.data.getItem.restore()
+      });
+
+      suite("Page - No Header", function () {
+
+        setup(function() {
+          clock.tick(6000000);
+        });
+
+        test("Should calculate height of section element correctly", function() {
+          assert.equal(document.querySelector("section.page").style.height, "250px");
+        });
+
+      });
+
+    });
+  }
 
   sinon.stub(googleSheet.$.data, "getItem", function(key, cb) {
     cb(null);
@@ -52,31 +75,11 @@
 
     // call it again with the params
     googleSheet.go();
-  });
-
-  suite("Scrolling", function() {
-
-    suiteTeardown(function() {
-      clock.restore();
-      server.restore();
-      googleSheet.$.data.getItem.restore()
-    });
-
-    suite("Page - No Header", function () {
-
-      setup(function() {
-        clock.tick(6000000);
-      });
-
-      test("Should calculate height of section element correctly", function() {
-        assert.equal(document.querySelector("section.page").style.height, "250px");
-      });
-
-    });
-
+    startTests();
   });
 
 </script>
+<script type="text/javascript" src="../../dist/js/widget.min.js"></script></body>
 
 </body>
 </html>
